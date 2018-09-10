@@ -333,8 +333,30 @@ module TSOS {
         }
 
         public shellDate(args) {
-            var today = new Date()
-            _StdOut.putText("Todays date is " + today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
+            var today = new Date();
+            var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
+            if (today.getSeconds() < 10) {
+                var seconds = "0" + today.getSeconds();
+            }
+            else {
+                var seconds = "" + today.getSeconds();
+            }
+            if (today.getMinutes() < 10) {
+                var minutes = "0" + today.getMinutes();
+            }
+            else {
+                var minutes = "" + today.getMinutes();
+            }
+            if (today.getHours() > 12) {
+                var hours = today.getHours() - 12;
+            }
+            else {
+                var hours = today.getHours();
+            }
+            var time = (hours + ":" + minutes + ":" + seconds);
+            _StdOut.putText("Todays date is " + date);
+            _StdOut.advanceLine();
+            _StdOut.putText("The current time is " + time);
         }
 
         public shellWhereAmI(args) {
