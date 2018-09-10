@@ -13,7 +13,7 @@
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    var Shell = (function () {
+    var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -48,6 +48,15 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
+            this.commandList[this.commandList.length] = sc;
+            //Date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the date.");
+            this.commandList[this.commandList.length] = sc;
+            //whereAmI
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Returns the user location.");
+            this.commandList[this.commandList.length] = sc;
+            //funFact
+            sc = new TSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -89,13 +98,13 @@ var TSOS;
             }
             else {
                 // It's not found, so check for curses and apologies before declaring the command invalid.
-                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) {
+                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
                     this.execute(this.shellCurse);
                 }
-                else if (this.apologies.indexOf("[" + cmd + "]") >= 0) {
+                else if (this.apologies.indexOf("[" + cmd + "]") >= 0) { // Check for apologies.
                     this.execute(this.shellApology);
                 }
-                else {
+                else { // It's just a bad command. {
                     this.execute(this.shellInvalidCommand);
                 }
             }
@@ -195,6 +204,33 @@ var TSOS;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "ver":
+                        _StdOut.putText("Displays the current version data.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Clears the screen and resets the cursor position.");
+                        break;
+                    case "man":
+                        _StdOut.putText("<topic> - Displays the MANual page for <topic>.");
+                        break;
+                    case "trace":
+                        _StdOut.putText("<on | off> - Turns the OS trace on or off.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("<string> - Does rot13 obfuscation on <string>.");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("<string> - Sets the prompt.");
+                        break;
+                    case "date":
+                        _StdOut.putText("Returns the date.");
+                        break;
+                    case "whereAmI":
+                        _StdOut.putText("Returns the user location.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -246,7 +282,58 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
+        Shell.prototype.shellDate = function (args) {
+            var today = new Date();
+            var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
+            if (today.getSeconds() < 10) {
+                var seconds = "0" + today.getSeconds();
+            }
+            else {
+                var seconds = "" + today.getSeconds();
+            }
+            if (today.getMinutes() < 10) {
+                var minutes = "0" + today.getMinutes();
+            }
+            else {
+                var minutes = "" + today.getMinutes();
+            }
+            if (today.getHours() > 12) {
+                var hours = today.getHours() - 12;
+            }
+            else {
+                var hours = today.getHours();
+            }
+            var time = (hours + ":" + minutes + ":" + seconds);
+            _StdOut.putText("Todays date is " + date);
+            _StdOut.advanceLine();
+            _StdOut.putText("The current time is " + time);
+        };
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("You tell me");
+        };
+        Shell.prototype.shellFunFact = function (args) {
+            var fact = Math.floor(Math.random() * 5);
+            switch (fact) {
+                case 0:
+                    _StdOut.putText("Banging your head against the wall for one hour burns 150 calories.");
+                    break;
+                case 1:
+                    _StdOut.putText("A single cloud can weight more than 1 million pounds.");
+                    break;
+                case 2:
+                    _StdOut.putText("Cherophobia is the fear of fun.");
+                    break;
+                case 3:
+                    _StdOut.putText("A ten-gallon hat will only hold three quarters of a gallon.");
+                    break;
+                case 4:
+                    _StdOut.putText("Russia has a larger surface area than Pluto.");
+                    break;
+                default:
+                    _StdOut.putText("fake news");
+            }
+        };
         return Shell;
-    })();
+    }());
     TSOS.Shell = Shell;
 })(TSOS || (TSOS = {}));
