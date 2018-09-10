@@ -49,14 +49,14 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            //Date <string>
+            //Date
             sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the date.");
             this.commandList[this.commandList.length] = sc;
-            //whereAmI <string>
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereAmI", "- Returns the user location.");
+            //whereAmI
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Returns the user location.");
             this.commandList[this.commandList.length] = sc;
-            //New and Creative
-            sc = new TSOS.ShellCommand(this.shellFunFact, "funFact", "<string> - Sets the prompt.");
+            //funFact
+            sc = new TSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -284,24 +284,31 @@ var TSOS;
         };
         Shell.prototype.shellDate = function (args) {
             var today = new Date();
-            _StdOut.putText("Todays date is" + today.getDate());
+            _StdOut.putText("Todays date is " + today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
         };
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You tell me");
         };
         Shell.prototype.shellFunFact = function (args) {
-            var fact = Math.random() * 5;
+            var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
                     _StdOut.putText("Banging your head against the wall for one hour burns 150 calories.");
+                    break;
                 case 1:
                     _StdOut.putText("A single cloud can weight more than 1 million pounds.");
+                    break;
                 case 2:
                     _StdOut.putText("Cherophobia is the fear of fun.");
+                    break;
                 case 3:
                     _StdOut.putText("A ten-gallon hat will only hold three quarters of a gallon.");
+                    break;
                 case 4:
                     _StdOut.putText("Russia has a larger surface area than Pluto.");
+                    break;
+                default:
+                    _StdOut.putText("fake news");
             }
         };
         return Shell;

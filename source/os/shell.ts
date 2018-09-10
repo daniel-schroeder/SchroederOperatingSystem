@@ -79,22 +79,22 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
-            //Date <string>
+            //Date
             sc = new ShellCommand(this.shellDate,
                                   "date",
                                   "- Returns the date.");
             this.commandList[this.commandList.length] = sc;
 
-            //whereAmI <string>
+            //whereAmI
             sc = new ShellCommand(this.shellWhereAmI,
-                                  "whereAmI",
+                                  "whereami",
                                   "- Returns the user location.");
             this.commandList[this.commandList.length] = sc;
 
-            //New and Creative
+            //funFact
             sc = new ShellCommand(this.shellFunFact,
-                                  "funFact",
-                                  "<string> - Sets the prompt.");
+                                  "funfact",
+                                  "- Displays a fun fact");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -334,7 +334,7 @@ module TSOS {
 
         public shellDate(args) {
             var today = new Date()
-            _StdOut.putText("Todays date is" + today.getDate());
+            _StdOut.putText("Todays date is " + today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
         }
 
         public shellWhereAmI(args) {
@@ -342,18 +342,25 @@ module TSOS {
         }
 
         public shellFunFact(args) {
-            var fact = Math.random() * 5;
+            var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
                     _StdOut.putText("Banging your head against the wall for one hour burns 150 calories.");
+                    break;
                 case 1:
                     _StdOut.putText("A single cloud can weight more than 1 million pounds.");
+                    break;
                 case 2:
                     _StdOut.putText("Cherophobia is the fear of fun.");
+                    break;
                 case 3:
                     _StdOut.putText("A ten-gallon hat will only hold three quarters of a gallon.");
+                    break;
                 case 4:
                     _StdOut.putText("Russia has a larger surface area than Pluto.");
+                    break;
+                default:
+                    _StdOut.putText("fake news");
             }
         }
 
