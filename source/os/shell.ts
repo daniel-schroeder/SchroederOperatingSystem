@@ -79,6 +79,24 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            //Date <string>
+            sc = new ShellCommand(this.shellDate,
+                                  "date",
+                                  "- Returns the date.");
+            this.commandList[this.commandList.length] = sc;
+
+            //whereAmI <string>
+            sc = new ShellCommand(this.shellWhereAmI,
+                                  "whereAmI",
+                                  "- Returns the user location.");
+            this.commandList[this.commandList.length] = sc;
+
+            //New and Creative
+            sc = new ShellCommand(this.shellFunFact,
+                                  "funFact",
+                                  "<string> - Sets the prompt.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -237,6 +255,33 @@ module TSOS {
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "ver":
+                        _StdOut.putText("Displays the current version data.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Clears the screen and resets the cursor position.");
+                        break;
+                    case "man":
+                        _StdOut.putText("<topic> - Displays the MANual page for <topic>.");
+                        break;
+                    case "trace":
+                        _StdOut.putText("<on | off> - Turns the OS trace on or off.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("<string> - Does rot13 obfuscation on <string>.");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("<string> - Sets the prompt.");
+                        break;
+                    case "date":
+                        _StdOut.putText("Returns the date.");
+                        break;
+                    case "whereAmI":
+                        _StdOut.putText("Returns the user location.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -284,6 +329,31 @@ module TSOS {
                 _OsShell.promptStr = args[0];
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
+            }
+        }
+
+        public shellDate(args) {
+            var today = new Date()
+            _StdOut.putText("Todays date is" + today.getDate());
+        }
+
+        public shellWhereAmI(args) {
+            _StdOut.putText("You tell me");
+        }
+
+        public shellFunFact(args) {
+            var fact = Math.random() * 5;
+            switch (fact) {
+                case 0:
+                    _StdOut.putText("Banging your head against the wall for one hour burns 150 calories.");
+                case 1:
+                    _StdOut.putText("A single cloud can weight more than 1 million pounds.");
+                case 2:
+                    _StdOut.putText("Cherophobia is the fear of fun.");
+                case 3:
+                    _StdOut.putText("A ten-gallon hat will only hold three quarters of a gallon.");
+                case 4:
+                    _StdOut.putText("Russia has a larger surface area than Pluto.");
             }
         }
 
