@@ -97,6 +97,11 @@ module TSOS {
                                   "- Displays a fun fact");
             this.commandList[this.commandList.length] = sc;
 
+            //status <string>
+            sc = new ShellCommand(this.shellStatus,
+                                  "status",
+                                  "<string> - Displays a status equal to <string>");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -386,5 +391,17 @@ module TSOS {
             }
         }
 
+        public shellStatus(args) {
+            if (args.length > 0) {
+                var status = "";
+                for (var i = 0; i < args.length; i++) {
+                    status = status + args[i] + " ";
+                }
+                document.getElementById("status").innerHTML = "Status: " + status;
+            } else {
+                _StdOut.putText("Usage: status <string>  Please supply a status.");
+            }
+
+        }
     }
 }
