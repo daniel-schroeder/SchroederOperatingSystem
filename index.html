@@ -104,24 +104,24 @@
                 <script>
                     function now() {
                         var today = new Date()
-                        var hours = today.getHours()
-                        var minutes = today.getMinutes()
-                        var seconds = today.getSeconds()
-                        var amPM = "AM"
-
-                        if (hours > 12){
-                            amPM = "PM"
-                            hours = hours - 12
+                        if (today.getSeconds() < 10) {
+                            var seconds = "0" + today.getSeconds();
                         }
-
-                        if (hours == 0)
-                            hours = 12
-
-                        if (minutes <= 9)
-                            minutes = "0" + minutes
-
-                        if (seconds <= 9)
-                            seconds = "0" + seconds
+                        else {
+                            var seconds = "" + today.getSeconds();
+                        }
+                        if (today.getMinutes() < 10) {
+                            var minutes = "0" + today.getMinutes();
+                        }
+                        else {
+                            var minutes = "" + today.getMinutes();
+                        }
+                        if (today.getHours() > 12) {
+                            var hours = today.getHours() - 12;
+                        }
+                        else {
+                            var hours = today.getHours();
+                        }
                         var currentTime = hours + ":" + minutes + ":" + seconds + " " + amPM
                         document.getElementById("time").innerHTML = currentTime;
                     }
