@@ -99,37 +99,55 @@
             </label>
         </div>
 
-        <div id="divStatusArea" style="margin:auto; width:200px; text-align:center;">
-            <p id="time">
+        <div id="divStatusArea" style="margin:auto; width:250px; text-align:center;padding-top:10px;">
+            <div id='date'>
+                <script>
+                    var today = new Date();
+                    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+                    var months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+                    var date = (days[today.getDay()] + " " + months[today.getMonth()] + " " + today.getDate() + "th, " + today.getFullYear());
+                    document.getElementById("date").innerHTML = date;
+                </script>
+            </div>
+            <div id="time">
                 <script>
                     function now() {
-                        var today = new Date()
+                        var today = new Date();
+                        var amPM = 'AM';
                         if (today.getSeconds() < 10) {
                             var seconds = "0" + today.getSeconds();
                         }
                         else {
                             var seconds = "" + today.getSeconds();
                         }
+
                         if (today.getMinutes() < 10) {
                             var minutes = "0" + today.getMinutes();
                         }
                         else {
                             var minutes = "" + today.getMinutes();
                         }
+
+                        if (hours == 12) {
+                            amPM = 'PM';
+                        }
                         if (today.getHours() > 12) {
                             var hours = today.getHours() - 12;
+                            amPM = 'PM';
                         }
                         else {
                             var hours = today.getHours();
                         }
+
                         var currentTime = hours + ":" + minutes + ":" + seconds + " " + amPM
                         document.getElementById("time").innerHTML = currentTime;
                     }
-                    setTimeout(now(),1000)
-</script>
-            </p>
-            <p id="status">
-            </p>
+                    now();
+                    setInterval(now,1000);
+                </script>
+            </div>
+            <div id="status">
+            </div>
         </div>
     </div>
 
