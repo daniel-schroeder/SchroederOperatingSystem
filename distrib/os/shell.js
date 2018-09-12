@@ -58,6 +58,9 @@ var TSOS;
             //funFact
             sc = new TSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact");
             this.commandList[this.commandList.length] = sc;
+            //status <string>
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays a status equal to <string>");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -331,6 +334,14 @@ var TSOS;
                     break;
                 default:
                     _StdOut.putText("fake news");
+            }
+        };
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                var status = args[0];
+            }
+            else {
+                _StdOut.putText("Usage: status <string>  Please supply a status.");
             }
         };
         return Shell;
