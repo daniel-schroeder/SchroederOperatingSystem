@@ -338,7 +338,11 @@ var TSOS;
         };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
-                var status = args[0];
+                var status = "";
+                for (var i = 0; i < args.length; i++) {
+                    status = status + args[i] + " ";
+                }
+                document.getElementById("status").innerHTML = "Status: " + status;
             }
             else {
                 _StdOut.putText("Usage: status <string>  Please supply a status.");
