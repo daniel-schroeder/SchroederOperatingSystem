@@ -102,6 +102,12 @@ module TSOS {
                                   "status",
                                   "<string> - Displays a status equal to <string>");
             this.commandList[this.commandList.length] = sc;
+
+            //load
+            sc = new ShellCommand(this.shellLoad,
+                                  "load",
+                                  "- Checks to see if the user code is valid");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -401,7 +407,17 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: status <string>  Please supply a status.");
             }
+        }
 
+        public shellLoad() {
+            var userInput = document.getElementById("taProgramInput").value;
+            console.log(userInput);
+            if (userInput.match(/^[a-fA-f 0-9]+$/)) {
+                _StdOut.putText("Text in input area is valid");
+            }
+            else {
+                _StdOut.putText("Text in input area is not valid code");
+            }
         }
     }
 }
