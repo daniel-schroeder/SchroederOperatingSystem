@@ -61,6 +61,9 @@ var TSOS;
             //status <string>
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays a status equal to <string>");
             this.commandList[this.commandList.length] = sc;
+            //load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -346,6 +349,16 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Usage: status <string>  Please supply a status.");
+            }
+        };
+        Shell.prototype.shellLoad = function () {
+            var userInput = document.getElementById("taProgramInput").value;
+            console.log(userInput);
+            if (userInput.match(/^[a-fA-f 0-9]+$/)) {
+                _StdOut.putText("Text in input area is valid");
+            }
+            else {
+                _StdOut.putText("Text in input area is not valid code");
             }
         };
         return Shell;
