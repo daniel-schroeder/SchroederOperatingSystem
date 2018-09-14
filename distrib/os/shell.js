@@ -64,6 +64,9 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid");
             this.commandList[this.commandList.length] = sc;
+            //bsod
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -360,6 +363,11 @@ var TSOS;
             else {
                 _StdOut.putText("Text in input area is not valid code");
             }
+        };
+        Shell.prototype.shellBSOD = function () {
+            _StdOut.putText("Shutting down...");
+            // Call Kernel shutdown routine.
+            _Kernel.krnShutdown();
         };
         return Shell;
     }());
