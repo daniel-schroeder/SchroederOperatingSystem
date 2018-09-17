@@ -165,7 +165,21 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
-            // TODO: Handle scrolling. (iProject 1)
+            if (this.currentYPosition > _Canvas.height) {
+                //copy the console screen to a variable
+                var consoleText = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                //clear the console
+                this.clearScreen();
+                //paste the copied screen onto the clear screen
+                //must multiply y value by -1 so it doesnt scroll from the top
+                _DrawingContext.putImageData(consoleText, 0, (_DefaultFontSize +
+                    _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                    _FontHeightMargin) * -1);
+                //set currentYPosition back to bottom of screen so its not off the console
+                this.currentYPosition -= (_DefaultFontSize +
+                    _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                    _FontHeightMargin);
+            }
         };
         return Console;
     }());
