@@ -427,7 +427,7 @@ module TSOS {
         }
 
         public shellBSOD() {
-            _Kernel.krnTrapError("BSOD")
+            _Kernel.krnTrapError("BSOD");
         }
     }
 }
