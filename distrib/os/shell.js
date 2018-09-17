@@ -365,9 +365,7 @@ var TSOS;
             }
         };
         Shell.prototype.shellBSOD = function () {
-            _StdOut.putText("Shutting down...");
-            // Call Kernel shutdown routine.
-            _Kernel.krnShutdown();
+            _Kernel.krnTrapError("BSOD");
         };
         return Shell;
     }());

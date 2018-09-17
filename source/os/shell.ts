@@ -427,9 +427,7 @@ module TSOS {
         }
 
         public shellBSOD() {
-            _StdOut.putText("Shutting down...");
-            // Call Kernel shutdown routine.
-           _Kernel.krnShutdown();
+            _Kernel.krnTrapError("BSOD")
         }
     }
 }

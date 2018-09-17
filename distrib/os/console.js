@@ -9,7 +9,7 @@
      ------------ */
 var TSOS;
 (function (TSOS) {
-    var Console = (function () {
+    var Console = /** @class */ (function () {
         function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
@@ -38,12 +38,16 @@ var TSOS;
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
-                if (chr === String.fromCharCode(13)) {
+                if (chr === String.fromCharCode(13)) { //     Enter key
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                }
+                else if (chr === String.fromCharCode(8)) { //     backspace key
+                    this.removeText();
+                    this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -52,6 +56,7 @@ var TSOS;
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
+                // TODO: Write a case for Ctrl-C.
             }
         };
         Console.prototype.putText = function (text) {
@@ -71,6 +76,19 @@ var TSOS;
                 this.currentXPosition = this.currentXPosition + offset;
             }
         };
+        Console.prototype.removeText = function () {
+            if (this.currentXPosition > 1) {
+                console.log(this.currentYPosition);
+                console.log(this.currentXPosition);
+                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.substring(this.buffer.length - 1));
+                var x = this.currentXPosition - offset;
+                var y = this.currentYPosition - this.currentFontSize;
+                var width = offset;
+                var height = this.currentFontSize + 5;
+                _DrawingContext.clearRect(x, y, width, height);
+                this.currentXPosition = this.currentXPosition - offset;
+            }
+        };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
             /*
@@ -84,6 +102,6 @@ var TSOS;
             // TODO: Handle scrolling. (iProject 1)
         };
         return Console;
-    })();
+    }());
     TSOS.Console = Console;
 })(TSOS || (TSOS = {}));
