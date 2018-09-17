@@ -48,6 +48,10 @@ module TSOS {
                 } else if (chr === String.fromCharCode(8)) { //     backspace key
                     this.removeText();
                     this.buffer = this.buffer.substring(0,this.buffer.length-1);
+                } else if (chr === String.fromCharCode(9)) { //     tab key
+                    var newBuffer = this.autoComplete(this.buffer);
+                    this.putText(newBuffer);
+                    this.buffer += newBuffer;
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -75,6 +79,19 @@ module TSOS {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
             }
+        }
+
+        public autoComplete(text): string {
+            var newText = "";
+            if (text != "") {
+                for (var i = 0; i < _OsShell.commandList.length; i++) {
+                    if (_OsShell.commandList[i].command.indexOf(text) == 0) {
+                        newText = _OsShell.commandList[i].command;
+                    }
+                }
+            }
+            newText = newText.substring(text.length);
+            return newText;
         }
 
         public removeText(): void {

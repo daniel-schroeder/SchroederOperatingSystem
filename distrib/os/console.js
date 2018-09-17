@@ -49,6 +49,11 @@ var TSOS;
                     this.removeText();
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                 }
+                else if (chr === String.fromCharCode(9)) { //     tab key
+                    var newBuffer = this.autoComplete(this.buffer);
+                    this.putText(newBuffer);
+                    this.buffer += newBuffer;
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -76,10 +81,20 @@ var TSOS;
                 this.currentXPosition = this.currentXPosition + offset;
             }
         };
+        Console.prototype.autoComplete = function (text) {
+            var newText = "";
+            if (text != "") {
+                for (var i = 0; i < _OsShell.commandList.length; i++) {
+                    if (_OsShell.commandList[i].command.indexOf(text) == 0) {
+                        newText = _OsShell.commandList[i].command;
+                    }
+                }
+            }
+            newText = newText.substring(text.length);
+            return newText;
+        };
         Console.prototype.removeText = function () {
             if (this.currentXPosition > 1) {
-                console.log(this.currentYPosition);
-                console.log(this.currentXPosition);
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.substring(this.buffer.length - 1));
                 var x = this.currentXPosition - offset;
                 var y = this.currentYPosition - this.currentFontSize;
