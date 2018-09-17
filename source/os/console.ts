@@ -17,7 +17,9 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public buffer = "") {
+                    public buffer = "",
+                    public previousBuffers = [],
+                    public prevBuffersPosition = previousBuffers.length) {
         }
 
         public init(): void {
@@ -44,14 +46,32 @@ module TSOS {
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
+                    this.previousBuffers[this.previousBuffers.length] = this.buffer;
+                    this.prevBuffersPosition = this.previousBuffers.length;
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(8)) { //     backspace key
                     this.removeText();
                     this.buffer = this.buffer.substring(0,this.buffer.length-1);
                 } else if (chr === String.fromCharCode(9)) { //     tab key
-                    var newBuffer = this.autoComplete(this.buffer);
-                    this.putText(newBuffer);
-                    this.buffer += newBuffer;
+                    var fullCommand = this.autoComplete(this.buffer);
+                    this.putText(fullCommand);
+                    this.buffer += fullCommand;
+                }
+                else if (chr === String.fromCharCode(38)) { //     up arrow key
+                    _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
+                    this.currentXPosition = 0
+                    _OsShell.putPrompt();
+                    var pastCommand = this.getPreviousCommand();
+                    this.putText(pastCommand);
+                    this.buffer = pastCommand;
+                }
+                else if (chr === String.fromCharCode(40)) { //     down arrow key
+                    _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
+                    this.currentXPosition = 0
+                    _OsShell.putPrompt();
+                    var nextCommand = this.getNextCommand();
+                    this.putText(nextCommand);
+                    this.buffer = nextCommand;
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -81,19 +101,49 @@ module TSOS {
             }
         }
 
+        //finishes a command for the user
         public autoComplete(text): string {
             var newText = "";
             if (text != "") {
+                //iterates throught the list of commands to check if what
+                //the user entered is a valid start to a command
                 for (var i = 0; i < _OsShell.commandList.length; i++) {
                     if (_OsShell.commandList[i].command.indexOf(text) == 0) {
+                        //if it is set the value of newText to the command name
                         newText = _OsShell.commandList[i].command;
                     }
                 }
             }
+            //new text only needs to contain the text not entered by user
+            //thats what this substring is for
             newText = newText.substring(text.length);
             return newText;
         }
 
+        //gets the previous commands entered by user starting witht the most recent
+        public getPreviousCommand(): string {
+            var newText = "";
+            //the if statement ensures that there was at least one command entered previously
+            if (this.prevBuffersPosition > 0) {
+                this.prevBuffersPosition--;
+                newText = this.previousBuffers[this.prevBuffersPosition];
+            }
+            //returns the previous command
+            return newText;
+        }
+
+        //very similar to the getPreviousCommand function but it goes through
+        //the previous commands in the opposite direction
+        public getNextCommand(): string {
+            var newText = "";
+            if (this.prevBuffersPosition < this.previousBuffers.length) {
+                this.prevBuffersPosition++;
+                newText = this.previousBuffers[this.prevBuffersPosition];
+            }
+            return newText;
+        }
+
+        //removes the most recent letter entered
         public removeText(): void {
             if (this.currentXPosition > 1) {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.substring(this.buffer.length-1));
@@ -101,6 +151,8 @@ module TSOS {
                 var y = this.currentYPosition - this.currentFontSize;
                 var width = offset;
                 var height = this.currentFontSize + 5;
+
+                //clears the text and then puts the cursor back to the previous location
                 _DrawingContext.clearRect(x, y, width, height);
                 this.currentXPosition = this.currentXPosition - offset;
             }
