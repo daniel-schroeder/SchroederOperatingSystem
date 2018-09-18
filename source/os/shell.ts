@@ -108,6 +108,12 @@ module TSOS {
                                   "load",
                                   "- Checks to see if the user code is valid");
             this.commandList[this.commandList.length] = sc;
+
+            //bsod
+            sc = new ShellCommand(this.shellBSOD,
+                                  "bsod",
+                                  "- Displays blue screen of death");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -418,6 +424,10 @@ module TSOS {
             else {
                 _StdOut.putText("Text in input area is not valid code");
             }
+        }
+
+        public shellBSOD() {
+            _Kernel.krnTrapError("BSOD");
         }
     }
 }
