@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, possibleCommands, possibleCommandsCounter, previousBuffers, prevBuffersPosition) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, possibleCommands, possibleCommandsCounter, previousBuffers, prevBuffersPosition, numLines) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -20,6 +20,7 @@ var TSOS;
             if (possibleCommandsCounter === void 0) { possibleCommandsCounter = 0; }
             if (previousBuffers === void 0) { previousBuffers = []; }
             if (prevBuffersPosition === void 0) { prevBuffersPosition = previousBuffers.length; }
+            if (numLines === void 0) { numLines = 1; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -29,6 +30,7 @@ var TSOS;
             this.possibleCommandsCounter = possibleCommandsCounter;
             this.previousBuffers = previousBuffers;
             this.prevBuffersPosition = prevBuffersPosition;
+            this.numLines = numLines;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -56,6 +58,7 @@ var TSOS;
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
                     this.buffer = "";
+                    this.numLines = 1;
                 }
                 else if (chr === String.fromCharCode(8)) { // backspace key
                     this.removeText();
@@ -74,7 +77,7 @@ var TSOS;
                     if (this.possibleCommands.length == 0) {
                         this.autoComplete(this.buffer);
                     }
-                    //iterate through the array. iif the counter is greater than the last index, reset to 0
+                    //iterate through the array. if the counter is greater than the last index, reset to 0
                     if (this.possibleCommandsCounter >= this.possibleCommands.length) {
                         this.possibleCommandsCounter = 0;
                     }
@@ -124,11 +127,56 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
+                if (this.currentXPosition + _DrawingContext.measureText(this.currentFont, this.currentFontSize, text) > _Canvas.width) {
+                    //if text contains two or more letters check each letter one at a time
+                    if (text.length >= 2) {
+                        //used to check each letter of text
+                        var a = 0;
+                        var b = 1;
+                        //ensure the whole array is checked and a is never larger than b
+                        while (b < text.length && a < b) {
+                            //if the letter is too big to fit advance line and put it there
+                            if (this.currentXPosition + _DrawingContext.measureText(this.currentFont, this.currentFontSize, text.substring(a, b)) > _Canvas.width) {
+                                this.advanceLine();
+                                // Draw the text at the current X and Y coordinates.
+                                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text.substring(a, b));
+                                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text.substring(a, b));
+                                // Move the current X position.
+                                this.currentXPosition = this.currentXPosition + offset;
+                                this.numLines++;
+                            }
+                            //otherwise put it in the next spot
+                            else {
+                                // Draw the text at the current X and Y coordinates.
+                                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text.substring(a, b));
+                                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text.substring(a, b));
+                                // Move the current X position.
+                                this.currentXPosition = this.currentXPosition + offset;
+                            }
+                            //advance the counters
+                            a++;
+                            b++;
+                        }
+                    }
+                    //if its just one character, advance line and put the text there
+                    else {
+                        this.advanceLine();
+                        // Draw the text at the current X and Y coordinates.
+                        _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                        var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                        // Move the current X position.
+                        this.currentXPosition = this.currentXPosition + offset;
+                        this.numLines++;
+                    }
+                }
+                //if it doesnt go beyond the limit of the canvas just put it normally on the command line
+                else {
+                    // Draw the text at the current X and Y coordinates.
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                    // Move the current X position.
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                    this.currentXPosition = this.currentXPosition + offset;
+                }
             }
         };
         //finishes a command for the user
@@ -168,12 +216,32 @@ var TSOS;
         };
         //removes the most recent letter entered
         Console.prototype.removeText = function () {
-            if (this.currentXPosition > 1) {
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.substring(this.buffer.length - 1));
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.substring(this.buffer.length - 1));
+            var width = _Canvas.width;
+            var height = (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin);
+            if (this.currentXPosition > 5) {
+                //set the appropriate x and y coordinates
                 var x = this.currentXPosition - offset;
-                var y = this.currentYPosition - this.currentFontSize - 2;
-                var width = offset;
-                var height = this.currentFontSize + 7;
+                var y = this.currentYPosition - this.currentFontSize - 1;
+                //clears the text and then puts the cursor back to the previous location
+                _DrawingContext.clearRect(x, y, width, height);
+                this.currentXPosition = this.currentXPosition - offset;
+            }
+            else {
+                //remove all text from previous lines
+                while (this.numLines > 1) {
+                    this.currentYPosition -= (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin);
+                    _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
+                    this.numLines--;
+                }
+                this.currentXPosition = 0;
+                _OsShell.putPrompt();
+                //put all text back
+                //used to reset this.currentXPosition
+                this.putText(this.buffer);
+                //set the appropriate x and y coordinates
+                var x = this.currentXPosition - offset;
+                var y = this.currentYPosition - this.currentFontSize - 1;
                 //clears the text and then puts the cursor back to the previous location
                 _DrawingContext.clearRect(x, y, width, height);
                 this.currentXPosition = this.currentXPosition - offset;
