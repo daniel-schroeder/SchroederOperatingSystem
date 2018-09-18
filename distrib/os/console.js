@@ -10,12 +10,14 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, previousBuffers, prevBuffersPosition) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, possibleCommands, possibleCommandsCounter, previousBuffers, prevBuffersPosition) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
+            if (possibleCommands === void 0) { possibleCommands = []; }
+            if (possibleCommandsCounter === void 0) { possibleCommandsCounter = 0; }
             if (previousBuffers === void 0) { previousBuffers = []; }
             if (prevBuffersPosition === void 0) { prevBuffersPosition = previousBuffers.length; }
             this.currentFont = currentFont;
@@ -23,6 +25,8 @@ var TSOS;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.possibleCommands = possibleCommands;
+            this.possibleCommandsCounter = possibleCommandsCounter;
             this.previousBuffers = previousBuffers;
             this.prevBuffersPosition = prevBuffersPosition;
         }
@@ -46,21 +50,39 @@ var TSOS;
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
-                    // ... and reset our buffer.
                     this.previousBuffers[this.previousBuffers.length] = this.buffer;
                     this.prevBuffersPosition = this.previousBuffers.length;
+                    // ... and reset our buffer, possible command list, and counter for possible commands.
+                    this.possibleCommands = [];
+                    this.possibleCommandsCounter = 0;
                     this.buffer = "";
                 }
                 else if (chr === String.fromCharCode(8)) { // backspace key
                     this.removeText();
+                    //reset the possible commands array and counter so that tab works properly
+                    this.possibleCommands = [];
+                    this.possibleCommandsCounter = 0;
                     //remove the charqcter from the buffer
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                 }
                 else if (chr === String.fromCharCode(9)) { // tab key
-                    var fullCommand = this.autoComplete(this.buffer);
-                    //fill the buffer with the whole command
+                    //clear the line and add a new prompt
+                    _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
+                    this.currentXPosition = 0;
+                    _OsShell.putPrompt();
+                    //only run the autocomplete function if the array containing possible commands is empty
+                    if (this.possibleCommands.length == 0) {
+                        this.autoComplete(this.buffer);
+                    }
+                    //iterate through the array. iif the counter is greater than the last index, reset to 0
+                    if (this.possibleCommandsCounter >= this.possibleCommands.length) {
+                        this.possibleCommandsCounter = 0;
+                    }
+                    var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
+                    this.possibleCommandsCounter++;
+                    //fill the buffer with the command and put it on the canvas
                     this.putText(fullCommand);
-                    this.buffer += fullCommand;
+                    this.buffer = fullCommand;
                 }
                 else if (chr == "up") { // up arrow key
                     //clear the line and add a new prompt
@@ -111,21 +133,17 @@ var TSOS;
         };
         //finishes a command for the user
         Console.prototype.autoComplete = function (text) {
-            var newText = "";
             if (text != "") {
                 //iterates throught the list of commands to check if what
                 //the user entered is a valid start to a command
                 for (var i = 0; i < _OsShell.commandList.length; i++) {
                     if (_OsShell.commandList[i].command.indexOf(text) == 0) {
                         //if it is set the value of newText to the command name
-                        newText = _OsShell.commandList[i].command;
+                        this.possibleCommands[this.possibleCommands.length] = _OsShell.commandList[i].command;
                     }
                 }
             }
-            //new text only needs to contain the text not entered by user
-            //thats what this substring is for
-            newText = newText.substring(text.length);
-            return newText;
+            return this.possibleCommands;
         };
         //gets the previous commands entered by user starting witht the most recent
         Console.prototype.getPreviousCommand = function () {
