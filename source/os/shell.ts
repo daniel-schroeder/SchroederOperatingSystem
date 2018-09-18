@@ -241,10 +241,12 @@ module TSOS {
            }
         }
 
+        //gives the version name and number of the OS
         public shellVer(args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
         }
 
+        //Displays a list of valid commands
         public shellHelp(args) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
@@ -253,6 +255,7 @@ module TSOS {
             }
         }
 
+        //shuts down the OS
         public shellShutdown(args) {
              _StdOut.putText("Shutting down...");
              // Call Kernel shutdown routine.
@@ -260,11 +263,13 @@ module TSOS {
             // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         }
 
+        //clears the command line
         public shellCls(args) {
             _StdOut.clearScreen();
             _StdOut.resetXY();
         }
 
+        //gives a short description of how to use a command
         public shellMan(args) {
             if (args.length > 0) {
                 var topic = args[0];
@@ -308,6 +313,7 @@ module TSOS {
             }
         }
 
+        //turns on or off the tracing
         public shellTrace(args) {
             if (args.length > 0) {
                 var setting = args[0];
@@ -332,6 +338,8 @@ module TSOS {
             }
         }
 
+        //shifts the letters in a word 13 to confuse people
+        //sorta encryption
         public shellRot13(args) {
             if (args.length > 0) {
                 // Requires Utils.ts for rot13() function.
@@ -341,6 +349,7 @@ module TSOS {
             }
         }
 
+        //changes the prompt of the shell
         public shellPrompt(args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
@@ -349,6 +358,7 @@ module TSOS {
             }
         }
 
+        //returns the date
         public shellDate(args) {
             var today = new Date();
             var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
@@ -376,10 +386,13 @@ module TSOS {
             _StdOut.putText("The current time is " + time);
         }
 
+        //tells where you are
         public shellWhereAmI(args) {
             _StdOut.putText("You tell me");
         }
 
+        //gives a fun fact
+        //not necessarily useful
         public shellFunFact(args) {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
@@ -403,6 +416,7 @@ module TSOS {
             }
         }
 
+        //set the status display
         public shellStatus(args) {
             if (args.length > 0) {
                 var status = "";
@@ -415,6 +429,7 @@ module TSOS {
             }
         }
 
+        //check if the text in the user input area is valid
         public shellLoad() {
             var userInput = document.getElementById("taProgramInput").value;
             console.log(userInput);
@@ -426,6 +441,7 @@ module TSOS {
             }
         }
 
+        //tests the BLUE SCREEN OF DEATH
         public shellBSOD() {
             _Kernel.krnTrapError("BSOD");
         }

@@ -186,9 +186,11 @@ var TSOS;
                 _StdOut.putText("For what?");
             }
         };
+        //gives the version name and number of the OS
         Shell.prototype.shellVer = function (args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
         };
+        //Displays a list of valid commands
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
@@ -196,16 +198,19 @@ var TSOS;
                 _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
             }
         };
+        //shuts down the OS
         Shell.prototype.shellShutdown = function (args) {
             _StdOut.putText("Shutting down...");
             // Call Kernel shutdown routine.
             _Kernel.krnShutdown();
             // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         };
+        //clears the command line
         Shell.prototype.shellCls = function (args) {
             _StdOut.clearScreen();
             _StdOut.resetXY();
         };
+        //gives a short description of how to use a command
         Shell.prototype.shellMan = function (args) {
             if (args.length > 0) {
                 var topic = args[0];
@@ -249,6 +254,7 @@ var TSOS;
                 _StdOut.putText("Usage: man <topic>  Please supply a topic.");
             }
         };
+        //turns on or off the tracing
         Shell.prototype.shellTrace = function (args) {
             if (args.length > 0) {
                 var setting = args[0];
@@ -274,6 +280,8 @@ var TSOS;
                 _StdOut.putText("Usage: trace <on | off>");
             }
         };
+        //shifts the letters in a word 13 to confuse people
+        //sorta encryption
         Shell.prototype.shellRot13 = function (args) {
             if (args.length > 0) {
                 // Requires Utils.ts for rot13() function.
@@ -283,6 +291,7 @@ var TSOS;
                 _StdOut.putText("Usage: rot13 <string>  Please supply a string.");
             }
         };
+        //changes the prompt of the shell
         Shell.prototype.shellPrompt = function (args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
@@ -291,6 +300,7 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
+        //returns the date
         Shell.prototype.shellDate = function (args) {
             var today = new Date();
             var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
@@ -317,9 +327,12 @@ var TSOS;
             _StdOut.advanceLine();
             _StdOut.putText("The current time is " + time);
         };
+        //tells where you are
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You tell me");
         };
+        //gives a fun fact
+        //not necessarily useful
         Shell.prototype.shellFunFact = function (args) {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
@@ -342,6 +355,7 @@ var TSOS;
                     _StdOut.putText("fake news");
             }
         };
+        //set the status display
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
                 var status = "";
@@ -354,6 +368,7 @@ var TSOS;
                 _StdOut.putText("Usage: status <string>  Please supply a status.");
             }
         };
+        //check if the text in the user input area is valid
         Shell.prototype.shellLoad = function () {
             var userInput = document.getElementById("taProgramInput").value;
             console.log(userInput);
@@ -364,6 +379,7 @@ var TSOS;
                 _StdOut.putText("Text in input area is not valid code");
             }
         };
+        //tests the BLUE SCREEN OF DEATH
         Shell.prototype.shellBSOD = function () {
             _Kernel.krnTrapError("BSOD");
         };
