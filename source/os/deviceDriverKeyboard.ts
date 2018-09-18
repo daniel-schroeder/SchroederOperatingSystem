@@ -9,7 +9,7 @@
    The Kernel Keyboard Device Driver.
    ---------------------------------- */
 
-module TSOS {
+module DSOS {
 
     // Extends DeviceDriver
     export class DeviceDriverKeyboard extends DeviceDriver {
@@ -55,7 +55,7 @@ module TSOS {
                         (keyCode == 8)                      ||   // backspace
                         (keyCode == 9)                      ||   // tab
                         (keyCode == 38)                     ||   // up arrow
-                        (keyCode == 40)) {                       // down arrow                           
+                        (keyCode == 40)) {                       // down arrow
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             } else if (keyCode == 188) {          //punctuation and other symbols

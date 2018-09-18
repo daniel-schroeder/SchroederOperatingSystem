@@ -1,4 +1,4 @@
-/* TSOS.css */
+/* DSOS.css */
 
 body {
   background: #909193 url(distrib/images/linen.png) repeat;
@@ -31,7 +31,7 @@ h3 {
 }
 
 #display {
-  background-color:#DFDBC3;
+  background-color:#DFDBC3;DSOS
   border: 2px solid red;
   cursor: default;
 }
