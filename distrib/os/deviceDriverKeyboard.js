@@ -20,14 +20,14 @@ var __extends = (this && this.__extends) || (function () {
 
    The Kernel Keyboard Device Driver.
    ---------------------------------- */
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     // Extends DeviceDriver
     var DeviceDriverKeyboard = /** @class */ (function (_super) {
         __extends(DeviceDriverKeyboard, _super);
         function DeviceDriverKeyboard() {
             // Override the base method pointers.
-            var _this =
+            var _this = 
             // The code below cannot run because "this" can only be
             // accessed after calling super.
             //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
@@ -66,7 +66,7 @@ var DSOS;
                 (keyCode == 8) || // backspace
                 (keyCode == 9) || // tab
                 (keyCode == 38) || // up arrow
-                (keyCode == 40)) { // down arrow
+                (keyCode == 40)) { // down arrow                           
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
@@ -76,6 +76,6 @@ var DSOS;
             }
         };
         return DeviceDriverKeyboard;
-    }(DSOS.DeviceDriver));
-    DSOS.DeviceDriverKeyboard = DeviceDriverKeyboard;
-})(DSOS || (DSOS = {}));
+    }(TSOS.DeviceDriver));
+    TSOS.DeviceDriverKeyboard = DeviceDriverKeyboard;
+})(TSOS || (TSOS = {}));

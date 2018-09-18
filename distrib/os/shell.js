@@ -11,8 +11,8 @@
           serious injuries may occur when trying to write your own Operating System.
    ------------ */
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
@@ -26,46 +26,46 @@ var DSOS;
             //
             // Load the command list.
             // ver
-            sc = new DSOS.ShellCommand(this.shellVer, "ver", "- Displays the current version data.");
+            sc = new TSOS.ShellCommand(this.shellVer, "ver", "- Displays the current version data.");
             this.commandList[this.commandList.length] = sc;
             // help
-            sc = new DSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
+            sc = new TSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
             // shutdown
-            sc = new DSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+            sc = new TSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
             this.commandList[this.commandList.length] = sc;
             // cls
-            sc = new DSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
+            sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
             // man <topic>
-            sc = new DSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
+            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
             // trace <on | off>
-            sc = new DSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
+            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
             // rot13 <string>
-            sc = new DSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
+            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
             // prompt <string>
-            sc = new DSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
+            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             //Date
-            sc = new DSOS.ShellCommand(this.shellDate, "date", "- Returns the date.");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Returns the date.");
             this.commandList[this.commandList.length] = sc;
             //whereAmI
-            sc = new DSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Returns the user location.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Returns the user location.");
             this.commandList[this.commandList.length] = sc;
             //funFact
-            sc = new DSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact");
+            sc = new TSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact");
             this.commandList[this.commandList.length] = sc;
             //status <string>
-            sc = new DSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays a status equal to <string>");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays a status equal to <string>");
             this.commandList[this.commandList.length] = sc;
             //load
-            sc = new DSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid");
             this.commandList[this.commandList.length] = sc;
             //bsod
-            sc = new DSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death");
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -107,7 +107,7 @@ var DSOS;
             }
             else {
                 // It's not found, so check for curses and apologies before declaring the command invalid.
-                if (this.curses.indexOf("[" + DSOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
+                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
                     this.execute(this.shellCurse);
                 }
                 else if (this.apologies.indexOf("[" + cmd + "]") >= 0) { // Check for apologies.
@@ -132,9 +132,9 @@ var DSOS;
             this.putPrompt();
         };
         Shell.prototype.parseInput = function (buffer) {
-            var retVal = new DSOS.UserCommand();
+            var retVal = new TSOS.UserCommand();
             // 1. Remove leading and trailing spaces.
-            buffer = DSOS.Utils.trim(buffer);
+            buffer = TSOS.Utils.trim(buffer);
             // 2. Lower-case it.
             buffer = buffer.toLowerCase();
             // 3. Separate on spaces so we can determine the command and command-line args, if any.
@@ -142,12 +142,12 @@ var DSOS;
             // 4. Take the first (zeroth) element and use that as the command.
             var cmd = tempList.shift(); // Yes, you can do that to an array in JavaScript.  See the Queue class.
             // 4.1 Remove any left-over spaces.
-            cmd = DSOS.Utils.trim(cmd);
+            cmd = TSOS.Utils.trim(cmd);
             // 4.2 Record it in the return value.
             retVal.command = cmd;
             // 5. Now create the args array from what's left.
             for (var i in tempList) {
-                var arg = DSOS.Utils.trim(tempList[i]);
+                var arg = TSOS.Utils.trim(tempList[i]);
                 if (arg != "") {
                     retVal.args[retVal.args.length] = tempList[i];
                 }
@@ -277,7 +277,7 @@ var DSOS;
         Shell.prototype.shellRot13 = function (args) {
             if (args.length > 0) {
                 // Requires Utils.ts for rot13() function.
-                _StdOut.putText(args.join(' ') + " = '" + DSOS.Utils.rot13(args.join(' ')) + "'");
+                _StdOut.putText(args.join(' ') + " = '" + TSOS.Utils.rot13(args.join(' ')) + "'");
             }
             else {
                 _StdOut.putText("Usage: rot13 <string>  Please supply a string.");
@@ -369,5 +369,5 @@ var DSOS;
         };
         return Shell;
     }());
-    DSOS.Shell = Shell;
-})(DSOS || (DSOS = {}));
+    TSOS.Shell = Shell;
+})(TSOS || (TSOS = {}));

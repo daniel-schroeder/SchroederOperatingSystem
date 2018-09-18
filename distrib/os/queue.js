@@ -7,8 +7,8 @@
    Look at the push and shift methods, as they are the least obvious here.
 
    ------------ */
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     var Queue = /** @class */ (function () {
         function Queue(q) {
             if (q === void 0) { q = new Array(); }
@@ -39,5 +39,5 @@ var DSOS;
         };
         return Queue;
     }());
-    DSOS.Queue = Queue;
-})(DSOS || (DSOS = {}));
+    TSOS.Queue = Queue;
+})(TSOS || (TSOS = {}));

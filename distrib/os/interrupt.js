@@ -1,8 +1,8 @@
 /* ------------
    Interrupt.ts
    ------------ */
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     var Interrupt = (function () {
         function Interrupt(irq, params) {
             this.irq = irq;
@@ -10,5 +10,5 @@ var DSOS;
         }
         return Interrupt;
     })();
-    DSOS.Interrupt = Interrupt;
-})(DSOS || (DSOS = {}));
+    TSOS.Interrupt = Interrupt;
+})(TSOS || (TSOS = {}));

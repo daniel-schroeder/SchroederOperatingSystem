@@ -17,7 +17,7 @@
  *       That might be fun.
  * ----------------- */
 
-module DSOS {
+module TSOS {
 
     export class CanvasTextFunctions {
 

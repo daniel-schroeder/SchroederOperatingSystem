@@ -1,5 +1,5 @@
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     var ShellCommand = /** @class */ (function () {
         function ShellCommand(func, command, description) {
             if (command === void 0) { command = ""; }
@@ -10,5 +10,5 @@ var DSOS;
         }
         return ShellCommand;
     }());
-    DSOS.ShellCommand = ShellCommand;
-})(DSOS || (DSOS = {}));
+    TSOS.ShellCommand = ShellCommand;
+})(TSOS || (TSOS = {}));

@@ -3,8 +3,8 @@
 
    Utility functions.
    -------- */
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     var Utils = /** @class */ (function () {
         function Utils() {
         }
@@ -46,5 +46,5 @@ var DSOS;
         };
         return Utils;
     }());
-    DSOS.Utils = Utils;
-})(DSOS || (DSOS = {}));
+    TSOS.Utils = Utils;
+})(TSOS || (TSOS = {}));

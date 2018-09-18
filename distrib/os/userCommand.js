@@ -1,5 +1,5 @@
-var DSOS;
-(function (DSOS) {
+var TSOS;
+(function (TSOS) {
     var UserCommand = /** @class */ (function () {
         function UserCommand(command, args) {
             if (command === void 0) { command = ""; }
@@ -9,5 +9,5 @@ var DSOS;
         }
         return UserCommand;
     }());
-    DSOS.UserCommand = UserCommand;
-})(DSOS || (DSOS = {}));
+    TSOS.UserCommand = UserCommand;
+})(TSOS || (TSOS = {}));
