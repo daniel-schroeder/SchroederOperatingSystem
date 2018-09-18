@@ -20,6 +20,7 @@ module TSOS {
                     public buffer = "",
                     public possibleCommands = [],
                     public possibleCommandsCounter = 0,
+                    public secondaryCommandCounter = 0,
                     public previousBuffers = [],
                     public prevBuffersPosition = previousBuffers.length,
                     public numLines = 1) {
@@ -50,9 +51,10 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     this.previousBuffers[this.previousBuffers.length] = this.buffer;
                     this.prevBuffersPosition = this.previousBuffers.length;
-                    // ... and reset our buffer, possible command list, and counter for possible commands.
+                    // ... and reset our buffer, possible command list, and counters for possible commands.
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
+                    this.secondaryCommandCounter = 0;
                     this.buffer = "";
                     this.numLines = 1;
                 } else if (chr === String.fromCharCode(8)) { // backspace key
@@ -69,21 +71,35 @@ module TSOS {
                     this.currentXPosition = 0
                     _OsShell.putPrompt();
 
-                    //only run the autocomplete function if the array containing possible commands is empty
-                    if (this.possibleCommands.length == 0) {
-                        this.autoComplete(this.buffer)
+                    //special case for man function
+                    if (this.buffer.indexOf("man ") == 0 || this.buffer.indexOf("man") == 0) {
+                        var startOfCommand = "man ";
+                        if(this.secondaryCommandCounter >= _OsShell.commandList.length) {
+                            this.secondaryCommandCounter = 0;
+                        }
+                        var endOfCommand = _OsShell.commandList[this.secondaryCommandCounter].command;
+                        var completeCommand = startOfCommand + endOfCommand;
+                        this.secondaryCommandCounter++;
+                        this.putText(completeCommand);
+                        this.buffer = completeCommand;
                     }
+                    else {
+                        //only run the autocomplete function if the array containing possible commands is empty
+                        if (this.possibleCommands.length == 0) {
+                            this.autoComplete(this.buffer)
+                        }
 
-                    //iterate through the array. if the counter is greater than the last index, reset to 0
-                    if(this.possibleCommandsCounter >= this.possibleCommands.length) {
-                        this.possibleCommandsCounter = 0;
+                        //iterate through the array. if the counter is greater than the last index, reset to 0
+                        if(this.possibleCommandsCounter >= this.possibleCommands.length) {
+                            this.possibleCommandsCounter = 0;
+                        }
+                        var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
+                        this.possibleCommandsCounter++;
+
+                        //fill the buffer with the command and put it on the canvas
+                        this.putText(fullCommand);
+                        this.buffer = fullCommand;
                     }
-                    var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
-                    this.possibleCommandsCounter++;
-
-                    //fill the buffer with the command and put it on the canvas
-                    this.putText(fullCommand);
-                    this.buffer = fullCommand;
                 } else if (chr == "up") { // up arrow key
                     //clear the line and add a new prompt
                     _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
