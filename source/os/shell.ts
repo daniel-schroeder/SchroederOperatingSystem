@@ -304,6 +304,18 @@ module TSOS {
                     case "whereAmI":
                         _StdOut.putText("Returns the user location.");
                         break;
+                    case "funfact":
+                        _StdOut.putText("Displays a fun fact.");
+                        break;
+                    case "status":
+                        _StdOut.putText("<string> - displays <string> in status area.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Lets user know if code entered in input area is valid.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("Tests the BSOD.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
