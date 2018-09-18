@@ -51,27 +51,33 @@ var TSOS;
                     this.prevBuffersPosition = this.previousBuffers.length;
                     this.buffer = "";
                 }
-                else if (chr === String.fromCharCode(8)) { //     backspace key
+                else if (chr === String.fromCharCode(8)) { // backspace key
                     this.removeText();
+                    //remove the charqcter from the buffer
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                 }
-                else if (chr === String.fromCharCode(9)) { //     tab key
+                else if (chr === String.fromCharCode(9)) { // tab key
                     var fullCommand = this.autoComplete(this.buffer);
+                    //fill the buffer with the whole command
                     this.putText(fullCommand);
                     this.buffer += fullCommand;
                 }
-                else if (chr === String.fromCharCode(38)) { //     up arrow key
+                else if (chr == "up") { // up arrow key
+                    //clear the line and add a new prompt
                     _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
                     this.currentXPosition = 0;
                     _OsShell.putPrompt();
+                    //recall last command
                     var pastCommand = this.getPreviousCommand();
                     this.putText(pastCommand);
                     this.buffer = pastCommand;
                 }
-                else if (chr === String.fromCharCode(40)) { //     down arrow key
+                else if (chr == "down") { // down arrow key
+                    //clear the line and add a new prompt
                     _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
                     this.currentXPosition = 0;
                     _OsShell.putPrompt();
+                    //recall command
                     var nextCommand = this.getNextCommand();
                     this.putText(nextCommand);
                     this.buffer = nextCommand;
@@ -147,9 +153,9 @@ var TSOS;
             if (this.currentXPosition > 1) {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.substring(this.buffer.length - 1));
                 var x = this.currentXPosition - offset;
-                var y = this.currentYPosition - this.currentFontSize;
+                var y = this.currentYPosition - this.currentFontSize - 2;
                 var width = offset;
-                var height = this.currentFontSize + 5;
+                var height = this.currentFontSize + 7;
                 //clears the text and then puts the cursor back to the previous location
                 _DrawingContext.clearRect(x, y, width, height);
                 this.currentXPosition = this.currentXPosition - offset;
@@ -167,12 +173,12 @@ var TSOS;
                 _FontHeightMargin;
             if (this.currentYPosition > _Canvas.height) {
                 //copy the console screen to a variable
-                var consoleText = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                var consolesText = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 //clear the console
                 this.clearScreen();
                 //paste the copied screen onto the clear screen
                 //must multiply y value by -1 so it doesnt scroll from the top
-                _DrawingContext.putImageData(consoleText, 0, (_DefaultFontSize +
+                _DrawingContext.putImageData(consolesText, 0, (_DefaultFontSize +
                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                     _FontHeightMargin) * -1);
                 //set currentYPosition back to bottom of screen so its not off the console
