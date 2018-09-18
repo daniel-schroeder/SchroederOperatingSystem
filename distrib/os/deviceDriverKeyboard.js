@@ -68,11 +68,11 @@ var TSOS;
                 _KernelInputQueue.enqueue(chr);
             }
             else if (keyCode == 38) { // up arrow
-                chr = "up";
+                chr = "up"; // used "up" instead of keycode because "&" and up arrow were being stupid
                 _KernelInputQueue.enqueue(chr);
             }
             else if (keyCode == 40) { // down arrow
-                chr = "down";
+                chr = "down"; // used "down" instead of keycode because "(" and down arrow were being stupid
                 _KernelInputQueue.enqueue(chr);
             }
             else if ((keyCode >= 48 && keyCode <= 59) || // digits when unshifted, other symbols when shifted
@@ -80,6 +80,8 @@ var TSOS;
                 (keyCode == 173) || // - and _
                 (keyCode >= 188 && keyCode <= 192) || // punctuation
                 (keyCode >= 219 && keyCode <= 222)) { // more punctuation/symbols
+                //big bad switch for all the cases.
+                //with nested if statements for added fun. and to check for shift key press
                 switch (keyCode) {
                     case 48: {
                         if (isShifted) {
