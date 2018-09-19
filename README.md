@@ -1,3 +1,5 @@
+Either Master or Project1 branch can be graded. Both are up to date
+
 Browser-based Operating System in TypeScript
 ============================================
 
