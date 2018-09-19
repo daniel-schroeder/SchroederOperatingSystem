@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, possibleCommands, possibleCommandsCounter, previousBuffers, prevBuffersPosition, numLines) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, possibleCommands, possibleCommandsCounter, secondaryCommandList, secondaryCommandCounter, previousBuffers, prevBuffersPosition, numLines) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -18,6 +18,8 @@ var TSOS;
             if (buffer === void 0) { buffer = ""; }
             if (possibleCommands === void 0) { possibleCommands = []; }
             if (possibleCommandsCounter === void 0) { possibleCommandsCounter = 0; }
+            if (secondaryCommandList === void 0) { secondaryCommandList = []; }
+            if (secondaryCommandCounter === void 0) { secondaryCommandCounter = 0; }
             if (previousBuffers === void 0) { previousBuffers = []; }
             if (prevBuffersPosition === void 0) { prevBuffersPosition = previousBuffers.length; }
             if (numLines === void 0) { numLines = 1; }
@@ -28,6 +30,8 @@ var TSOS;
             this.buffer = buffer;
             this.possibleCommands = possibleCommands;
             this.possibleCommandsCounter = possibleCommandsCounter;
+            this.secondaryCommandList = secondaryCommandList;
+            this.secondaryCommandCounter = secondaryCommandCounter;
             this.previousBuffers = previousBuffers;
             this.prevBuffersPosition = prevBuffersPosition;
             this.numLines = numLines;
@@ -54,9 +58,11 @@ var TSOS;
                     _OsShell.handleInput(this.buffer);
                     this.previousBuffers[this.previousBuffers.length] = this.buffer;
                     this.prevBuffersPosition = this.previousBuffers.length;
-                    // ... and reset our buffer, possible command list, and counter for possible commands.
+                    // ... and reset our buffer, possible command list, and counters for possible commands.
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
+                    this.secondaryCommandList = [];
+                    this.secondaryCommandCounter = 0;
                     this.buffer = "";
                     this.numLines = 1;
                 }
@@ -65,7 +71,9 @@ var TSOS;
                     //reset the possible commands array and counter so that tab works properly
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
-                    //remove the charqcter from the buffer
+                    this.secondaryCommandList = [];
+                    this.secondaryCommandCounter = 0;
+                    //remove the character from the buffer
                     this.buffer = this.buffer.substring(0, this.buffer.length - 1);
                 }
                 else if (chr === String.fromCharCode(9)) { // tab key
@@ -73,19 +81,41 @@ var TSOS;
                     _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
                     this.currentXPosition = 0;
                     _OsShell.putPrompt();
-                    //only run the autocomplete function if the array containing possible commands is empty
-                    if (this.possibleCommands.length == 0) {
-                        this.autoComplete(this.buffer);
+                    //special case for man function
+                    if (this.buffer.indexOf("man ") == 0 || this.buffer.indexOf("man") == 0) {
+                        var startOfCommand = "man ";
+                        //only run the autocomplete function if the array containing possible commands is empty
+                        if (this.secondaryCommandList.length == 0 && this.buffer.length > 3) {
+                            this.autoComplete(this.buffer.substring(4));
+                        }
+                        else {
+                            this.autoComplete(" ");
+                        }
+                        //iterate through the array. if the counter is greater than the last index, reset to 0
+                        if (this.secondaryCommandCounter >= this.secondaryCommandList.length) {
+                            this.secondaryCommandCounter = 0;
+                        }
+                        var endOfCommand = this.secondaryCommandList[this.secondaryCommandCounter];
+                        var completeCommand = startOfCommand + endOfCommand;
+                        this.secondaryCommandCounter++;
+                        this.putText(completeCommand);
+                        this.buffer = completeCommand;
                     }
-                    //iterate through the array. if the counter is greater than the last index, reset to 0
-                    if (this.possibleCommandsCounter >= this.possibleCommands.length) {
-                        this.possibleCommandsCounter = 0;
+                    else {
+                        //only run the autocomplete function if the array containing possible commands is empty
+                        if (this.possibleCommands.length == 0) {
+                            this.autoComplete(this.buffer);
+                        }
+                        //iterate through the array. if the counter is greater than the last index, reset to 0
+                        if (this.possibleCommandsCounter >= this.possibleCommands.length) {
+                            this.possibleCommandsCounter = 0;
+                        }
+                        var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
+                        this.possibleCommandsCounter++;
+                        //fill the buffer with the command and put it on the canvas
+                        this.putText(fullCommand);
+                        this.buffer = fullCommand;
                     }
-                    var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
-                    this.possibleCommandsCounter++;
-                    //fill the buffer with the command and put it on the canvas
-                    this.putText(fullCommand);
-                    this.buffer = fullCommand;
                 }
                 else if (chr == "up") { // up arrow key
                     //clear the line and add a new prompt
@@ -188,7 +218,14 @@ var TSOS;
                     if (_OsShell.commandList[i].command.indexOf(text) == 0) {
                         //if it is set the value of newText to the command name
                         this.possibleCommands[this.possibleCommands.length] = _OsShell.commandList[i].command;
+                        this.secondaryCommandList[this.secondaryCommandList.length] = _OsShell.commandList[i].command;
                     }
+                }
+            }
+            if (this.possibleCommands.length == 0) {
+                for (var i = 0; i < _OsShell.commandList.length; i++) {
+                    this.possibleCommands[i] = _OsShell.commandList[i].command;
+                    this.secondaryCommandList[i] = _OsShell.commandList[i].command;
                 }
             }
             return this.possibleCommands;

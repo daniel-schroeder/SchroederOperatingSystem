@@ -20,6 +20,8 @@ module TSOS {
                     public buffer = "",
                     public possibleCommands = [],
                     public possibleCommandsCounter = 0,
+                    public secondaryCommandList = [],
+                    public secondaryCommandCounter = 0,
                     public previousBuffers = [],
                     public prevBuffersPosition = previousBuffers.length,
                     public numLines = 1) {
@@ -50,9 +52,11 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     this.previousBuffers[this.previousBuffers.length] = this.buffer;
                     this.prevBuffersPosition = this.previousBuffers.length;
-                    // ... and reset our buffer, possible command list, and counter for possible commands.
+                    // ... and reset our buffer, possible command list, and counters for possible commands.
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
+                    this.secondaryCommandList = [];
+                    this.secondaryCommandCounter = 0;
                     this.buffer = "";
                     this.numLines = 1;
                 } else if (chr === String.fromCharCode(8)) { // backspace key
@@ -60,8 +64,10 @@ module TSOS {
                     //reset the possible commands array and counter so that tab works properly
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
+                    this.secondaryCommandList = [];
+                    this.secondaryCommandCounter = 0;
 
-                    //remove the charqcter from the buffer
+                    //remove the character from the buffer
                     this.buffer = this.buffer.substring(0,this.buffer.length-1);
                 } else if (chr === String.fromCharCode(9)) { // tab key
                     //clear the line and add a new prompt
@@ -69,21 +75,45 @@ module TSOS {
                     this.currentXPosition = 0
                     _OsShell.putPrompt();
 
-                    //only run the autocomplete function if the array containing possible commands is empty
-                    if (this.possibleCommands.length == 0) {
-                        this.autoComplete(this.buffer)
-                    }
+                    //special case for man function
+                    if (this.buffer.indexOf("man ") == 0 || this.buffer.indexOf("man") == 0) {
+                        var startOfCommand = "man ";
 
-                    //iterate through the array. if the counter is greater than the last index, reset to 0
-                    if(this.possibleCommandsCounter >= this.possibleCommands.length) {
-                        this.possibleCommandsCounter = 0;
-                    }
-                    var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
-                    this.possibleCommandsCounter++;
+                        //only run the autocomplete function if the array containing possible commands is empty
+                        if (this.secondaryCommandList.length == 0 && this.buffer.length > 3) {
+                            this.autoComplete(this.buffer.substring(4));
+                        }
+                        else {
+                            this.autoComplete(" ")
+                        }
+                        //iterate through the array. if the counter is greater than the last index, reset to 0
+                        if(this.secondaryCommandCounter >= this.secondaryCommandList.length) {
+                            this.secondaryCommandCounter = 0;
+                        }
 
-                    //fill the buffer with the command and put it on the canvas
-                    this.putText(fullCommand);
-                    this.buffer = fullCommand;
+                        var endOfCommand = this.secondaryCommandList[this.secondaryCommandCounter];
+                        var completeCommand = startOfCommand + endOfCommand;
+                        this.secondaryCommandCounter++;
+                        this.putText(completeCommand);
+                        this.buffer = completeCommand;
+                    }
+                    else {
+                        //only run the autocomplete function if the array containing possible commands is empty
+                        if (this.possibleCommands.length == 0) {
+                            this.autoComplete(this.buffer);
+                        }
+
+                        //iterate through the array. if the counter is greater than the last index, reset to 0
+                        if(this.possibleCommandsCounter >= this.possibleCommands.length) {
+                            this.possibleCommandsCounter = 0;
+                        }
+                        var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
+                        this.possibleCommandsCounter++;
+
+                        //fill the buffer with the command and put it on the canvas
+                        this.putText(fullCommand);
+                        this.buffer = fullCommand;
+                    }
                 } else if (chr == "up") { // up arrow key
                     //clear the line and add a new prompt
                     _DrawingContext.clearRect(0, (this.currentYPosition - this.currentFontSize), _Canvas.width, _Canvas.height);
@@ -188,7 +218,14 @@ module TSOS {
                     if (_OsShell.commandList[i].command.indexOf(text) == 0) {
                         //if it is set the value of newText to the command name
                         this.possibleCommands[this.possibleCommands.length] = _OsShell.commandList[i].command;
+                        this.secondaryCommandList[this.secondaryCommandList.length] = _OsShell.commandList[i].command;
                     }
+                }
+            }
+            if (this.possibleCommands.length == 0) {
+                for (var i = 0; i < _OsShell.commandList.length; i++) {
+                    this.possibleCommands[i] = _OsShell.commandList[i].command
+                    this.secondaryCommandList[i] = _OsShell.commandList[i].command
                 }
             }
             return this.possibleCommands;

@@ -37,9 +37,6 @@ var TSOS;
             // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
-            // man <topic>
-            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
-            this.commandList[this.commandList.length] = sc;
             // trace <on | off>
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
@@ -66,6 +63,9 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             //bsod
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death");
+            this.commandList[this.commandList.length] = sc;
+            // man <topic>
+            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -244,6 +244,18 @@ var TSOS;
                         break;
                     case "whereAmI":
                         _StdOut.putText("Returns the user location.");
+                        break;
+                    case "funfact":
+                        _StdOut.putText("Displays a fun fact.");
+                        break;
+                    case "status":
+                        _StdOut.putText("<string> - displays <string> in status area.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Lets user know if code entered in input area is valid.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("Tests the BSOD.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
