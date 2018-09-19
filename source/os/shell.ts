@@ -55,12 +55,6 @@ module TSOS {
                                   "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
-            // man <topic>
-            sc = new ShellCommand(this.shellMan,
-                                  "man",
-                                  "<topic> - Displays the MANual page for <topic>.");
-            this.commandList[this.commandList.length] = sc;
-
             // trace <on | off>
             sc = new ShellCommand(this.shellTrace,
                                   "trace",
@@ -113,6 +107,12 @@ module TSOS {
             sc = new ShellCommand(this.shellBSOD,
                                   "bsod",
                                   "- Displays blue screen of death");
+            this.commandList[this.commandList.length] = sc;
+            
+            // man <topic>
+            sc = new ShellCommand(this.shellMan,
+                                  "man",
+                                  "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.

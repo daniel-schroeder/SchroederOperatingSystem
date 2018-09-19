@@ -20,6 +20,7 @@ module TSOS {
                     public buffer = "",
                     public possibleCommands = [],
                     public possibleCommandsCounter = 0,
+                    public secondaryCommandList = [],
                     public secondaryCommandCounter = 0,
                     public previousBuffers = [],
                     public prevBuffersPosition = previousBuffers.length,
@@ -54,6 +55,7 @@ module TSOS {
                     // ... and reset our buffer, possible command list, and counters for possible commands.
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
+                    this.secondaryCommandList = [];
                     this.secondaryCommandCounter = 0;
                     this.buffer = "";
                     this.numLines = 1;
@@ -74,10 +76,23 @@ module TSOS {
                     //special case for man function
                     if (this.buffer.indexOf("man ") == 0 || this.buffer.indexOf("man") == 0) {
                         var startOfCommand = "man ";
-                        if(this.secondaryCommandCounter >= _OsShell.commandList.length) {
+
+                        //only run the autocomplete function if the array containing possible commands is empty
+                        if (this.secondaryCommandList.length == 0 && this.buffer.length > 3) {
+                            this.autoComplete(this.buffer.substring(4));
+                        }
+                        else {
+                            this.autoComplete(" ")
+                        }
+                        console.log(this.buffer);
+                        console.log(this.secondaryCommandList);
+                        console.log(this.buffer.length);
+                        //iterate through the array. if the counter is greater than the last index, reset to 0
+                        if(this.secondaryCommandCounter >= this.secondaryCommandList.length) {
                             this.secondaryCommandCounter = 0;
                         }
-                        var endOfCommand = _OsShell.commandList[this.secondaryCommandCounter].command;
+
+                        var endOfCommand = this.secondaryCommandList[this.secondaryCommandCounter];
                         var completeCommand = startOfCommand + endOfCommand;
                         this.secondaryCommandCounter++;
                         this.putText(completeCommand);
@@ -86,7 +101,7 @@ module TSOS {
                     else {
                         //only run the autocomplete function if the array containing possible commands is empty
                         if (this.possibleCommands.length == 0) {
-                            this.autoComplete(this.buffer)
+                            this.autoComplete(this.buffer);
                         }
 
                         //iterate through the array. if the counter is greater than the last index, reset to 0
@@ -204,7 +219,14 @@ module TSOS {
                     if (_OsShell.commandList[i].command.indexOf(text) == 0) {
                         //if it is set the value of newText to the command name
                         this.possibleCommands[this.possibleCommands.length] = _OsShell.commandList[i].command;
+                        this.secondaryCommandList[this.secondaryCommandList.length] = _OsShell.commandList[i].command;
                     }
+                }
+            }
+            if (this.possibleCommands.length == 0) {
+                for (var i = 0; i < _OsShell.commandList.length; i++) {
+                    this.possibleCommands[i] = _OsShell.commandList[i].command
+                    this.secondaryCommandList[i] = _OsShell.commandList[i].command
                 }
             }
             return this.possibleCommands;
