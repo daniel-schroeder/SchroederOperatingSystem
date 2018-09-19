@@ -95,11 +95,19 @@ var TSOS;
                         if (this.secondaryCommandCounter >= this.secondaryCommandList.length) {
                             this.secondaryCommandCounter = 0;
                         }
-                        var endOfCommand = this.secondaryCommandList[this.secondaryCommandCounter];
-                        var completeCommand = startOfCommand + endOfCommand;
-                        this.secondaryCommandCounter++;
-                        this.putText(completeCommand);
-                        this.buffer = completeCommand;
+                        //make sure theres somehing to put in endOfCOmmand
+                        //fill the buffer with the command and put it on the canvas
+                        //but only if it exists. if it doesnt put back og text
+                        if (this.secondaryCommandList.length > 0) {
+                            var endOfCommand = this.secondaryCommandList[this.secondaryCommandCounter];
+                            var completeCommand = startOfCommand + endOfCommand;
+                            this.secondaryCommandCounter++;
+                            this.putText(completeCommand);
+                            this.buffer = completeCommand;
+                        }
+                        else {
+                            this.putText(this.buffer);
+                        }
                     }
                     else {
                         //only run the autocomplete function if the array containing possible commands is empty
@@ -110,11 +118,18 @@ var TSOS;
                         if (this.possibleCommandsCounter >= this.possibleCommands.length) {
                             this.possibleCommandsCounter = 0;
                         }
-                        var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
-                        this.possibleCommandsCounter++;
+                        //make sure theres something to put in fullCommand
                         //fill the buffer with the command and put it on the canvas
-                        this.putText(fullCommand);
-                        this.buffer = fullCommand;
+                        //but only if it exists. if it doesnt put back og text
+                        if (this.possibleCommands.length > 0) {
+                            var fullCommand = this.possibleCommands[this.possibleCommandsCounter];
+                            this.possibleCommandsCounter++;
+                            this.putText(fullCommand);
+                            this.buffer = fullCommand;
+                        }
+                        else {
+                            this.putText(this.buffer);
+                        }
                     }
                 }
                 else if (chr == "up") { // up arrow key
@@ -222,13 +237,12 @@ var TSOS;
                     }
                 }
             }
-            if (this.possibleCommands.length == 0) {
+            else {
                 for (var i = 0; i < _OsShell.commandList.length; i++) {
                     this.possibleCommands[i] = _OsShell.commandList[i].command;
                     this.secondaryCommandList[i] = _OsShell.commandList[i].command;
                 }
             }
-            return this.possibleCommands;
         };
         //gets the previous commands entered by user starting witht the most recent
         Console.prototype.getPreviousCommand = function () {
