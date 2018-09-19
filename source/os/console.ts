@@ -64,8 +64,10 @@ module TSOS {
                     //reset the possible commands array and counter so that tab works properly
                     this.possibleCommands = [];
                     this.possibleCommandsCounter = 0;
+                    this.secondaryCommandList = [];
+                    this.secondaryCommandCounter = 0;
 
-                    //remove the charqcter from the buffer
+                    //remove the character from the buffer
                     this.buffer = this.buffer.substring(0,this.buffer.length-1);
                 } else if (chr === String.fromCharCode(9)) { // tab key
                     //clear the line and add a new prompt
@@ -84,9 +86,6 @@ module TSOS {
                         else {
                             this.autoComplete(" ")
                         }
-                        console.log(this.buffer);
-                        console.log(this.secondaryCommandList);
-                        console.log(this.buffer.length);
                         //iterate through the array. if the counter is greater than the last index, reset to 0
                         if(this.secondaryCommandCounter >= this.secondaryCommandList.length) {
                             this.secondaryCommandCounter = 0;
