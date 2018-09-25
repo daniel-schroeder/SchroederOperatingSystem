@@ -2,7 +2,7 @@
 %
 % CMPT 424L
 % Fall 2018
-% Lab Two
+% Lab Three
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -67,7 +67,7 @@
    \normalfont \normalsize 
    \textsc{CMPT 424L - Fall 2018 - Dr. Labouseur} \\[10pt] % Header stuff.
    \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
-   \huge Lab Two  \\     	    % Assignment title
+   \huge Lab Three  \\     	    % Assignment title
    \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
 }
 
@@ -83,7 +83,16 @@
 %----------------------------------------------------------------------------------------
 \section{Questions}
 
-\subsection{How is your console like the ancient TTY subsystem in Unix as described in https://www.linusakesson.net/programming/tty/ ? }
-My console is like the TTY subsystem because they both have commands, and processes and each process has states. The states are very similar if not the same as the states I use.   
+\subsection{Explain the difference between internal and external fragmentation.}
+Internal fragmentation is used with variable size partition, while external fragmentation is used with fixed sized partitions. Internal fragmentation allocates memory that may be larger than necessary for the processes. 
+
+\subsection{Given Five (5) memory partitions of 100KB, 500KB, 200KB, 300KB, and 600KB (in that order), how would optimal, First-Fit, best-fit, and worst-fit algorithms place processes of 212KB, 417KB, 112KB, and 426KB (in that order)?}
+Optimal: 212KB process in the 300KB partition, 417KB process in the 500KB partition, 112KB process in the 200KB partition, 426KB process in the 600KB partition
+
+First-Fit: 212KB process in the 500KB partition, 417KB process in the 600KB partition, 112KB process in the 200KB partition, 426KB process in the 500KB partition once the 212KB process is complete
+
+Best-Fit: 212KB process in the 300KB partition, 417KB process in the 500KB partition, 112KB process in the 200KB partition, 426KB process in the 600KB partition
+
+Worst-Fit: 212KB process in the 600KB partition, 417KB process in the 500KB partition, 112KB process in the 300KB partition, 426KB process in the 600KB partition once the 212KB process is complete
 
 \end{document}
