@@ -59,7 +59,7 @@ module TSOS {
                 _GLaDOS.afterStartup();
             }
 
-            _MemoryManager = new _MemoryManager();
+            _MemoryManager = new memoryManager();
         }
 
         public krnShutdown() {

@@ -50,7 +50,7 @@ var TSOS;
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
-            _MemoryManager = new MemoryManager();
+            _MemoryManager = new TSOS.memoryManager();
         };
         Kernel.prototype.krnShutdown = function () {
             this.krnTrace("begin shutdown OS");

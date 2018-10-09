@@ -5,7 +5,7 @@
 
      Requires Memory.ts.
 
-     Class for storing memory
+     Class for managing memory
 ------------ */
 
 module TSOS {
