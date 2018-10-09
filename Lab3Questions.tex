@@ -22,7 +22,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl}
 
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 \usepackage[english]{babel} % English language/hyphenation
@@ -63,8 +63,8 @@
 
 \newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
 
-\title{	
-   \normalfont \normalsize 
+\title{
+   \normalfont \normalsize
    \textsc{CMPT 424L - Fall 2018 - Dr. Labouseur} \\[10pt] % Header stuff.
    \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
    \huge Lab Three  \\     	    % Assignment title
@@ -84,15 +84,14 @@
 \section{Questions}
 
 \subsection{Explain the difference between internal and external fragmentation.}
-Internal fragmentation is used with variable size partition, while external fragmentation is used with fixed sized partitions. Internal fragmentation allocates memory that may be larger than necessary for the processes. 
+Internal fragmentation is used with variable size partition, while external fragmentation is used with fixed sized partitions. Internal fragmentation allocates memory that may be larger than necessary for the processes.
 
 \subsection{Given Five (5) memory partitions of 100KB, 500KB, 200KB, 300KB, and 600KB (in that order), how would optimal, First-Fit, best-fit, and worst-fit algorithms place processes of 212KB, 417KB, 112KB, and 426KB (in that order)?}
-Optimal: 212KB process in the 300KB partition, 417KB process in the 500KB partition, 112KB process in the 200KB partition, 426KB process in the 600KB partition
+Optimal: 212KB process in the 300KB partition, 417KB process in the 600KB partition, 112KB process in the 200KB partition, 426KB process in the 500KB partition
 
-First-Fit: 212KB process in the 500KB partition, 417KB process in the 600KB partition, 112KB process in the 200KB partition, 426KB process in the 500KB partition once the 212KB process is complete
+First-Fit: 212KB process in the 500KB partition, 417KB process in the 600KB partition, 112KB process in the 500KB partition along with the 212KB process, 426KB process cant be placed in memory
 
 Best-Fit: 212KB process in the 300KB partition, 417KB process in the 500KB partition, 112KB process in the 200KB partition, 426KB process in the 600KB partition
 
-Worst-Fit: 212KB process in the 600KB partition, 417KB process in the 500KB partition, 112KB process in the 300KB partition, 426KB process in the 600KB partition once the 212KB process is complete
-
+Worst-Fit: 212KB process in the 600KB partition, 417KB process in the 500KB partition, 112KB process in the 600KB partition with the 212KB process, 426KB process cant be placed in memory
 \end{document}

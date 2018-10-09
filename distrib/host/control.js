@@ -23,7 +23,7 @@
 //
 var TSOS;
 (function (TSOS) {
-    var Control = (function () {
+    var Control = /** @class */ (function () {
         function Control() {
         }
         Control.hostInit = function () {
@@ -76,6 +76,9 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            //initialize memory
+            _Memory = new TSOS.Memory();
+            _Memory.init();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -99,6 +102,6 @@ var TSOS;
             // page from its cache, which is not what we want.
         };
         return Control;
-    })();
+    }());
     TSOS.Control = Control;
 })(TSOS || (TSOS = {}));
