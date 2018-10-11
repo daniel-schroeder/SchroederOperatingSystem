@@ -10,7 +10,7 @@ var TSOS;
 (function (TSOS) {
     var Memory = /** @class */ (function () {
         function Memory(mem) {
-            if (mem === void 0) { mem = []; }
+            if (mem === void 0) { mem = new Array(); }
             this.mem = mem;
         }
         Memory.prototype.init = function () {
@@ -19,6 +19,6 @@ var TSOS;
             }
         };
         return Memory;
-    })();
+    }());
     TSOS.Memory = Memory;
 })(TSOS || (TSOS = {}));

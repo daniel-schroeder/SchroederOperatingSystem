@@ -67,6 +67,9 @@ var TSOS;
             // man <topic>
             sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
+            //run <pid>
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Process id of process to run.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -257,6 +260,9 @@ var TSOS;
                     case "bsod":
                         _StdOut.putText("Tests the BSOD.");
                         break;
+                    case "bsod":
+                        _StdOut.putText("<pid> - Runs the process with process id of <pid>");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -380,16 +386,20 @@ var TSOS;
                 _StdOut.putText("Usage: status <string>  Please supply a status.");
             }
         };
-        //check if the text in the user input area is valid
+        //check if the text in the user input area is valid and load into memory
         Shell.prototype.shellLoad = function () {
             var userInput = document.getElementById("taProgramInput").value;
-            console.log(userInput);
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
-                _StdOut.putText("Text in input area is valid");
+                _MemoryManager.loadProgram();
+                var pcb = new TSOS.ProcessControlBlock(1);
+                _StdOut.putText("Process id = " + pcb.pid);
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");
             }
+        };
+        //run program in memory
+        Shell.prototype.shellRun = function () {
         };
         //tests the BLUE SCREEN OF DEATH
         Shell.prototype.shellBSOD = function () {

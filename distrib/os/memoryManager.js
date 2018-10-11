@@ -10,9 +10,23 @@ var TSOS;
 (function (TSOS) {
     var memoryManager = /** @class */ (function () {
         function memoryManager(memory) {
-            if (memory === void 0) { memory = []; }
             this.memory = memory;
+            this.memory = _Memory.mem;
         }
+        memoryManager.prototype.loadProgram = function () {
+            this.clearMem();
+            var userInput = document.getElementById("taProgramInput").value.split(" ");
+            for (var i = 0; i < userInput.length; i++) {
+                this.memory[i] = userInput[i];
+            }
+            _Memory.mem = this.memory;
+        };
+        memoryManager.prototype.clearMem = function () {
+            for (var i = 0; i <= 255; i++) {
+                this.memory[i] = "00";
+            }
+            _Memory.mem = this.memory;
+        };
         return memoryManager;
     }());
     TSOS.memoryManager = memoryManager;
