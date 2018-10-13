@@ -47,11 +47,22 @@ h3 {
   text-align: center;
 }
 
-table, tr, td {
+table, tr, .tdMem {
     border: 1px solid black;
     border-collapse:collapse;
     background-color: white;
 }
 
-td {
+.tdMem {
     width: 11.1%;
+}
+
+.tdCPU {
+    width: 16.6%;
+    text-align: center;
+}
+
+.tdPCB {
+    width: 12.5%;
+    text-align: center;
+}

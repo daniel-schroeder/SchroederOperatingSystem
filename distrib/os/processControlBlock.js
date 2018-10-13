@@ -9,7 +9,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit) {
+        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, state) {
             if (pid === void 0) { pid = 0; }
             if (pc === void 0) { pc = 0; }
             if (xreg === void 0) { xreg = 0; }
@@ -18,6 +18,7 @@ var TSOS;
             if (accumulator === void 0) { accumulator = 0; }
             if (base === void 0) { base = 0; }
             if (limit === void 0) { limit = 0; }
+            if (state === void 0) { state = ""; }
             this.pid = pid;
             this.pc = pc;
             this.xreg = xreg;
@@ -26,6 +27,7 @@ var TSOS;
             this.accumulator = accumulator;
             this.base = base;
             this.limit = limit;
+            this.state = state;
         }
         ProcessControlBlock.prototype.init = function () {
             this.pid = this.nextPID();
@@ -36,9 +38,11 @@ var TSOS;
             this.accumulator = 0;
             this.base = 0;
             this.limit = this.getLimit();
+            this.state = "Ready";
         };
         ProcessControlBlock.prototype.nextPID = function () {
-            return 0;
+            _CPU.latestPID++;
+            return _CPU.latestPID;
         };
         ProcessControlBlock.prototype.getLimit = function () {
             var limit = document.getElementById("taProgramInput").value.split(" ").length;

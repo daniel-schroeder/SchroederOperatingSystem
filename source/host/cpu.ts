@@ -18,6 +18,7 @@
 module TSOS {
 
     export class Cpu {
+        public latestPID = -1;
 
         constructor(public PC: number = 0,
                     public Acc: number = 0,
@@ -45,18 +46,30 @@ module TSOS {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            this.isExecuting = true;
-            while (this.isExecuting) {
-                this.opCodes();
-                this.PC++;
-                this.thePCB.pc = this.PC;
-                this.thePCB.xreg = this.Xreg;
-                this.thePCB.yreg = this.Yreg;
-                this.thePCB.zflag = this.Zflag;
-                this.thePCB.accumulator = this.Acc;
-                if (this.thePCB.base + this.PC > this.thePCB.limit) {
-                    this.isExecuting = false;
-                }
+            if (this.thePCB == null) {
+                _Kernel.krnTrapError("PCB should not be null");
+            }
+            else {
+                this.PC = this.thePCB.pc
+                this.Xreg = this.thePCB.xreg;
+                this.Yreg =this.thePCB.yreg;
+                this.Zflag = this.thePCB.zflag;
+                this.Acc = this.thePCB.accumulator;
+            }
+            this.opCodes();
+            this.PC++;
+            this.thePCB.pc = this.PC;
+            this.thePCB.xreg = this.Xreg;
+            this.thePCB.yreg = this.Yreg;
+            this.thePCB.zflag = this.Zflag;
+            this.thePCB.accumulator = this.Acc;
+
+            this.updateCPU();
+            this.updatePCB();
+
+            if (this.thePCB.base + this.PC > this.thePCB.limit) {
+                this.isExecuting = false;
+                this.thePCB.state = "Completed"
             }
         }
 
@@ -79,15 +92,15 @@ module TSOS {
                     var first = _Memory.mem[this.thePCB.base + this.PC];
                     this.PC++;
                     var second = _Memory.mem[this.thePCB.base + this.PC];
-                    var addressIndex = this.thePCB.base + parseInt((second + first), 16);
+                    var i = this.thePCB.base + parseInt((second + first), 16);
                     if (this.Acc.toString(16).length == 1) {
                         var temp = "0" + this.Acc.toString(16);
-                        _Memory.mem[addressIndex] = temp;
-                        document.getElementById(addressIndex.toString()).innerHTML = temp;
+                        _Memory.mem[i] = temp;
+                        document.getElementById(i.toString()).innerHTML = temp;
                     }
                     else {
-                        _Memory.mem[addressIndex] = this.Acc.toString(16);
-                        document.getElementById(addressIndex.toString()).innerHTML = this.Acc.toString(16);
+                        _Memory.mem[i] = this.Acc.toString(16);
+                        document.getElementById(i.toString()).innerHTML = this.Acc.toString(16);
                     }
                     break;
                 case "6D":
@@ -115,21 +128,68 @@ module TSOS {
                     break;
                 case "00":
                     //Break
+                    this.thePCB.state = "Break"
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal
-                    this.Acc = 1;
+                    if (this.Xreg === this.loadFromMemory()) {
+                        this.Zflag = 1;
+                    }
+                    else {
+                        this.Zflag = 0;
+                    }
                     break;
                 case "D0":
                     //Branch n bytes if Z flag = 0
-                    this.Acc = 1;
+                    if (this.Zflag === 0) {
+                        //set this.PC to this locaiton in
+                        this.PC += this.loadWithConstant();
+                    }
+                    else {
+                        //move past it if this.Zflag is not equal to 0
+                        this.PC++
+                    }
                     break;
                 case "EE":
-                    //Increment the value of a byte
-                    this.Acc = 1;
+                    //increment the value of a byte in memory
+                    //first get the index in memory
+                    this.PC++;
+                    var first = _Memory.mem[this.thePCB.base + this.PC];
+                    this.PC++;
+                    var second = _Memory.mem[this.thePCB.base + this.PC];
+                    var i = this.thePCB.base + parseInt((second + first), 16);
+
+                    //then get the value from index i
+                    var value = parseInt(_Memory.mem[i], 16);
+
+                    //then Increment value by one
+                    value++;
+
+                    //then check to make sure the program is not over limit
+                    if (i > _Memory.mem.limit) {
+                        _StdOut.advanceLine();
+                        _StdOut.putText("Out of MEmory");
+                        return;
+                    }
+
+                    //finally replace the value in memory with the new value
+                    _Memory.mem[i] = value.toString(16);
                     break;
                 case "FF":
-                    this.Acc = 1;
+                    if (this.Xreg === 1) {
+                        //print out this.Yreg if this.Xreg equals 1
+                        _StdOut.putText(this.Yreg.toString(16));
+                    }
+                    else if (this.Xreg === 2) {
+                        //print the 00 - terminated string stored at the address in this.Yreg
+                        //get the starting address set by this.Yreg
+                        var i = this.thePCB.base + this.Yreg;
+                        while (_Memory.mem[i] != "00") {
+                            //print out the characters until 00 iss at the indexed location
+                            _StdOut.putText(String.fromCharCode(parseInt(_Memory.mem[i], 16)));
+                            i++;
+                        }
+                    }
                     break;
             }
         }
@@ -147,8 +207,21 @@ module TSOS {
             var first = _Memory.mem[this.thePCB.base + this.PC];
             this.PC++;
             var second = _Memory.mem[this.thePCB.base + this.PC];
-            var addressIndex = this.thePCB.base + parseInt((second + first), 16);
-            return parseInt(_Memory.mem[addressIndex], 16);
+            var i = this.thePCB.base + parseInt((second + first), 16);
+            return parseInt(_Memory.mem[i], 16);
+        }
+
+        public updateCPU(): void {
+            document.getElementById("cpuPC").innerHTML = this.PC.toString(10);
+            document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
+            document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
+            document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
+            document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
+            //document.getElementById("cpuInstruction").innerHTML = this.instruction.toString();
+        }
+
+        public updatePCB(): void {
+
         }
     }
 }

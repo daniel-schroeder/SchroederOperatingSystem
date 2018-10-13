@@ -391,10 +391,9 @@ var TSOS;
             var userInput = document.getElementById("taProgramInput").value;
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
                 _MemoryManager.loadProgram();
-                var pcb = new TSOS.ProcessControlBlock();
-                pcb.init();
-                _CPU.thePCB = pcb;
-                _StdOut.putText("Process id = " + pcb.pid);
+                _PCB = new TSOS.ProcessControlBlock();
+                _PCB.init();
+                _StdOut.putText("Process id = " + _PCB.pid);
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");
@@ -403,9 +402,13 @@ var TSOS;
         //run program in memory
         Shell.prototype.shellRun = function (args) {
             if (args.length > 0) {
-                _CPU.cycle();
-                console.log(_CPU.Acc + " " + _CPU.PC);
-                console.log(_Memory.mem);
+                if (args == _CPU.latestPID) {
+                    _CPU.thePCB = _PCB;
+                    _CPU.isExecuting = true;
+                }
+                else {
+                    _StdOut.putText("Unable to run process " + args);
+                }
             }
             else {
                 _StdOut.putText("Usage: run <pid>  Please supply a process id.");

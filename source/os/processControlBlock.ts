@@ -17,7 +17,8 @@ module TSOS {
                     public zflag: number = 0,
                     public accumulator: number = 0,
                     public base: number = 0,
-                    public limit: number = 0) {
+                    public limit: number = 0,
+                    public state: String = "") {
         }
 
         public init(): void {
@@ -29,10 +30,12 @@ module TSOS {
             this.accumulator = 0;
             this.base = 0;
             this.limit = this.getLimit();
+            this.state = "Ready";
         }
 
         public nextPID(): number {
-            return 0;
+            _CPU.latestPID++;
+            return _CPU.latestPID;
         }
 
         public getLimit(): number {
