@@ -42,7 +42,7 @@
 
     <div id="divMain" style="width:100%;">
 
-        <div id="divButtonBar" style="margin:4px; max-width:500px;">
+        <div id="divButtonBar" style="margin:4px; max-width:550px;">
             <input type="button"
                 id = "btnStartOS"
                 name="brnStartOS"
@@ -77,6 +77,15 @@
                 value="Single Step"
                 tabindex="3"
                 onclick="TSOS.Control.hostBtnSingleStep_click(this);">
+
+            <input type="button"
+                id = "btnStep"
+                name="brnStep"
+                class="small_button"
+                disabled="disabled"
+                value=">>"
+                tabindex="4"
+                onclick="TSOS.Control.hostBtnStep_click(this);">
         </div>
 
         <div id="container" style="display:flex; justify-content:space-between;">

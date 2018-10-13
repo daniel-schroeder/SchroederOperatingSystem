@@ -48,7 +48,6 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.thePCB == null) {
-                _Kernel.krnTrapError("PCB should not be null");
             }
             else {
                 this.PC = this.thePCB.pc;
@@ -57,6 +56,12 @@ var TSOS;
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
+            //if (this.PC.toString() == document.getElementById(this.PC.toString()).id) {
+            //    document.getElementById(this.PC.toString()).style.color = "green";
+            //}
+            //else {
+            //    document.getElementById(this.PC.toString()).style.color = "black";
+            //}
             this.opCodes();
             this.PC++;
             this.thePCB.pc = this.PC;
@@ -69,6 +74,23 @@ var TSOS;
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
                 this.isExecuting = false;
                 this.thePCB.state = "Completed";
+            }
+            switch (this.thePCB.state) {
+                case "Completed":
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
+                case "Break":
+                    break;
+                case "Error":
+                    _MemoryManager.clearMem();
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an error");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
             }
         };
         Cpu.prototype.opCodes = function () {
@@ -142,6 +164,9 @@ var TSOS;
                     if (this.Zflag === 0) {
                         //set this.PC to this locaiton in
                         this.PC += this.loadWithConstant();
+                        while (this.PC > _MemoryManager.getLimit()) {
+                            this.PC = (this.PC - _MemoryManager.getLimit());
+                        }
                     }
                     else {
                         //move past it if this.Zflag is not equal to 0
@@ -149,22 +174,25 @@ var TSOS;
                     }
                     break;
                 case "EE":
+                    //increment the value of a byte in memory
+                    //first get the index in memory
                     this.PC++;
                     var first = _Memory.mem[this.thePCB.base + this.PC];
                     this.PC++;
                     var second = _Memory.mem[this.thePCB.base + this.PC];
                     var i = this.thePCB.base + parseInt((second + first), 16);
-                    //get the value from index i
+                    //then get the value from index i
                     var value = parseInt(_Memory.mem[i], 16);
-                    //Increment value by one
+                    //then Increment value by one
                     value++;
-                    //check to make sure the program is not over limit
+                    //then check to make sure the program is not over limit
                     if (i > _Memory.mem.limit) {
                         _StdOut.advanceLine();
-                        _StdOut.putText("Out of MEmory");
+                        _StdOut.putText("Out of Memory");
+                        this.thePCB.state = "Error";
                         return;
                     }
-                    //store the value in memory with the address index
+                    //finally replace the value in memory with the new value
                     _Memory.mem[i] = value.toString(16);
                     break;
                 case "FF":

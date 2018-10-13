@@ -82,9 +82,10 @@ module TSOS {
             // Disable the (passed-in) start button...
             btn.disabled = true;
 
-            // .. enable the Halt and Reset buttons ...
+            // .. enable the Halt and Reset  and Single Step buttons ...
             (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
             (<HTMLButtonElement>document.getElementById("btnReset")).disabled = false;
+            (<HTMLButtonElement>document.getElementById("btnSingleStep")).disabled = false;
 
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
@@ -127,6 +128,19 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        public static hostBtnSingleStep_click(btn): void {
+            if ((<HTMLButtonElement>document.getElementById("btnStep")).disabled == false) {
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
+            }
+            else {
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = false;
+            }
+        }
+
+        public static hostBtnStep_click(btn): void {
+            _CPU.cycle();
         }
     }
 }

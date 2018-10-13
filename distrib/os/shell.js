@@ -393,6 +393,7 @@ var TSOS;
                 _MemoryManager.loadProgram();
                 _PCB = new TSOS.ProcessControlBlock();
                 _PCB.init();
+                _CPU.thePCB = _PCB;
                 _StdOut.putText("Process id = " + _PCB.pid);
             }
             else {
@@ -403,7 +404,7 @@ var TSOS;
         Shell.prototype.shellRun = function (args) {
             if (args.length > 0) {
                 if (args == _CPU.latestPID) {
-                    _CPU.thePCB = _PCB;
+                    _PCB.state = "Running";
                     _CPU.isExecuting = true;
                 }
                 else {

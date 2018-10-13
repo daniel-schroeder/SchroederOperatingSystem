@@ -30,8 +30,14 @@ module TSOS {
         public clearMem(): void {
             for (var i = 0; i <= 255; i++) {
                 this.memory[i] = "00";
+                document.getElementById(i.toString()).innerHTML = "00";
             }
             _Memory.mem = this.memory;
+        }
+
+        public getLimit(): number {
+            var limit = 255;
+            return limit;
         }
     }
 }

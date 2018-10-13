@@ -40,6 +40,10 @@ h3 {
   width: 100px;
 }
 
+.small_button {
+  width: 50px;
+}
+
 .footerText {
   color: black;
   font-family: Arial, Helvetica, sans-serif;

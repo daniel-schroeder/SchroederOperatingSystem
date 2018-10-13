@@ -27,8 +27,13 @@ var TSOS;
         memoryManager.prototype.clearMem = function () {
             for (var i = 0; i <= 255; i++) {
                 this.memory[i] = "00";
+                document.getElementById(i.toString()).innerHTML = "00";
             }
             _Memory.mem = this.memory;
+        };
+        memoryManager.prototype.getLimit = function () {
+            var limit = 255;
+            return limit;
         };
         return memoryManager;
     }());
