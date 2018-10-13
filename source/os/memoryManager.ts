@@ -20,6 +20,10 @@ module TSOS {
             for (var i = 0; i < userInput.length; i++) {
                 this.memory[i] = userInput[i];
             }
+
+            for (var i = 0; i < this.memory.length; i++) {
+                document.getElementById(i.toString()).innerHTML = this.memory[i];
+            }
             _Memory.mem = this.memory;
         }
 

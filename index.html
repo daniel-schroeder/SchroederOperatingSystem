@@ -42,7 +42,7 @@
 
     <div id="divMain" style="width:100%;">
 
-        <div id="divButtonBar" style="margin:4px;">
+        <div id="divButtonBar" style="margin:4px; max-width:400px;">
             <input type="button"
                 id = "btnStartOS"
                 name="brnStartOS"
@@ -70,32 +70,419 @@
                 onclick="TSOS.Control.hostBtnReset_click(this);">
         </div>
 
-        <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
-            <canvas id="display"
-                width="500px"
-                height="500px"
-                tabindex="3">
-            </canvas>
-        </div>
+        <div id="container" style="display:flex; justify-content:space-evenly;">
+            <div id=column1>
+                <div id="divConsole" style="margin:4px; width:500px; height:500px;">
+                    <canvas id="display"
+                        width="500px"
+                        height="500px"
+                        tabindex="3">
+                    </canvas>
+                </div>
+            </div>
 
-        <div id="divLog" style="margin-left:520px;">
-            <label>
-                Host Log
-                <br>
-                <textarea name="taHostLog"
-                    id  ="taHostLog"
-                    rows="26"
-                    cols="48">
-                </textarea>
-            </label>
-        </div>
+            <div id="column2">
+                <div id="divLog" style="max-width:400px;">
+                    <label>
+                        Host Log
+                        <br>
+                        <textarea name="taHostLog"
+                            id  ="taHostLog"
+                            rows="26"
+                            cols="48">
+                        </textarea>
+                    </label>
+                </div>
 
-        <div id="divUserProgramInput" style="margin-left:520px;">
-            <label>
-                User Program Input
-                <br>
-                <textarea name="taProgramInput" id  ="taProgramInput" rows="8" cols="48"></textarea>
-            </label>
+                <div id="divUserProgramInput" style="max-width:400px;">
+                    <label>
+                        User Program Input
+                        <br>
+                        <textarea name="taProgramInput" id  ="taProgramInput" rows="8" cols="48"></textarea>
+                    </label>
+                </div>
+            </div>
+
+            <div id="column3">
+                <div id="divCPUStatus" style="max-width:400px;">
+                    <label>
+                        CPU Status
+                        <br>
+                        <textarea name="taCPUStatus" id  ="taCPUStatus" rows="8" cols="48"></textarea>
+                    </label>
+                </div>
+
+                <div id="divMemory" style="margin-top:10px;">
+                    <label>
+                        Memory
+                        <br>
+                        <div id"memoryTable" style="max-height:140px; overflow-y:scroll; overflow-x:hidden;">
+                            <table id="tableMem" style="border: 1px solid black; border-collapse:collapse;">
+                                <tr>
+                                    <th>0x000</th>
+                                    <td id="0">00</td>
+                                    <td id="1">00</td>
+                                    <td id="2">00</td>
+                                    <td id="3">00</td>
+                                    <td id="4">00</td>
+                                    <td id="5">00</td>
+                                    <td id="6">00</td>
+                                    <td id="7">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x008</th>
+                                    <td id="8">00</td>
+                                    <td id="9">00</td>
+                                    <td id="10">00</td>
+                                    <td id="11">00</td>
+                                    <td id="12">00</td>
+                                    <td id="13">00</td>
+                                    <td id="14">00</td>
+                                    <td id="15">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x010</th>
+                                    <td id="16">00</td>
+                                    <td id="17">00</td>
+                                    <td id="18">00</td>
+                                    <td id="19">00</td>
+                                    <td id="20">00</td>
+                                    <td id="21">00</td>
+                                    <td id="22">00</td>
+                                    <td id="23">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x018</th>
+                                    <td id="24">00</td>
+                                    <td id="25">00</td>
+                                    <td id="26">00</td>
+                                    <td id="27">00</td>
+                                    <td id="28">00</td>
+                                    <td id="29">00</td>
+                                    <td id="30">00</td>
+                                    <td id="31">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x020</th>
+                                    <td id="32">00</td>
+                                    <td id="33">00</td>
+                                    <td id="34">00</td>
+                                    <td id="35">00</td>
+                                    <td id="36">00</td>
+                                    <td id="37">00</td>
+                                    <td id="38">00</td>
+                                    <td id="39">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x028</th>
+                                    <td id="40">00</td>
+                                    <td id="41">00</td>
+                                    <td id="42">00</td>
+                                    <td id="43">00</td>
+                                    <td id="44">00</td>
+                                    <td id="45">00</td>
+                                    <td id="46">00</td>
+                                    <td id="47">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x030</th>
+                                    <td id="48">00</td>
+                                    <td id="49">00</td>
+                                    <td id="50">00</td>
+                                    <td id="51">00</td>
+                                    <td id="52">00</td>
+                                    <td id="53">00</td>
+                                    <td id="54">00</td>
+                                    <td id="55">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x038</th>
+                                    <td id="56">00</td>
+                                    <td id="57">00</td>
+                                    <td id="58">00</td>
+                                    <td id="59">00</td>
+                                    <td id="60">00</td>
+                                    <td id="61">00</td>
+                                    <td id="62">00</td>
+                                    <td id="63">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x040</th>
+                                    <td id="64">00</td>
+                                    <td id="65">00</td>
+                                    <td id="66">00</td>
+                                    <td id="67">00</td>
+                                    <td id="68">00</td>
+                                    <td id="69">00</td>
+                                    <td id="70">00</td>
+                                    <td id="71">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x048</th>
+                                    <td id="72">00</td>
+                                    <td id="73">00</td>
+                                    <td id="74">00</td>
+                                    <td id="75">00</td>
+                                    <td id="76">00</td>
+                                    <td id="77">00</td>
+                                    <td id="78">00</td>
+                                    <td id="79">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x050</th>
+                                    <td id="80">00</td>
+                                    <td id="81">00</td>
+                                    <td id="82">00</td>
+                                    <td id="83">00</td>
+                                    <td id="84">00</td>
+                                    <td id="85">00</td>
+                                    <td id="86">00</td>
+                                    <td id="87">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x058</th>
+                                    <td id="88">00</td>
+                                    <td id="89">00</td>
+                                    <td id="90">00</td>
+                                    <td id="91">00</td>
+                                    <td id="92">00</td>
+                                    <td id="93">00</td>
+                                    <td id="94">00</td>
+                                    <td id="95">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x060</th>
+                                    <td id="96">00</td>
+                                    <td id="97">00</td>
+                                    <td id="98">00</td>
+                                    <td id="99">00</td>
+                                    <td id="100">00</td>
+                                    <td id="101">00</td>
+                                    <td id="102">00</td>
+                                    <td id="103">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x068</th>
+                                    <td id="104">00</td>
+                                    <td id="105">00</td>
+                                    <td id="106">00</td>
+                                    <td id="107">00</td>
+                                    <td id="108">00</td>
+                                    <td id="109">00</td>
+                                    <td id="110">00</td>
+                                    <td id="111">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x070</th>
+                                    <td id="112">00</td>
+                                    <td id="113">00</td>
+                                    <td id="114">00</td>
+                                    <td id="115">00</td>
+                                    <td id="116">00</td>
+                                    <td id="117">00</td>
+                                    <td id="118">00</td>
+                                    <td id="119">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x078</th>
+                                    <td id="120">00</td>
+                                    <td id="121">00</td>
+                                    <td id="122">00</td>
+                                    <td id="123">00</td>
+                                    <td id="124">00</td>
+                                    <td id="125">00</td>
+                                    <td id="126">00</td>
+                                    <td id="127">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x080</th>
+                                    <td id="128">00</td>
+                                    <td id="129">00</td>
+                                    <td id="130">00</td>
+                                    <td id="131">00</td>
+                                    <td id="132">00</td>
+                                    <td id="133">00</td>
+                                    <td id="134">00</td>
+                                    <td id="135">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x088</th>
+                                    <td id="136">00</td>
+                                    <td id="137">00</td>
+                                    <td id="138">00</td>
+                                    <td id="139">00</td>
+                                    <td id="140">00</td>
+                                    <td id="141">00</td>
+                                    <td id="142">00</td>
+                                    <td id="143">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x090</th>
+                                    <td id="144">00</td>
+                                    <td id="145">00</td>
+                                    <td id="146">00</td>
+                                    <td id="147">00</td>
+                                    <td id="148">00</td>
+                                    <td id="149">00</td>
+                                    <td id="150">00</td>
+                                    <td id="151">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x098</th>
+                                    <td id="152">00</td>
+                                    <td id="153">00</td>
+                                    <td id="154">00</td>
+                                    <td id="155">00</td>
+                                    <td id="156">00</td>
+                                    <td id="157">00</td>
+                                    <td id="158">00</td>
+                                    <td id="159">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0A0</th>
+                                    <td id="160">00</td>
+                                    <td id="161">00</td>
+                                    <td id="162">00</td>
+                                    <td id="163">00</td>
+                                    <td id="164">00</td>
+                                    <td id="165">00</td>
+                                    <td id="166">00</td>
+                                    <td id="167">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0A8</th>
+                                    <td id="168">00</td>
+                                    <td id="169">00</td>
+                                    <td id="170">00</td>
+                                    <td id="171">00</td>
+                                    <td id="172">00</td>
+                                    <td id="173">00</td>
+                                    <td id="174">00</td>
+                                    <td id="175">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0B0</th>
+                                    <td id="176">00</td>
+                                    <td id="177">00</td>
+                                    <td id="178">00</td>
+                                    <td id="179">00</td>
+                                    <td id="180">00</td>
+                                    <td id="181">00</td>
+                                    <td id="182">00</td>
+                                    <td id="183">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0B8</th>
+                                    <td id="184">00</td>
+                                    <td id="185">00</td>
+                                    <td id="186">00</td>
+                                    <td id="187">00</td>
+                                    <td id="188">00</td>
+                                    <td id="189">00</td>
+                                    <td id="190">00</td>
+                                    <td id="191">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0C0</th>
+                                    <td id="192">00</td>
+                                    <td id="193">00</td>
+                                    <td id="194">00</td>
+                                    <td id="195">00</td>
+                                    <td id="196">00</td>
+                                    <td id="197">00</td>
+                                    <td id="198">00</td>
+                                    <td id="199">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0C8</th>
+                                    <td id="200">00</td>
+                                    <td id="201">00</td>
+                                    <td id="202">00</td>
+                                    <td id="203">00</td>
+                                    <td id="204">00</td>
+                                    <td id="205">00</td>
+                                    <td id="206">00</td>
+                                    <td id="207">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0D0</th>
+                                    <td id="208">00</td>
+                                    <td id="209">00</td>
+                                    <td id="210">00</td>
+                                    <td id="211">00</td>
+                                    <td id="212">00</td>
+                                    <td id="213">00</td>
+                                    <td id="214">00</td>
+                                    <td id="215">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0D8</th>
+                                    <td id="216">00</td>
+                                    <td id="217">00</td>
+                                    <td id="218">00</td>
+                                    <td id="219">00</td>
+                                    <td id="220">00</td>
+                                    <td id="221">00</td>
+                                    <td id="222">00</td>
+                                    <td id="223">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0E0</th>
+                                    <td id="224">00</td>
+                                    <td id="225">00</td>
+                                    <td id="226">00</td>
+                                    <td id="227">00</td>
+                                    <td id="228">00</td>
+                                    <td id="229">00</td>
+                                    <td id="230">00</td>
+                                    <td id="231">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0E8</th>
+                                    <td id="232">00</td>
+                                    <td id="233">00</td>
+                                    <td id="234">00</td>
+                                    <td id="235">00</td>
+                                    <td id="236">00</td>
+                                    <td id="237">00</td>
+                                    <td id="238">00</td>
+                                    <td id="239">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0F0</th>
+                                    <td id="240">00</td>
+                                    <td id="241">00</td>
+                                    <td id="242">00</td>
+                                    <td id="243">00</td>
+                                    <td id="244">00</td>
+                                    <td id="245">00</td>
+                                    <td id="246">00</td>
+                                    <td id="247">00</td>
+                                </tr>
+                                <tr>
+                                    <th>0x0F8</th>
+                                    <td id="248">00</td>
+                                    <td id="249">00</td>
+                                    <td id="250">00</td>
+                                    <td id="251">00</td>
+                                    <td id="252">00</td>
+                                    <td id="253">00</td>
+                                    <td id="254">00</td>
+                                    <td id="255">00</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="divProcess" style="margin-top:10px;">
+                    <label>
+                        Process in Progress
+                        <br>
+                        <textarea name="taCPUStatus" id  ="taCPUStatus" rows="8" cols="48"></textarea>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <div id="divStatusArea" style="margin:auto; width:250px; text-align:center;padding-top:10px;">

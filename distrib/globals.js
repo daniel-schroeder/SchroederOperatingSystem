@@ -51,6 +51,7 @@ var _GLaDOS = null; // If the above is linked in, this is the instantiated insta
 //Memory
 var _Memory;
 var _MemoryManager = null;
+var _PCB;
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };

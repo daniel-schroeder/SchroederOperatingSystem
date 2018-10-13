@@ -380,7 +380,7 @@ module TSOS {
         }
 
         //returns the date
-        public shellDate(args) {
+        public shellDate() {
             var today = new Date();
             var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
             if (today.getSeconds() < 10) {
@@ -408,13 +408,13 @@ module TSOS {
         }
 
         //tells where you are
-        public shellWhereAmI(args) {
+        public shellWhereAmI() {
             _StdOut.putText("You tell me");
         }
 
         //gives a fun fact
         //not necessarily useful
-        public shellFunFact(args) {
+        public shellFunFact() {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
@@ -455,7 +455,9 @@ module TSOS {
             var userInput = document.getElementById("taProgramInput").value;
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
                 _MemoryManager.loadProgram();
-                var pcb = new TSOS.ProcessControlBlock(1);
+                var pcb = new TSOS.ProcessControlBlock();
+                pcb.init();
+                _CPU.thePCB = pcb;
                 _StdOut.putText("Process id = " + pcb.pid);
             }
             else {
@@ -464,8 +466,12 @@ module TSOS {
         }
 
         //run program in memory
-        public shellRun() {
-
+        public shellRun(args) {
+            if (args.length > 0) {
+                _CPU.cycle();
+            } else {
+                _StdOut.putText("Usage: run <pid>  Please supply a process id.");
+            }
         }
 
         //tests the BLUE SCREEN OF DEATH

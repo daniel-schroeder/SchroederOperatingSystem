@@ -69,6 +69,8 @@ var _GLaDOS: any = null; // If the above is linked in, this is the instantiated 
 var _Memory: TSOS.Memory;
 var _MemoryManager: any = null;
 
+var _PCB;
+
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };

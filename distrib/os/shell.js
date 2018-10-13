@@ -319,7 +319,7 @@ var TSOS;
             }
         };
         //returns the date
-        Shell.prototype.shellDate = function (args) {
+        Shell.prototype.shellDate = function () {
             var today = new Date();
             var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
             if (today.getSeconds() < 10) {
@@ -346,12 +346,12 @@ var TSOS;
             _StdOut.putText("The current time is " + time);
         };
         //tells where you are
-        Shell.prototype.shellWhereAmI = function (args) {
+        Shell.prototype.shellWhereAmI = function () {
             _StdOut.putText("You tell me");
         };
         //gives a fun fact
         //not necessarily useful
-        Shell.prototype.shellFunFact = function (args) {
+        Shell.prototype.shellFunFact = function () {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
@@ -391,7 +391,9 @@ var TSOS;
             var userInput = document.getElementById("taProgramInput").value;
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
                 _MemoryManager.loadProgram();
-                var pcb = new TSOS.ProcessControlBlock(1);
+                var pcb = new TSOS.ProcessControlBlock();
+                pcb.init();
+                _CPU.thePCB = pcb;
                 _StdOut.putText("Process id = " + pcb.pid);
             }
             else {
@@ -399,7 +401,15 @@ var TSOS;
             }
         };
         //run program in memory
-        Shell.prototype.shellRun = function () {
+        Shell.prototype.shellRun = function (args) {
+            if (args.length > 0) {
+                _CPU.cycle();
+                console.log(_CPU.Acc + " " + _CPU.PC);
+                console.log(_Memory.mem);
+            }
+            else {
+                _StdOut.putText("Usage: run <pid>  Please supply a process id.");
+            }
         };
         //tests the BLUE SCREEN OF DEATH
         Shell.prototype.shellBSOD = function () {
