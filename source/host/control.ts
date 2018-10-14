@@ -133,9 +133,13 @@ module TSOS {
         public static hostBtnSingleStep_click(btn): void {
             if ((<HTMLButtonElement>document.getElementById("btnStep")).disabled == false) {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
+                _SingleStep = false;
+                _CPU.isExecuting = true;
             }
             else {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = false;
+                _SingleStep = true;
+                _CPU.isExecuting = false;
             }
         }
 

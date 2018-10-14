@@ -111,9 +111,13 @@ var TSOS;
         Control.hostBtnSingleStep_click = function (btn) {
             if (document.getElementById("btnStep").disabled == false) {
                 document.getElementById("btnStep").disabled = true;
+                _SingleStep = false;
+                _CPU.isExecuting = true;
             }
             else {
                 document.getElementById("btnStep").disabled = false;
+                _SingleStep = true;
+                _CPU.isExecuting = false;
             }
         };
         Control.hostBtnStep_click = function (btn) {

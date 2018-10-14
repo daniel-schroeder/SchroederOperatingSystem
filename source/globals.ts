@@ -72,6 +72,8 @@ var _MemoryManager: any = null;
 var _PCB: TSOS.processControlBlock;
 var _Processes;
 
+var _SingleStep = false;
+
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };
