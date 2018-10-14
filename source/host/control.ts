@@ -82,22 +82,34 @@ module TSOS {
             // Disable the (passed-in) start button...
             btn.disabled = true;
 
-            // .. enable the Halt and Reset buttons ...
+            // .. enable the Halt and Reset  and Single Step buttons ...
             (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
             (<HTMLButtonElement>document.getElementById("btnReset")).disabled = false;
+            (<HTMLButtonElement>document.getElementById("btnSingleStep")).disabled = false;
 
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
 
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
-            _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
+            _CPU = new TSOS.Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
+            //initialize memory and memory manager
+            _Memory = new TSOS.Memory();
+            _Memory.init();
+            _MemoryManager = new TSOS.memoryManager();
+
             // ... then set the host clock pulse ...
-            _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+            _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
-            _Kernel = new Kernel();
+            _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
+
+            document.getElementById("cpuPC").innerHTML = "000";
+            document.getElementById("cpuAcc").innerHTML = "00";
+            document.getElementById("cpuX").innerHTML = "00";
+            document.getElementById("cpuY").innerHTML = "00";
+            document.getElementById("cpuZ").innerHTML = "00";
         }
 
         public static hostBtnHaltOS_click(btn): void {
@@ -116,6 +128,23 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        public static hostBtnSingleStep_click(btn): void {
+            if ((<HTMLButtonElement>document.getElementById("btnStep")).disabled == false) {
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
+                _SingleStep = false;
+                _CPU.isExecuting = true;
+            }
+            else {
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = false;
+                _SingleStep = true;
+                _CPU.isExecuting = false;
+            }
+        }
+
+        public static hostBtnStep_click(btn): void {
+            _CPU.cycle();
         }
     }
 }

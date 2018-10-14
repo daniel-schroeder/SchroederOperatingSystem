@@ -23,7 +23,7 @@
 //
 var TSOS;
 (function (TSOS) {
-    var Control = (function () {
+    var Control = /** @class */ (function () {
         function Control() {
         }
         Control.hostInit = function () {
@@ -68,19 +68,29 @@ var TSOS;
         Control.hostBtnStartOS_click = function (btn) {
             // Disable the (passed-in) start button...
             btn.disabled = true;
-            // .. enable the Halt and Reset buttons ...
+            // .. enable the Halt and Reset  and Single Step buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            document.getElementById("btnSingleStep").disabled = false;
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            //initialize memory and memory manager
+            _Memory = new TSOS.Memory();
+            _Memory.init();
+            _MemoryManager = new TSOS.memoryManager();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            document.getElementById("cpuPC").innerHTML = "000";
+            document.getElementById("cpuAcc").innerHTML = "00";
+            document.getElementById("cpuX").innerHTML = "00";
+            document.getElementById("cpuY").innerHTML = "00";
+            document.getElementById("cpuZ").innerHTML = "00";
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -98,7 +108,22 @@ var TSOS;
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         };
+        Control.hostBtnSingleStep_click = function (btn) {
+            if (document.getElementById("btnStep").disabled == false) {
+                document.getElementById("btnStep").disabled = true;
+                _SingleStep = false;
+                _CPU.isExecuting = true;
+            }
+            else {
+                document.getElementById("btnStep").disabled = false;
+                _SingleStep = true;
+                _CPU.isExecuting = false;
+            }
+        };
+        Control.hostBtnStep_click = function (btn) {
+            _CPU.cycle();
+        };
         return Control;
-    })();
+    }());
     TSOS.Control = Control;
 })(TSOS || (TSOS = {}));

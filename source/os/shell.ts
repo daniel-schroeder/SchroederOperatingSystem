@@ -108,11 +108,17 @@ module TSOS {
                                   "bsod",
                                   "- Displays blue screen of death");
             this.commandList[this.commandList.length] = sc;
-            
+
             // man <topic>
             sc = new ShellCommand(this.shellMan,
                                   "man",
                                   "<topic> - Displays the MANual page for <topic>.");
+            this.commandList[this.commandList.length] = sc;
+
+            //run <pid>
+            sc = new ShellCommand(this.shellRun,
+                                  "run",
+                                  "<pid> - Process id of process to run.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -301,7 +307,7 @@ module TSOS {
                     case "date":
                         _StdOut.putText("Returns the date.");
                         break;
-                    case "whereAmI":
+                    case "whereami":
                         _StdOut.putText("Returns the user location.");
                         break;
                     case "funfact":
@@ -315,6 +321,9 @@ module TSOS {
                         break;
                     case "bsod":
                         _StdOut.putText("Tests the BSOD.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("<pid> - Runs the process with process id of <pid>");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -371,7 +380,7 @@ module TSOS {
         }
 
         //returns the date
-        public shellDate(args) {
+        public shellDate() {
             var today = new Date();
             var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
             if (today.getSeconds() < 10) {
@@ -399,13 +408,13 @@ module TSOS {
         }
 
         //tells where you are
-        public shellWhereAmI(args) {
+        public shellWhereAmI() {
             _StdOut.putText("You tell me");
         }
 
         //gives a fun fact
         //not necessarily useful
-        public shellFunFact(args) {
+        public shellFunFact() {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
@@ -441,15 +450,42 @@ module TSOS {
             }
         }
 
-        //check if the text in the user input area is valid
+        //check if the text in the user input area is valid and load into memory
         public shellLoad() {
             var userInput = document.getElementById("taProgramInput").value;
-            console.log(userInput);
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
-                _StdOut.putText("Text in input area is valid");
+                _MemoryManager.loadProgram();
+                _PCB = new TSOS.ProcessControlBlock();
+                _PCB.init();
+                _Processes.push(_PCB);
+                _StdOut.putText("Process id = " + _PCB.pid);
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");
+            }
+        }
+
+        //run program in memory
+        public shellRun(args) {
+            if (args.length > 0) {
+                if (args == _CPU.latestPID) {
+                    if (_SingleStep) {
+                        _PCB = _Processes[_CPU.latestPID];
+                        _CPU.thePCB = _PCB;
+                        _CPU.cycle();
+                    }
+                    else {
+                        _PCB = _Processes[_CPU.latestPID];
+                        _CPU.thePCB = _PCB;
+                        _PCB.state = "Running";
+                        _CPU.isExecuting = true;
+                    }
+                }
+                else {
+                    _StdOut.putText("Unable to run process " + args);
+                }
+            } else {
+                _StdOut.putText("Usage: run <pid>  Please supply a process id.");
             }
         }
 
