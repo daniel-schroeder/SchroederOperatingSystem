@@ -307,7 +307,7 @@ module TSOS {
                     case "date":
                         _StdOut.putText("Returns the date.");
                         break;
-                    case "whereAmI":
+                    case "whereami":
                         _StdOut.putText("Returns the user location.");
                         break;
                     case "funfact":
@@ -457,7 +457,7 @@ module TSOS {
                 _MemoryManager.loadProgram();
                 _PCB = new TSOS.ProcessControlBlock();
                 _PCB.init();
-                _CPU.thePCB = _PCB;
+                _Processes.push(_PCB);
                 _StdOut.putText("Process id = " + _PCB.pid);
             }
             else {
@@ -469,6 +469,8 @@ module TSOS {
         public shellRun(args) {
             if (args.length > 0) {
                 if (args == _CPU.latestPID) {
+                    _PCB = _Processes[_CPU.latestPID];
+                    _CPU.thePCB = _PCB;
                     _PCB.state = "Running";
                     _CPU.isExecuting = true;
                 }

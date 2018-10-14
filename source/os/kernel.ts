@@ -60,6 +60,7 @@ module TSOS {
             }
 
             _MemoryManager = new memoryManager();
+            _Processes = new Array();
         }
 
         public krnShutdown() {

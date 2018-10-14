@@ -10,6 +10,7 @@
 
 module TSOS {
     export class ProcessControlBlock {
+
         constructor(public pid: number = 0,
                     public pc: number = 0,
                     public xreg: number = 0,

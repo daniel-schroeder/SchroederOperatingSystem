@@ -56,12 +56,7 @@ module TSOS {
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
-            //if (this.PC.toString() == document.getElementById(this.PC.toString()).id) {
-            //    document.getElementById(this.PC.toString()).style.color = "green";
-            //}
-            //else {
-            //    document.getElementById(this.PC.toString()).style.color = "black";
-            //}
+
             this.opCodes();
             this.PC++;
             this.thePCB.pc = this.PC;
@@ -70,13 +65,13 @@ module TSOS {
             this.thePCB.zflag = this.Zflag;
             this.thePCB.accumulator = this.Acc;
 
-            this.updateCPU();
-            this.updatePCB();
-
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
                 this.isExecuting = false;
                 this.thePCB.state = "Completed"
             }
+
+            this.updateCPU();
+            this.updatePCB();
 
             switch(this.thePCB.state) {
                 case "Completed":
@@ -84,6 +79,7 @@ module TSOS {
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
+                    this.clearPCB();
                     break;
                 case "Break":
                     break;
@@ -152,7 +148,6 @@ module TSOS {
                     break;
                 case "00":
                     //Break
-                    this.thePCB.state = "Break"
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal
@@ -240,16 +235,34 @@ module TSOS {
         }
 
         public updateCPU(): void {
-            document.getElementById("cpuPC").innerHTML = this.PC.toString(10);
+            document.getElementById("cpuPC").innerHTML = this.PC.toString(16);
             document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
             document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
             document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
             document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
-            //document.getElementById("cpuInstruction").innerHTML = this.instruction.toString();
+            document.getElementById("cpuInstruction").innerHTML = this.instruction.toString();
         }
 
         public updatePCB(): void {
+            document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
+            document.getElementById("pcbPC").innerHTML = this.PC.toString(16);
+            document.getElementById("pcbAcc").innerHTML = this.Acc.toString(16);
+            document.getElementById("pcbXreg").innerHTML = this.Xreg.toString(16);
+            document.getElementById("pcbYreg").innerHTML = this.Yreg.toString(16);
+            document.getElementById("pcbZflag").innerHTML = this.Zflag.toString(16);
+            document.getElementById("pcbInstruction").innerHTML = this.instruction.toString();
+            document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
+        }
 
+        public clearPCB(): void {
+            document.getElementById("pcbPID").innerHTML = "--";
+            document.getElementById("pcbPC").innerHTML = "--";
+            document.getElementById("pcbAcc").innerHTML = "--";
+            document.getElementById("pcbXreg").innerHTML = "--";
+            document.getElementById("pcbYreg").innerHTML = "--";
+            document.getElementById("pcbZflag").innerHTML = "--";
+            document.getElementById("pcbInstruction").innerHTML = "--";
+            document.getElementById("pcbState").innerHTML = "--";
         }
     }
 }

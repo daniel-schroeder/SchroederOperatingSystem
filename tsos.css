@@ -61,12 +61,12 @@ table, tr, .tdMem {
     width: 11.1%;
 }
 
-.tdCPU {
+.tdCPU, .thCPU {
     width: 16.6%;
-    text-align: center;
+    text-align: left;
 }
 
-.tdPCB {
+.tdPCB, .thPCB {
     width: 12.5%;
-    text-align: center;
+    text-align: left;
 }
