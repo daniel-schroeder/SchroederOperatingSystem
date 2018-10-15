@@ -322,7 +322,7 @@ module TSOS {
                     case "bsod":
                         _StdOut.putText("Tests the BSOD.");
                         break;
-                    case "bsod":
+                    case "run":
                         _StdOut.putText("<pid> - Runs the process with process id of <pid>");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
@@ -453,10 +453,16 @@ module TSOS {
         //check if the text in the user input area is valid and load into memory
         public shellLoad() {
             var userInput = document.getElementById("taProgramInput").value;
+            //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
+                //loadProgram
                 _MemoryManager.loadProgram();
+
+                //create a new pcb for process and store it in _PCB
                 _PCB = new TSOS.ProcessControlBlock();
+                //initialize _PCB
                 _PCB.init();
+                //store _PCB into _Processes - almost like a ready queue but not quite
                 _Processes.push(_PCB);
                 _StdOut.putText("Process id = " + _PCB.pid);
             }
@@ -467,21 +473,29 @@ module TSOS {
 
         //run program in memory
         public shellRun(args) {
+            //check for a pid givin
             if (args.length > 0) {
+                //check to make sure the pid is the most recent because we only store one process in memory
                 if (args == _CPU.latestPID) {
+                    //set _PCB to the most recent _PCB in _Processes
                     _PCB = _Processes[(_Processes.length - 1)];
                     _CPU.thePCB = _PCB;
+                    //if single step is on, do one cycle then wait
                     if (_SingleStep) {
+                        _PCB.state = "Running";
                         _CPU.cycle();
                     }
+                    //otherwise run free
                     else {
                         _PCB.state = "Running";
                         _CPU.isExecuting = true;
                     }
                 }
+                //message for if pid given is not most recent
                 else {
                     _StdOut.putText("Unable to run process " + args);
                 }
+            //error in case pid is not given at all
             } else {
                 _StdOut.putText("Usage: run <pid>  Please supply a process id.");
             }

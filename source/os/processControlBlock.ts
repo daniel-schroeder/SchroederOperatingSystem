@@ -34,11 +34,13 @@ module TSOS {
             this.state = "Ready";
         }
 
+        //gets and returns the next PID using latestPID
         public nextPID(): number {
             _CPU.latestPID++;
             return _CPU.latestPID;
         }
 
+        //gets the limit of a program
         public getLimit(): number {
             var limit = document.getElementById("taProgramInput").value.split(" ").length;
             return limit;
