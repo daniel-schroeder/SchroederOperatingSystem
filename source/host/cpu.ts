@@ -243,7 +243,7 @@ module TSOS {
             document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
             document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
             document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
-            document.getElementById("cpuInstruction").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
+            document.getElementById("cpuIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
         }
 
         public updatePCB(): void {
@@ -253,7 +253,7 @@ module TSOS {
             document.getElementById("pcbXreg").innerHTML = this.Xreg.toString(16);
             document.getElementById("pcbYreg").innerHTML = this.Yreg.toString(16);
             document.getElementById("pcbZflag").innerHTML = this.Zflag.toString(16);
-            document.getElementById("pcbInstruction").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
+            document.getElementById("pcbIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
             document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
         }
 
@@ -264,7 +264,7 @@ module TSOS {
             document.getElementById("pcbXreg").innerHTML = "--";
             document.getElementById("pcbYreg").innerHTML = "--";
             document.getElementById("pcbZflag").innerHTML = "--";
-            document.getElementById("pcbInstruction").innerHTML = "--";
+            document.getElementById("pcbIr").innerHTML = "--";
             document.getElementById("pcbState").innerHTML = "--";
         }
 
@@ -274,7 +274,7 @@ module TSOS {
             document.getElementById("cpuX").innerHTML = "--";
             document.getElementById("cpuY").innerHTML = "--";
             document.getElementById("cpuZ").innerHTML = "--";
-            document.getElementById("cpuInstruction").innerHTML = "--";
+            document.getElementById("cpuIr").innerHTML = "--";
         }
     }
 }
