@@ -19,6 +19,7 @@ module TSOS {
 
     export class Cpu {
         public latestPID = -1;
+        //public cycles = 0;
 
         constructor(public PC: number = 0,
                     public Acc: number = 0,
@@ -56,7 +57,6 @@ module TSOS {
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
-
             this.opCodes();
             this.PC++;
             this.thePCB.pc = this.PC;
@@ -72,6 +72,7 @@ module TSOS {
 
             this.updateCPU();
             this.updatePCB();
+            //this.cycles++;
 
             switch(this.thePCB.state) {
                 case "Completed":
@@ -80,6 +81,7 @@ module TSOS {
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
                     this.clearPCB();
+                    this.clearCPU();
                     break;
                 case "Break":
                     break;
@@ -147,7 +149,8 @@ module TSOS {
                     //No operation
                     break;
                 case "00":
-                    //Break
+                    this.thePCB.state = "Completed";
+                    this.PC = 254;
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal
@@ -240,7 +243,7 @@ module TSOS {
             document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
             document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
             document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
-            document.getElementById("cpuInstruction").innerHTML = this.instruction.toString();
+            document.getElementById("cpuInstruction").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
         }
 
         public updatePCB(): void {
@@ -250,7 +253,7 @@ module TSOS {
             document.getElementById("pcbXreg").innerHTML = this.Xreg.toString(16);
             document.getElementById("pcbYreg").innerHTML = this.Yreg.toString(16);
             document.getElementById("pcbZflag").innerHTML = this.Zflag.toString(16);
-            document.getElementById("pcbInstruction").innerHTML = this.instruction.toString();
+            document.getElementById("pcbInstruction").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
             document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
         }
 
@@ -263,6 +266,15 @@ module TSOS {
             document.getElementById("pcbZflag").innerHTML = "--";
             document.getElementById("pcbInstruction").innerHTML = "--";
             document.getElementById("pcbState").innerHTML = "--";
+        }
+
+        public clearCPU(): void {
+            document.getElementById("cpuPC").innerHTML = "--";
+            document.getElementById("cpuAcc").innerHTML = "--";
+            document.getElementById("cpuX").innerHTML = "--";
+            document.getElementById("cpuY").innerHTML = "--";
+            document.getElementById("cpuZ").innerHTML = "--";
+            document.getElementById("cpuInstruction").innerHTML = "--";
         }
     }
 }
