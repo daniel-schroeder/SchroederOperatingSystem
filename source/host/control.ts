@@ -133,6 +133,9 @@ module TSOS {
         }
 
         public static hostBtnSingleStep_click(btn): void {
+            //enable or disable the step button
+            //set _SingleStep to either true or false
+            //and do the same with _CPU.isExecuting
             if ((<HTMLButtonElement>document.getElementById("btnStep")).disabled == false) {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
                 _SingleStep = false;
@@ -145,6 +148,7 @@ module TSOS {
             }
         }
 
+        //on click of the step button one cycle
         public static hostBtnStep_click(btn): void {
             _CPU.cycle();
         }

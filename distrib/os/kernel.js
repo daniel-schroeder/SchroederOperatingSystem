@@ -50,6 +50,7 @@ var TSOS;
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
+            //initialize _MemoryManager and _Processes
             _MemoryManager = new TSOS.memoryManager();
             _Processes = new Array();
         };

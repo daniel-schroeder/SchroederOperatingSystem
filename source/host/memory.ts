@@ -13,6 +13,7 @@ module TSOS {
         constructor(public mem: String[]) {
         }
 
+        //initialize memory to "00"
         public init(): void {
             for (var i = 0; i <= 255; i++) {
                 this.mem[i] = "00";

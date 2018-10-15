@@ -13,17 +13,23 @@ var TSOS;
             this.memory = memory;
             this.memory = _Memory.mem;
         }
+        //load the program into memory
         memoryManager.prototype.loadProgram = function () {
+            //clears mem cuz only one program at a time for now
             this.clearMem();
+            //splits the userInput on " "
             var userInput = document.getElementById("taProgramInput").value.split(" ");
+            //sets each loacation in memory to the user input starting at 0000
             for (var i = 0; i < userInput.length; i++) {
                 this.memory[i] = userInput[i];
             }
+            //update memory table
             for (var i = 0; i < this.memory.length; i++) {
                 document.getElementById(i.toString()).innerHTML = this.memory[i];
             }
             _Memory.mem = this.memory;
         };
+        //clears memory by setting everything to "00"
         memoryManager.prototype.clearMem = function () {
             for (var i = 0; i <= 255; i++) {
                 this.memory[i] = "00";

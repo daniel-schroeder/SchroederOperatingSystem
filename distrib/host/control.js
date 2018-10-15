@@ -110,6 +110,9 @@ var TSOS;
             // page from its cache, which is not what we want.
         };
         Control.hostBtnSingleStep_click = function (btn) {
+            //enable or disable the step button
+            //set _SingleStep to either true or false
+            //and do the same with _CPU.isExecuting
             if (document.getElementById("btnStep").disabled == false) {
                 document.getElementById("btnStep").disabled = true;
                 _SingleStep = false;
@@ -121,6 +124,7 @@ var TSOS;
                 _CPU.isExecuting = false;
             }
         };
+        //on click of the step button one cycle
         Control.hostBtnStep_click = function (btn) {
             _CPU.cycle();
         };

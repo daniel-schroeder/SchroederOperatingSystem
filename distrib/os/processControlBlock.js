@@ -40,10 +40,12 @@ var TSOS;
             this.limit = this.getLimit();
             this.state = "Ready";
         };
+        //gets and returns the next PID using latestPID
         ProcessControlBlock.prototype.nextPID = function () {
             _CPU.latestPID++;
             return _CPU.latestPID;
         };
+        //gets the limit of a program
         ProcessControlBlock.prototype.getLimit = function () {
             var limit = document.getElementById("taProgramInput").value.split(" ").length;
             return limit;

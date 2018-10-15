@@ -48,32 +48,45 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.thePCB == null) {
-
+                //if thePCB is null set it to the latest pcb in the list
+                this.thePCB = (_Processes.length - 1);
             }
             else {
+                //initialize the variables used
                 this.PC = this.thePCB.pc
                 this.Xreg = this.thePCB.xreg;
                 this.Yreg =this.thePCB.yreg;
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
+
+            //run one instruction
             this.opCodes();
+
+            //increment this.PC
             this.PC++;
+
+            //update thePCB with new values
             this.thePCB.pc = this.PC;
             this.thePCB.xreg = this.Xreg;
             this.thePCB.yreg = this.Yreg;
             this.thePCB.zflag = this.Zflag;
             this.thePCB.accumulator = this.Acc;
 
+            //check to see if this.PC is over the processes limit
+            //if so stop executing
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
                 this.isExecuting = false;
                 this.thePCB.state = "Completed"
             }
 
+            //updates the cpu and pcb displays
             this.updateCPU();
             this.updatePCB();
             //this.cycles++;
 
+
+            //depending on thePCB.state, what output we get
             switch(this.thePCB.state) {
                 case "Completed":
                     _StdOut.advanceLine();
@@ -110,18 +123,25 @@ module TSOS {
                     break;
                 case "8D":
                     //store the accumulator in memory
+                    //get the memory address using the same tactic as in loadFromMemory()
                     this.PC++;
                     var first = _Memory.mem[this.thePCB.base + this.PC];
                     this.PC++;
                     var second = _Memory.mem[this.thePCB.base + this.PC];
                     var i = this.thePCB.base + parseInt((second + first), 16);
+
+                    //adds a 0 before the number if it only has one digit
                     if (this.Acc.toString(16).length == 1) {
                         var temp = "0" + this.Acc.toString(16);
+                        //store accumulator in memory at index i
                         _Memory.mem[i] = temp;
+                        //update the memory table
                         document.getElementById(i.toString()).innerHTML = temp;
                     }
                     else {
+                        //store accumulator in memory at index i
                         _Memory.mem[i] = this.Acc.toString(16);
+                        //update the memory table
                         document.getElementById(i.toString()).innerHTML = this.Acc.toString(16);
                     }
                     break;
@@ -149,6 +169,7 @@ module TSOS {
                     //No operation
                     break;
                 case "00":
+                    //break. end the process. set this.PC = 254 so that it ends the cycles
                     this.thePCB.state = "Completed";
                     this.PC = 254;
                     break;
@@ -177,7 +198,7 @@ module TSOS {
                     break;
                 case "EE":
                     //increment the value of a byte in memory
-                    //first get the index in memory
+                    //first get the index in memory same as in loadFromMemory()
                     this.PC++;
                     var first = _Memory.mem[this.thePCB.base + this.PC];
                     this.PC++;
@@ -187,7 +208,7 @@ module TSOS {
                     //then get the value from index i
                     var value = parseInt(_Memory.mem[i], 16);
 
-                    //then Increment value by one
+                    //then increment value by one
                     value++;
 
                     //then check to make sure the program is not over limit
@@ -222,21 +243,31 @@ module TSOS {
 
         //used to load accumulator, xreg, yreg with a constant
         public loadWithConstant(): number {
+            //get the first byte after the instruction
             this.PC++;
-            var constant = parseInt(_Memory.mem[this.thePCB.base + this.PC], 16);
-            return constant;
+
+            //return the value at the next byte
+            return parseInt(_Memory.mem[this.thePCB.base + this.PC], 16);
         }
 
         //used to load accumulator, xreg, yreg from memory
         public loadFromMemory(): number {
+            //gets the first byte after the instruction
             this.PC++;
             var first = _Memory.mem[this.thePCB.base + this.PC];
+
+            //gets the second byte after the instruction
             this.PC++;
             var second = _Memory.mem[this.thePCB.base + this.PC];
+
+            //adds the two together to get the memory address
             var i = this.thePCB.base + parseInt((second + first), 16);
+
+            //return the value at the memory address
             return parseInt(_Memory.mem[i], 16);
         }
 
+        //update the cpu table on index.html
         public updateCPU(): void {
             document.getElementById("cpuPC").innerHTML = this.PC.toString(16);
             document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
@@ -246,6 +277,7 @@ module TSOS {
             document.getElementById("cpuIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
         }
 
+        //update the pcb table on index.html
         public updatePCB(): void {
             document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
             document.getElementById("pcbPC").innerHTML = this.PC.toString(16);
@@ -257,6 +289,7 @@ module TSOS {
             document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
         }
 
+        //reset the pcb table on index.html
         public clearPCB(): void {
             document.getElementById("pcbPID").innerHTML = "--";
             document.getElementById("pcbPC").innerHTML = "--";
@@ -268,6 +301,7 @@ module TSOS {
             document.getElementById("pcbState").innerHTML = "--";
         }
 
+        //reset the cpu table on index.html
         public clearCPU(): void {
             document.getElementById("cpuPC").innerHTML = "--";
             document.getElementById("cpuAcc").innerHTML = "--";
