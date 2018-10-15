@@ -382,7 +382,7 @@ module TSOS {
         //returns the date
         public shellDate() {
             var today = new Date();
-            var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
+            var date = ((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear());
             if (today.getSeconds() < 10) {
                 var seconds = "0" + today.getSeconds();
             }
@@ -469,14 +469,12 @@ module TSOS {
         public shellRun(args) {
             if (args.length > 0) {
                 if (args == _CPU.latestPID) {
+                    _PCB = _Processes[(_Processes.length - 1)];
+                    _CPU.thePCB = _PCB;
                     if (_SingleStep) {
-                        _PCB = _Processes[_CPU.latestPID];
-                        _CPU.thePCB = _PCB;
                         _CPU.cycle();
                     }
                     else {
-                        _PCB = _Processes[_CPU.latestPID];
-                        _CPU.thePCB = _PCB;
                         _PCB.state = "Running";
                         _CPU.isExecuting = true;
                     }
