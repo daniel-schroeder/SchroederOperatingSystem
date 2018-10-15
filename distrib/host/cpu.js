@@ -232,7 +232,7 @@ var TSOS;
             document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
             document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
             document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
-            document.getElementById("cpuInstruction").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
+            document.getElementById("cpuIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
         };
         Cpu.prototype.updatePCB = function () {
             document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
@@ -241,7 +241,7 @@ var TSOS;
             document.getElementById("pcbXreg").innerHTML = this.Xreg.toString(16);
             document.getElementById("pcbYreg").innerHTML = this.Yreg.toString(16);
             document.getElementById("pcbZflag").innerHTML = this.Zflag.toString(16);
-            document.getElementById("pcbInstruction").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
+            document.getElementById("pcbIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
             document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
         };
         Cpu.prototype.clearPCB = function () {
@@ -251,7 +251,7 @@ var TSOS;
             document.getElementById("pcbXreg").innerHTML = "--";
             document.getElementById("pcbYreg").innerHTML = "--";
             document.getElementById("pcbZflag").innerHTML = "--";
-            document.getElementById("pcbInstruction").innerHTML = "--";
+            document.getElementById("pcbIr").innerHTML = "--";
             document.getElementById("pcbState").innerHTML = "--";
         };
         Cpu.prototype.clearCPU = function () {
@@ -260,7 +260,7 @@ var TSOS;
             document.getElementById("cpuX").innerHTML = "--";
             document.getElementById("cpuY").innerHTML = "--";
             document.getElementById("cpuZ").innerHTML = "--";
-            document.getElementById("cpuInstruction").innerHTML = "--";
+            document.getElementById("cpuIr").innerHTML = "--";
         };
         return Cpu;
     }());
