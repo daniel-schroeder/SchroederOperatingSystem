@@ -109,7 +109,8 @@ module TSOS {
         }
 
         public opCodes(): void {
-            this.instruction = _Memory.mem[this.thePCB.base + this.PC];
+            //make sure all input is uppercase
+            this.instruction = _Memory.mem[this.thePCB.base + this.PC].toUpperCase();
             switch (this.instruction) {
                 default:
                     break;
