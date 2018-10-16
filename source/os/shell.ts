@@ -493,7 +493,9 @@ module TSOS {
                 }
                 //message for if pid given is not most recent
                 else {
-                    _StdOut.putText("Unable to run process " + args);
+                    _StdOut.putText("Unable to run process " + args + ".")
+                    _StdOut.advanceLine();
+                    _StdOut.putText("No longer in memory. Try process " + _CPU.latestPID);
                 }
             //error in case pid is not given at all
             } else {
