@@ -50,8 +50,7 @@ var TSOS;
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
-            //initialize _MemoryManager and _Processes
-            _MemoryManager = new TSOS.memoryManager();
+            //initialize _Processes
             _Processes = new Array();
         };
         Kernel.prototype.krnShutdown = function () {
