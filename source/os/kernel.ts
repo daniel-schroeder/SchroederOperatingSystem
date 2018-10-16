@@ -59,8 +59,7 @@ module TSOS {
                 _GLaDOS.afterStartup();
             }
 
-            //initialize _MemoryManager and _Processes
-            _MemoryManager = new memoryManager();
+            //initialize _Processes
             _Processes = new Array();
         }
 
