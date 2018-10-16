@@ -392,15 +392,21 @@ var TSOS;
             var userInput = document.getElementById("taProgramInput").value;
             //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
-                //loadProgram
-                _MemoryManager.loadProgram();
-                //create a new pcb for process and store it in _PCB
-                _PCB = new TSOS.ProcessControlBlock();
-                //initialize _PCB
-                _PCB.init();
-                //store _PCB into _Processes - almost like a ready queue but not quite
-                _Processes.push(_PCB);
-                _StdOut.putText("Process id = " + _PCB.pid);
+                if (_MemoryManager.spaceFree) {
+                    //loadProgram
+                    _MemoryManager.loadProgram();
+                    //create a new pcb for process and store it in _PCB
+                    _PCB = new TSOS.ProcessControlBlock();
+                    //initialize _PCB
+                    _PCB.init();
+                    _PCB.state = "Resident";
+                    //store _PCB into _ResidentQ
+                    _ResidentQ.push(_PCB);
+                    _StdOut.putText("Process id = " + _PCB.pid);
+                }
+                else {
+                    _StdOut.putText("No memory available. Run a program first");
+                }
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");
@@ -412,8 +418,10 @@ var TSOS;
             if (args.length > 0) {
                 //check to make sure the pid is the most recent because we only store one process in memory
                 if (args == _CPU.latestPID) {
-                    //set _PCB to the most recent _PCB in _Processes
-                    _PCB = _Processes[(_Processes.length - 1)];
+                    //move the process from resident queue to ready queue
+                    _ReadyQ.push(_ResidentQ[args]);
+                    //set _PCB to the most recent _PCB in _ReadyQ
+                    _PCB = _ReadyQ[(_ReadyQ.length - 1)];
                     _CPU.thePCB = _PCB;
                     //if single step is on, do one cycle then wait
                     if (_SingleStep) {
@@ -425,6 +433,7 @@ var TSOS;
                         _PCB.state = "Running";
                         _CPU.isExecuting = true;
                     }
+                    _MemoryManager.spaceFree = true;
                 }
                 //message for if pid given is not most recent
                 else {

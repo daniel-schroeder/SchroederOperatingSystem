@@ -31,6 +31,9 @@ var TSOS;
             // Initialize standard input and output to the _Console.
             _StdIn = _Console;
             _StdOut = _Console;
+            //initialize _ReadyQ and _ResidentQ
+            _ReadyQ = new Array();
+            _ResidentQ = new Array();
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
@@ -50,8 +53,6 @@ var TSOS;
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
-            //initialize _Processes
-            _Processes = new Array();
         };
         Kernel.prototype.krnShutdown = function () {
             this.krnTrace("begin shutdown OS");
