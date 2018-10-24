@@ -55,12 +55,6 @@ module TSOS {
                                   "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
-            // man <topic>
-            sc = new ShellCommand(this.shellMan,
-                                  "man",
-                                  "<topic> - Displays the MANual page for <topic>.");
-            this.commandList[this.commandList.length] = sc;
-
             // trace <on | off>
             sc = new ShellCommand(this.shellTrace,
                                   "trace",
@@ -107,6 +101,24 @@ module TSOS {
             sc = new ShellCommand(this.shellLoad,
                                   "load",
                                   "- Checks to see if the user code is valid");
+            this.commandList[this.commandList.length] = sc;
+
+            //bsod
+            sc = new ShellCommand(this.shellBSOD,
+                                  "bsod",
+                                  "- Displays blue screen of death");
+            this.commandList[this.commandList.length] = sc;
+
+            // man <topic>
+            sc = new ShellCommand(this.shellMan,
+                                  "man",
+                                  "<topic> - Displays the MANual page for <topic>.");
+            this.commandList[this.commandList.length] = sc;
+
+            //run <pid>
+            sc = new ShellCommand(this.shellRun,
+                                  "run",
+                                  "<pid> - Process id of process to run.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -235,10 +247,12 @@ module TSOS {
            }
         }
 
+        //gives the version name and number of the OS
         public shellVer(args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
         }
 
+        //Displays a list of valid commands
         public shellHelp(args) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
@@ -247,18 +261,22 @@ module TSOS {
             }
         }
 
+        //shuts down the OS
         public shellShutdown(args) {
              _StdOut.putText("Shutting down...");
              // Call Kernel shutdown routine.
+             _CPU.isExecuting = false;
             _Kernel.krnShutdown();
             // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         }
 
+        //clears the command line
         public shellCls(args) {
             _StdOut.clearScreen();
             _StdOut.resetXY();
         }
 
+        //gives a short description of how to use a command
         public shellMan(args) {
             if (args.length > 0) {
                 var topic = args[0];
@@ -290,8 +308,23 @@ module TSOS {
                     case "date":
                         _StdOut.putText("Returns the date.");
                         break;
-                    case "whereAmI":
+                    case "whereami":
                         _StdOut.putText("Returns the user location.");
+                        break;
+                    case "funfact":
+                        _StdOut.putText("Displays a fun fact.");
+                        break;
+                    case "status":
+                        _StdOut.putText("<string> - displays <string> in status area.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Lets user know if code entered in input area is valid.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("Tests the BSOD.");
+                        break;
+                    case "run":
+                        _StdOut.putText("<pid> - Runs the process with process id of <pid>");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -302,6 +335,7 @@ module TSOS {
             }
         }
 
+        //turns on or off the tracing
         public shellTrace(args) {
             if (args.length > 0) {
                 var setting = args[0];
@@ -326,6 +360,8 @@ module TSOS {
             }
         }
 
+        //shifts the letters in a word 13 to confuse people
+        //sorta encryption
         public shellRot13(args) {
             if (args.length > 0) {
                 // Requires Utils.ts for rot13() function.
@@ -335,6 +371,7 @@ module TSOS {
             }
         }
 
+        //changes the prompt of the shell
         public shellPrompt(args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
@@ -343,9 +380,10 @@ module TSOS {
             }
         }
 
-        public shellDate(args) {
+        //returns the date
+        public shellDate() {
             var today = new Date();
-            var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
+            var date = ((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear());
             if (today.getSeconds() < 10) {
                 var seconds = "0" + today.getSeconds();
             }
@@ -370,11 +408,14 @@ module TSOS {
             _StdOut.putText("The current time is " + time);
         }
 
-        public shellWhereAmI(args) {
+        //tells where you are
+        public shellWhereAmI() {
             _StdOut.putText("You tell me");
         }
 
-        public shellFunFact(args) {
+        //gives a fun fact
+        //not necessarily useful
+        public shellFunFact() {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
@@ -397,6 +438,7 @@ module TSOS {
             }
         }
 
+        //set the status display
         public shellStatus(args) {
             if (args.length > 0) {
                 var status = "";
@@ -409,15 +451,71 @@ module TSOS {
             }
         }
 
+        //check if the text in the user input area is valid and load into memory
         public shellLoad() {
             var userInput = document.getElementById("taProgramInput").value;
-            console.log(userInput);
+            //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
-                _StdOut.putText("Text in input area is valid");
+                if (_MemoryManager.spaceFree) {
+                    //loadProgram
+                    _MemoryManager.loadProgram();
+
+                    //create a new pcb for process and store it in _PCB
+                    _PCB = new TSOS.ProcessControlBlock();
+                    //initialize _PCB
+                    _PCB.init();
+                    _PCB.state = "Resident";
+                    //store _PCB into _ResidentQ
+                    _ResidentQ.push(_PCB);
+                    _StdOut.putText("Process id = " + _PCB.pid);
+                }
+                else {
+                    _StdOut.putText("No memory available. Run a program first");
+                }
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");
             }
+        }
+
+        //run program in memory
+        public shellRun(args) {
+            //check for a pid givin
+            if (args.length > 0) {
+                //check to make sure the pid is the most recent because we only store one process in memory
+                if (args == _CPU.latestPID) {
+                    //move the process from resident queue to ready queue
+                    _ReadyQ.push(_ResidentQ[args]);
+                    //set _PCB to the most recent _PCB in _ReadyQ
+                    _PCB = _ReadyQ[(_ReadyQ.length - 1)];
+                    _CPU.thePCB = _PCB;
+                    //if single step is on, do one cycle then wait
+                    if (_SingleStep) {
+                        _PCB.state = "Running";
+                        _CPU.cycle();
+                    }
+                    //otherwise run free
+                    else {
+                        _PCB.state = "Running";
+                        _CPU.isExecuting = true;
+                    }
+                    _MemoryManager.spaceFree = true;
+                }
+                //message for if pid given is not most recent
+                else {
+                    _StdOut.putText("Unable to run process " + args + ".")
+                    _StdOut.advanceLine();
+                    _StdOut.putText("No longer in memory. Try process " + _CPU.latestPID);
+                }
+            //error in case pid is not given at all
+            } else {
+                _StdOut.putText("Usage: run <pid>  Please supply a process id.");
+            }
+        }
+
+        //tests the BLUE SCREEN OF DEATH
+        public shellBSOD() {
+            _Kernel.krnTrapError("BSOD");
         }
     }
 }

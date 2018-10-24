@@ -49,11 +49,218 @@ module TSOS {
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
-                        (keyCode == 32)                     ||   // space
-                        (keyCode == 13)) {                       // enter
+            } else if  ((keyCode == 32)                     ||   // space
+                        (keyCode == 13)                     ||   // enter
+                        (keyCode == 8)                      ||   // backspace
+                        (keyCode == 9)) {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
+            } else if (keyCode == 38) {                          // up arrow
+                chr = "up";                                      // used "up" instead of keycode because "&" and up arrow were being stupid
+                _KernelInputQueue.enqueue(chr);
+            } else if (keyCode == 40) {                          // down arrow
+                chr = "down";                                    // used "down" instead of keycode because "(" and down arrow were being stupid
+                _KernelInputQueue.enqueue(chr);
+            } else if ((keyCode >= 48 && keyCode <= 59)          ||  // digits when unshifted, other symbols when shifted
+                       (keyCode == 61)                           ||  // + and =
+                       (keyCode == 173)                          ||  // - and _
+                       (keyCode >= 188 && keyCode <= 192)        ||  // punctuation
+                       (keyCode >= 219 && keyCode <= 222)) {         // more punctuation/symbols
+
+                //big bad switch for all the cases.
+                //with nested if statements for added fun. and to check for shift key press
+                switch (keyCode) {
+                    case 48: {
+                        if (isShifted) {
+                            chr = ")";
+                        }
+                        else {
+                            chr = "0";
+                        }
+                        break;
+                    }
+                    case 49: {
+                        if (isShifted) {
+                            chr = "!";
+                        }
+                        else {
+                            chr = "1";
+                        }
+                        break;
+                    }
+                    case 50: {
+                        if (isShifted) {
+                            chr = "@";
+                        }
+                        else {
+                            chr = "2";
+                        }
+                        break;
+                    }
+                    case 51: {
+                        if (isShifted) {
+                            chr = "#";
+                        }
+                        else {
+                            chr = "3";
+                        }
+                        break;
+                    }
+                    case 52: {
+                        if (isShifted) {
+                            chr = "$";
+                        }
+                        else {
+                            chr = "4";
+                        }
+                        break;
+                    }
+                    case 53: {
+                        if (isShifted) {
+                            chr = "%";
+                        }
+                        else {
+                            chr = "5";
+                        }
+                        break;
+                    }
+                    case 54: {
+                        if (isShifted) {
+                            chr = "^";
+                        }
+                        else {
+                            chr = "6";
+                        }
+                        break;
+                    }
+                    case 55: {
+                        if (isShifted) {
+                            chr = "&";
+                        }
+                        else {
+                            chr = "7";
+                        }
+                        break;
+                    }
+                    case 56: {
+                        if (isShifted) {
+                            chr = "*";
+                        }
+                        else {
+                            chr = "8";
+                        }
+                        break;
+                    }
+                    case 57: {
+                        if (isShifted) {
+                            chr = "(";
+                        }
+                        else {
+                            chr = "9";
+                        }
+                        break;
+                    }
+                    case 59: {
+                        if (isShifted) {
+                            chr = ":";
+                        }
+                        else {
+                            chr = ";";
+                        }
+                        break;
+                    }
+                    case 61: {
+                        if (isShifted) {
+                            chr = "+";
+                        }
+                        else {
+                            chr = "=";
+                        }
+                        break;
+                    }
+                    case 173: {
+                        if (isShifted) {
+                            chr = "_";
+                        }
+                        else {
+                            chr = "-";
+                        }
+                        break;
+                    }
+                    case 188: {
+                        if (isShifted) {
+                            chr = "<";
+                        }
+                        else {
+                            chr = ",";
+                        }
+                        break;
+                    }
+                    case 190: {
+                        if (isShifted) {
+                            chr = ">";
+                        }
+                        else {
+                            chr = ".";
+                        }
+                        break;
+                    }
+                    case 191: {
+                        if (isShifted) {
+                            chr = "?";
+                        }
+                        else {
+                            chr = "/";
+                        }
+                        break;
+                    }
+                    case 192: {
+                        if (isShifted) {
+                            chr = "~";
+                        }
+                        else {
+                            chr = "`";
+                        }
+                        break;
+                    }
+                    case 219: {
+                        if (isShifted) {
+                            chr = "{";
+                        }
+                        else {
+                            chr = "[";
+                        }
+                        break;
+                    }
+                    case 220: {
+                        if (isShifted) {
+                            chr = "|";
+                        }
+                        else {
+                            chr = "\\";
+                        }
+                        break;
+                    }
+                    case 221: {
+                        if (isShifted) {
+                            chr = "}";
+                        }
+                        else {
+                            chr = "]";
+                        }
+                        break;
+                    }
+                    case 222: {
+                        if (isShifted) {
+                            chr = "\"";
+                        }
+                        else {
+                            chr = "'";
+                        }
+                        break;
+                    }
+                }
+            _KernelInputQueue.enqueue(chr);
             }
         }
     }

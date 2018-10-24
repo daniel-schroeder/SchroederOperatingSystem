@@ -35,6 +35,10 @@ module TSOS {
             _StdIn  = _Console;
             _StdOut = _Console;
 
+            //initialize _ReadyQ and _ResidentQ
+            _ReadyQ = new Array();
+            _ResidentQ = new Array();
+
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
@@ -173,7 +177,10 @@ module TSOS {
 
         public krnTrapError(msg) {
             Control.hostLog("OS ERROR - TRAP: " + msg);
-            // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            document.getElementById("display").style.background = "#5ce3f2";
+            _Console.clearScreen();
+            _Console.resetXY();
+            _StdOut.putText("Uh-Oh. Something went wrong. Shutting Down...");
             this.krnShutdown();
         }
     }
