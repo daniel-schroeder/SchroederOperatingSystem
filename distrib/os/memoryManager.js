@@ -26,7 +26,7 @@ var TSOS;
                 this.memory[i] = userInput[i];
             }
             //update memory table
-            for (var i = 0; i < this.memory.length; i++) {
+            for (var i = 0; i < userInput.length; i++) {
                 document.getElementById(i.toString()).innerHTML = this.memory[i];
             }
             _Memory.mem = this.memory;
