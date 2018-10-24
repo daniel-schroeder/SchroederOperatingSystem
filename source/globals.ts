@@ -65,6 +65,15 @@ var _hardwareClockID: number = null;
 var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.
 var _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
 
+//Memory
+var _Memory: TSOS.Memory;
+var _MemoryManager: any = null;
+
+var _PCB: TSOS.processControlBlock;
+var _Processes;
+
+var _SingleStep = false;
+
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };

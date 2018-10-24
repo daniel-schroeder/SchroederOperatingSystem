@@ -37,9 +37,6 @@ var TSOS;
             // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
-            // man <topic>
-            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
-            this.commandList[this.commandList.length] = sc;
             // trace <on | off>
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
@@ -63,6 +60,15 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid");
+            this.commandList[this.commandList.length] = sc;
+            //bsod
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death");
+            this.commandList[this.commandList.length] = sc;
+            // man <topic>
+            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
+            this.commandList[this.commandList.length] = sc;
+            //run <pid>
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Process id of process to run.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -183,9 +189,11 @@ var TSOS;
                 _StdOut.putText("For what?");
             }
         };
+        //gives the version name and number of the OS
         Shell.prototype.shellVer = function (args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
         };
+        //Displays a list of valid commands
         Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
@@ -193,16 +201,20 @@ var TSOS;
                 _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
             }
         };
+        //shuts down the OS
         Shell.prototype.shellShutdown = function (args) {
             _StdOut.putText("Shutting down...");
             // Call Kernel shutdown routine.
+            _CPU.isExecuting = false;
             _Kernel.krnShutdown();
             // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         };
+        //clears the command line
         Shell.prototype.shellCls = function (args) {
             _StdOut.clearScreen();
             _StdOut.resetXY();
         };
+        //gives a short description of how to use a command
         Shell.prototype.shellMan = function (args) {
             if (args.length > 0) {
                 var topic = args[0];
@@ -234,8 +246,23 @@ var TSOS;
                     case "date":
                         _StdOut.putText("Returns the date.");
                         break;
-                    case "whereAmI":
+                    case "whereami":
                         _StdOut.putText("Returns the user location.");
+                        break;
+                    case "funfact":
+                        _StdOut.putText("Displays a fun fact.");
+                        break;
+                    case "status":
+                        _StdOut.putText("<string> - displays <string> in status area.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Lets user know if code entered in input area is valid.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("Tests the BSOD.");
+                        break;
+                    case "run":
+                        _StdOut.putText("<pid> - Runs the process with process id of <pid>");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -246,6 +273,7 @@ var TSOS;
                 _StdOut.putText("Usage: man <topic>  Please supply a topic.");
             }
         };
+        //turns on or off the tracing
         Shell.prototype.shellTrace = function (args) {
             if (args.length > 0) {
                 var setting = args[0];
@@ -271,6 +299,8 @@ var TSOS;
                 _StdOut.putText("Usage: trace <on | off>");
             }
         };
+        //shifts the letters in a word 13 to confuse people
+        //sorta encryption
         Shell.prototype.shellRot13 = function (args) {
             if (args.length > 0) {
                 // Requires Utils.ts for rot13() function.
@@ -280,6 +310,7 @@ var TSOS;
                 _StdOut.putText("Usage: rot13 <string>  Please supply a string.");
             }
         };
+        //changes the prompt of the shell
         Shell.prototype.shellPrompt = function (args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
@@ -288,9 +319,10 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
-        Shell.prototype.shellDate = function (args) {
+        //returns the date
+        Shell.prototype.shellDate = function () {
             var today = new Date();
-            var date = (today.getMonth() + "/" + today.getDate() + "/" + today.getFullYear());
+            var date = ((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear());
             if (today.getSeconds() < 10) {
                 var seconds = "0" + today.getSeconds();
             }
@@ -314,10 +346,13 @@ var TSOS;
             _StdOut.advanceLine();
             _StdOut.putText("The current time is " + time);
         };
-        Shell.prototype.shellWhereAmI = function (args) {
+        //tells where you are
+        Shell.prototype.shellWhereAmI = function () {
             _StdOut.putText("You tell me");
         };
-        Shell.prototype.shellFunFact = function (args) {
+        //gives a fun fact
+        //not necessarily useful
+        Shell.prototype.shellFunFact = function () {
             var fact = Math.floor(Math.random() * 5);
             switch (fact) {
                 case 0:
@@ -339,6 +374,7 @@ var TSOS;
                     _StdOut.putText("fake news");
             }
         };
+        //set the status display
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
                 var status = "";
@@ -351,15 +387,60 @@ var TSOS;
                 _StdOut.putText("Usage: status <string>  Please supply a status.");
             }
         };
+        //check if the text in the user input area is valid and load into memory
         Shell.prototype.shellLoad = function () {
             var userInput = document.getElementById("taProgramInput").value;
-            console.log(userInput);
+            //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
-                _StdOut.putText("Text in input area is valid");
+                //loadProgram
+                _MemoryManager.loadProgram();
+                //create a new pcb for process and store it in _PCB
+                _PCB = new TSOS.ProcessControlBlock();
+                //initialize _PCB
+                _PCB.init();
+                //store _PCB into _Processes - almost like a ready queue but not quite
+                _Processes.push(_PCB);
+                _StdOut.putText("Process id = " + _PCB.pid);
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");
             }
+        };
+        //run program in memory
+        Shell.prototype.shellRun = function (args) {
+            //check for a pid givin
+            if (args.length > 0) {
+                //check to make sure the pid is the most recent because we only store one process in memory
+                if (args == _CPU.latestPID) {
+                    //set _PCB to the most recent _PCB in _Processes
+                    _PCB = _Processes[(_Processes.length - 1)];
+                    _CPU.thePCB = _PCB;
+                    //if single step is on, do one cycle then wait
+                    if (_SingleStep) {
+                        _PCB.state = "Running";
+                        _CPU.cycle();
+                    }
+                    //otherwise run free
+                    else {
+                        _PCB.state = "Running";
+                        _CPU.isExecuting = true;
+                    }
+                }
+                //message for if pid given is not most recent
+                else {
+                    _StdOut.putText("Unable to run process " + args + ".");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("No longer in memory. Try process " + _CPU.latestPID);
+                }
+                //error in case pid is not given at all
+            }
+            else {
+                _StdOut.putText("Usage: run <pid>  Please supply a process id.");
+            }
+        };
+        //tests the BLUE SCREEN OF DEATH
+        Shell.prototype.shellBSOD = function () {
+            _Kernel.krnTrapError("BSOD");
         };
         return Shell;
     }());
