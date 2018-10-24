@@ -45,6 +45,26 @@ module TSOS {
             _Memory.mem = this.memory;
         }
 
+        public clearMemPartition(part): void {
+            var base = 0;
+            switch (part) {
+                case 1:
+                    base = 0;
+                    break;
+                case 2:
+                    base = 256;
+                    break;
+                case 3:
+                    base = 512;
+                    break;
+            }
+
+            for (base; base < base + 255; base++) {
+                this.memory[base] = "00";
+                document.getElementById(base.toString()).innerHTML = "00";
+            }
+        }
+
         public getLimit(): number {
             var limit = 255;
             return limit;
