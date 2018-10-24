@@ -26,7 +26,7 @@ var TSOS;
                 this.memory[i] = userInput[i];
             }
             //update memory table
-            for (var i = 0; i < this.memory.length; i++) {
+            for (var i = 0; i < userInput.length; i++) {
                 document.getElementById(i.toString()).innerHTML = this.memory[i];
             }
             _Memory.mem = this.memory;
@@ -39,6 +39,24 @@ var TSOS;
                 document.getElementById(i.toString()).innerHTML = "00";
             }
             _Memory.mem = this.memory;
+        };
+        memoryManager.prototype.clearMemPartition = function (part) {
+            var base = 0;
+            switch (part) {
+                case 1:
+                    base = 0;
+                    break;
+                case 2:
+                    base = 256;
+                    break;
+                case 3:
+                    base = 512;
+                    break;
+            }
+            for (base; base < base + 255; base++) {
+                this.memory[base] = "00";
+                document.getElementById(base.toString()).innerHTML = "00";
+            }
         };
         memoryManager.prototype.getLimit = function () {
             var limit = 255;
