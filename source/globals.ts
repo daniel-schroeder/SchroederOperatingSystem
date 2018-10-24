@@ -70,7 +70,8 @@ var _Memory: TSOS.Memory;
 var _MemoryManager: any = null;
 
 var _PCB: TSOS.processControlBlock;
-var _Processes;
+var _ResidentQ;
+var _ReadyQ;
 
 var _SingleStep = false;
 

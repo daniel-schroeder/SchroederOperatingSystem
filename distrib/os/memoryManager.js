@@ -9,9 +9,11 @@
 var TSOS;
 (function (TSOS) {
     var memoryManager = /** @class */ (function () {
-        function memoryManager(memory) {
+        function memoryManager(memory, spaceFree) {
             this.memory = memory;
+            this.spaceFree = spaceFree;
             this.memory = _Memory.mem;
+            this.spaceFree = true;
         }
         //load the program into memory
         memoryManager.prototype.loadProgram = function () {
@@ -28,6 +30,7 @@ var TSOS;
                 document.getElementById(i.toString()).innerHTML = this.memory[i];
             }
             _Memory.mem = this.memory;
+            this.spaceFree = false;
         };
         //clears memory by setting everything to "00"
         memoryManager.prototype.clearMem = function () {

@@ -49,7 +49,7 @@ module TSOS {
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.thePCB == null) {
                 //if thePCB is null set it to the latest pcb in the list
-                this.thePCB = (_Processes.length - 1);
+                this.thePCB = (_ReadyQ.length - 1);
             }
             else {
                 //initialize the variables used
@@ -81,8 +81,8 @@ module TSOS {
             }
 
             //updates the cpu and pcb displays
-            this.updateCPU();
-            this.updatePCB();
+            this.updateCPUTable();
+            this.updatePCBTable();
             //this.cycles++;
 
 
@@ -93,8 +93,8 @@ module TSOS {
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
-                    this.clearPCB();
-                    this.clearCPU();
+                    this.clearPCBTable();
+                    this.clearCPUTable();
                     break;
                 case "Break":
                     break;
@@ -170,9 +170,8 @@ module TSOS {
                     //No operation
                     break;
                 case "00":
-                    //break. end the process. set this.PC = 254 so that it ends the cycles
                     this.thePCB.state = "Completed";
-                    this.PC = 254;
+                    this.isExecuting = false;
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal
@@ -269,7 +268,7 @@ module TSOS {
         }
 
         //update the cpu table on index.html
-        public updateCPU(): void {
+        public updateCPUTable(): void {
             document.getElementById("cpuPC").innerHTML = this.PC.toString(16);
             document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
             document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
@@ -279,7 +278,7 @@ module TSOS {
         }
 
         //update the pcb table on index.html
-        public updatePCB(): void {
+        public updatePCBTable(): void {
             document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
             document.getElementById("pcbPC").innerHTML = this.PC.toString(16);
             document.getElementById("pcbAcc").innerHTML = this.Acc.toString(16);
@@ -291,7 +290,7 @@ module TSOS {
         }
 
         //reset the pcb table on index.html
-        public clearPCB(): void {
+        public clearPCBTable(): void {
             document.getElementById("pcbPID").innerHTML = "--";
             document.getElementById("pcbPC").innerHTML = "--";
             document.getElementById("pcbAcc").innerHTML = "--";
@@ -303,7 +302,7 @@ module TSOS {
         }
 
         //reset the cpu table on index.html
-        public clearCPU(): void {
+        public clearCPUTable(): void {
             document.getElementById("cpuPC").innerHTML = "--";
             document.getElementById("cpuAcc").innerHTML = "--";
             document.getElementById("cpuX").innerHTML = "--";

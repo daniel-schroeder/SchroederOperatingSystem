@@ -50,7 +50,7 @@ var TSOS;
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.thePCB == null) {
                 //if thePCB is null set it to the latest pcb in the list
-                this.thePCB = (_Processes.length - 1);
+                this.thePCB = (_ReadyQ.length - 1);
             }
             else {
                 //initialize the variables used
@@ -77,8 +77,8 @@ var TSOS;
                 this.thePCB.state = "Completed";
             }
             //updates the cpu and pcb displays
-            this.updateCPU();
-            this.updatePCB();
+            this.updateCPUTable();
+            this.updatePCBTable();
             //this.cycles++;
             //depending on thePCB.state, what output we get
             switch (this.thePCB.state) {
@@ -87,8 +87,8 @@ var TSOS;
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
-                    this.clearPCB();
-                    this.clearCPU();
+                    this.clearPCBTable();
+                    this.clearCPUTable();
                     break;
                 case "Break":
                     break;
@@ -162,9 +162,8 @@ var TSOS;
                     //No operation
                     break;
                 case "00":
-                    //break. end the process. set this.PC = 254 so that it ends the cycles
                     this.thePCB.state = "Completed";
-                    this.PC = 254;
+                    this.isExecuting = false;
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal
@@ -250,7 +249,7 @@ var TSOS;
             return parseInt(_Memory.mem[i], 16);
         };
         //update the cpu table on index.html
-        Cpu.prototype.updateCPU = function () {
+        Cpu.prototype.updateCPUTable = function () {
             document.getElementById("cpuPC").innerHTML = this.PC.toString(16);
             document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
             document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
@@ -259,7 +258,7 @@ var TSOS;
             document.getElementById("cpuIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
         };
         //update the pcb table on index.html
-        Cpu.prototype.updatePCB = function () {
+        Cpu.prototype.updatePCBTable = function () {
             document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
             document.getElementById("pcbPC").innerHTML = this.PC.toString(16);
             document.getElementById("pcbAcc").innerHTML = this.Acc.toString(16);
@@ -270,7 +269,7 @@ var TSOS;
             document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
         };
         //reset the pcb table on index.html
-        Cpu.prototype.clearPCB = function () {
+        Cpu.prototype.clearPCBTable = function () {
             document.getElementById("pcbPID").innerHTML = "--";
             document.getElementById("pcbPC").innerHTML = "--";
             document.getElementById("pcbAcc").innerHTML = "--";
@@ -281,7 +280,7 @@ var TSOS;
             document.getElementById("pcbState").innerHTML = "--";
         };
         //reset the cpu table on index.html
-        Cpu.prototype.clearCPU = function () {
+        Cpu.prototype.clearCPUTable = function () {
             document.getElementById("cpuPC").innerHTML = "--";
             document.getElementById("cpuAcc").innerHTML = "--";
             document.getElementById("cpuX").innerHTML = "--";

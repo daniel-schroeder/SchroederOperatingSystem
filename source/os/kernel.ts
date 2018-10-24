@@ -35,6 +35,10 @@ module TSOS {
             _StdIn  = _Console;
             _StdOut = _Console;
 
+            //initialize _ReadyQ and _ResidentQ
+            _ReadyQ = new Array();
+            _ResidentQ = new Array();
+
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
@@ -58,9 +62,6 @@ module TSOS {
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
-
-            //initialize _Processes
-            _Processes = new Array();
         }
 
         public krnShutdown() {

@@ -10,8 +10,10 @@
 
 module TSOS {
     export class memoryManager {
-        constructor(public memory: String[],) {
+        constructor(public memory: String[],
+                    public spaceFree: boolean) {
             this.memory = _Memory.mem;
+            this.spaceFree = true;
         }
 
         //load the program into memory
@@ -31,6 +33,7 @@ module TSOS {
                 document.getElementById(i.toString()).innerHTML = this.memory[i];
             }
             _Memory.mem = this.memory;
+            this.spaceFree = false;
         }
 
         //clears memory by setting everything to "00"
