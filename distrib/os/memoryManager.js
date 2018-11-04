@@ -9,58 +9,98 @@
 var TSOS;
 (function (TSOS) {
     var memoryManager = /** @class */ (function () {
-        function memoryManager(memory, spaceFree) {
+        function memoryManager(memory, partitionOneFree, partitionTwoFree, partitionThreeFree, latestPartition) {
             this.memory = memory;
-            this.spaceFree = spaceFree;
+            this.partitionOneFree = partitionOneFree;
+            this.partitionTwoFree = partitionTwoFree;
+            this.partitionThreeFree = partitionThreeFree;
+            this.latestPartition = latestPartition;
             this.memory = _Memory.mem;
-            this.spaceFree = true;
+            this.partitionOneFree = true;
+            this.partitionTwoFree = true;
+            this.partitionThreeFree = true;
         }
         //load the program into memory
         memoryManager.prototype.loadProgram = function () {
-            //clears mem cuz only one program at a time for now
-            this.clearMem();
+            var partitionBase;
+            if (this.partitionOneFree) {
+                partitionBase = 0;
+                //clears mem partition
+                this.clearMemPartition(0);
+                this.partitionOneFree = false;
+                this.latestPartition = 0;
+            }
+            else if (this.partitionTwoFree) {
+                partitionBase = 256;
+                //clears mem partition
+                this.clearMemPartition(1);
+                this.partitionTwoFree = false;
+                this.latestPartition = 1;
+            }
+            else if (this.partitionThreeFree) {
+                partitionBase = 512;
+                //clears mem partition
+                this.clearMemPartition(2);
+                this.partitionThreeFree = false;
+                this.latestPartition = 2;
+            }
             //splits the userInput on " "
             var userInput = document.getElementById("taProgramInput").value.split(" ");
             //sets each loacation in memory to the user input starting at 0000
             for (var i = 0; i < userInput.length; i++) {
-                this.memory[i] = userInput[i];
-            }
-            //update memory table
-            for (var i = 0; i < userInput.length; i++) {
-                document.getElementById(i.toString()).innerHTML = this.memory[i];
+                this.memory[partitionBase] = userInput[i];
+                //update memory table
+                document.getElementById(partitionBase.toString()).innerHTML = this.memory[i];
+                partitionBase++;
             }
             _Memory.mem = this.memory;
-            this.spaceFree = false;
         };
         //clears memory by setting everything to "00"
         memoryManager.prototype.clearMem = function () {
-            for (var i = 0; i <= 255; i++) {
+            for (var i = 0; i <= 767; i++) {
                 this.memory[i] = "00";
                 document.getElementById(i.toString()).innerHTML = "00";
             }
+            this.partitionOneFree = true;
+            this.partitionTwoFree = true;
+            this.partitionThreeFree = true;
+            _ResidentQ.length = 0;
             _Memory.mem = this.memory;
         };
         memoryManager.prototype.clearMemPartition = function (part) {
             var base = 0;
             switch (part) {
-                case 1:
+                case 0:
                     base = 0;
+                    this.partitionOneFree = true;
+                    break;
+                case 1:
+                    base = 256;
+                    this.partitionTwoFree = true;
                     break;
                 case 2:
-                    base = 256;
-                    break;
-                case 3:
                     base = 512;
+                    this.partitionThreeFree = true;
                     break;
             }
-            for (base; base < base + 255; base++) {
+            for (base; base <= this.getLimit(part); base++) {
                 this.memory[base] = "00";
                 document.getElementById(base.toString()).innerHTML = "00";
             }
+            _Memory.mem = this.memory;
         };
-        memoryManager.prototype.getLimit = function () {
-            var limit = 255;
-            return limit;
+        memoryManager.prototype.getLimit = function (part) {
+            switch (part) {
+                case 0:
+                    return 255;
+                    break;
+                case 1:
+                    return 511;
+                    break;
+                case 2:
+                    return 767;
+                    break;
+            }
         };
         return memoryManager;
     }());

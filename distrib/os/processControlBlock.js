@@ -36,8 +36,8 @@ var TSOS;
             this.yreg = 0;
             this.zflag = 0;
             this.accumulator = 0;
-            this.base = 0;
-            this.limit = this.getLimit();
+            this.base = this.getBase();
+            this.limit = this.base + this.getLimit();
             this.state = "Ready";
         };
         //gets and returns the next PID using latestPID
@@ -49,6 +49,22 @@ var TSOS;
         ProcessControlBlock.prototype.getLimit = function () {
             var limit = document.getElementById("taProgramInput").value.split(" ").length;
             return limit;
+        };
+        //gets the base of a program
+        ProcessControlBlock.prototype.getBase = function () {
+            var base;
+            switch (_MemoryManager.latestPartition) {
+                case 0:
+                    base = 0;
+                    break;
+                case 0:
+                    base = 256;
+                    break;
+                case 0:
+                    base = 512;
+                    break;
+            }
+            return base;
         };
         return ProcessControlBlock;
     }());

@@ -120,8 +120,36 @@ module TSOS {
                                   "run",
                                   "<pid> - Process id of process to run.");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+
+            //kill <pid>
+            sc = new ShellCommand(this.shellKill,
+                                  "kill",
+                                  "<pid> - Process id of process to kill.");
+            this.commandList[this.commandList.length] = sc;
+
+            //clearmem
+            sc = new ShellCommand(this.shellClearMem,
+                                  "clearmem",
+                                  " - Clears memory.");
+            this.commandList[this.commandList.length] = sc;
+
+            //runall
+            sc = new ShellCommand(this.shellRunAll,
+                                  "runall",
+                                  " - Runs all processes in memory.");
+            this.commandList[this.commandList.length] = sc;
+
+            //ps
+            sc = new ShellCommand(this.shellPS,
+                                  "ps",
+                                  " - Shows all processes in memory");
+            this.commandList[this.commandList.length] = sc;
+
+            //quantum
+            sc = new ShellCommand(this.shellQuantum,
+                                  "quantum",
+                                  "<int> - set the length of the quantum.");
+            this.commandList[this.commandList.length] = sc;
 
             //
             // Display the initial prompt.
@@ -326,6 +354,21 @@ module TSOS {
                     case "run":
                         _StdOut.putText("<pid> - Runs the process with process id of <pid>");
                         break;
+                    case "clearmem":
+                        _StdOut.putText("Clears memory");
+                        break;
+                    case "runall":
+                        _StdOut.putText("Runs all processes in memory");
+                        break;
+                    case "ps":
+                        _StdOut.putText("shows the PID of all processes in memory");
+                        break;
+                    case "kill":
+                        _StdOut.putText("<pid> - Kills the process with process id of <pid>");
+                        break;
+                    case "quantum":
+                        _StdOut.putText("<int> - Sets the quantum to <int>");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -456,7 +499,9 @@ module TSOS {
             var userInput = document.getElementById("taProgramInput").value;
             //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
-                if (_MemoryManager.spaceFree) {
+                if (_MemoryManager.partitionOneFree ||
+                    _MemoryManager.partitionTwoFree ||
+                    _MemoryManager.partitionThreeFree) {
                     //loadProgram
                     _MemoryManager.loadProgram();
 
@@ -480,36 +525,86 @@ module TSOS {
 
         //run program in memory
         public shellRun(args) {
-            //check for a pid givin
+            //check for a pid given
             if (args.length > 0) {
-                //check to make sure the pid is the most recent because we only store one process in memory
-                if (args == _CPU.latestPID) {
-                    //move the process from resident queue to ready queue
-                    _ReadyQ.push(_ResidentQ[args]);
-                    //set _PCB to the most recent _PCB in _ReadyQ
-                    _PCB = _ReadyQ[(_ReadyQ.length - 1)];
-                    _CPU.thePCB = _PCB;
-                    //if single step is on, do one cycle then wait
-                    if (_SingleStep) {
-                        _PCB.state = "Running";
-                        _CPU.cycle();
+                //check to make sure the pid has been given out and is still in memory
+                if (args <= _CPU.latestPID && args >= _CPU.latestPID - 2) {
+                    //make sure the resident Q isnt empty
+                    if (_ResidentQ.length > 0) {
+                        //move the process from resident queue to ready queue
+                        _ReadyQ.push(_ResidentQ[args]);
+                        //set _PCB to the most recent _PCB in _ReadyQ
+                        _PCB = _ReadyQ[(_ReadyQ.length - 1)];
+                        _CPU.thePCB = _PCB;
+                        //if single step is on, do one cycle then wait
+                        if (_SingleStep) {
+                            _PCB.state = "Running";
+                            _CPU.cycle();
+                        }
+                        //otherwise run free
+                        else {
+                            _PCB.state = "Running";
+                            _CPU.isExecuting = true;
+                        }
                     }
-                    //otherwise run free
+                    //message for if pid given not in memory
                     else {
-                        _PCB.state = "Running";
-                        _CPU.isExecuting = true;
+                        _StdOut.putText("Unable to run process " + args + ".")
+                        _StdOut.advanceLine();
+                        _StdOut.putText("No longer in memory.");
                     }
-                    _MemoryManager.spaceFree = true;
                 }
-                //message for if pid given is not most recent
+                //message for if pid given not ok
                 else {
                     _StdOut.putText("Unable to run process " + args + ".")
                     _StdOut.advanceLine();
-                    _StdOut.putText("No longer in memory. Try process " + _CPU.latestPID);
+                    _StdOut.putText("No longer in memory.");
                 }
             //error in case pid is not given at all
             } else {
                 _StdOut.putText("Usage: run <pid>  Please supply a process id.");
+            }
+        }
+
+        //clears memory
+        public shellClearMem() {
+            _MemoryManager.clearMem();
+        }
+
+        //runs all processes
+        public shellRunAll() {
+            var temp;
+            for (var i = 0; i < _ResidentQ.length; i++) {
+                temp = _ResidentQ[i];
+                this.shellRun(temp.pid);
+            }
+        }
+
+        //shows all processes in memory
+        public shellPS() {
+            var temp;
+            for (var i = 0; i < _ResidentQ.length; i++) {
+                temp = _ResidentQ[i];
+                _StdOut.putText("PID " + temp.pid);
+                _StdOut.advanceLine();
+            }
+        }
+
+        //kills a process
+        public shellKill(args) {
+            if (args.length > 0) {
+
+            } else {
+                _StdOut.putText("Usage: kill <pid>  Please supply a PID.");
+            }
+        }
+
+        //sets quantum
+        public shellQuantum(args) {
+            if (args.length > 0) {
+
+            } else {
+                _StdOut.putText("Usage: quantum <int>  Please supply a quantum size.");
             }
         }
 

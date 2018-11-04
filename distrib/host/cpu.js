@@ -77,8 +77,8 @@ var TSOS;
                 this.thePCB.state = "Completed";
             }
             //updates the cpu and pcb displays
-            this.updateCPUTable();
-            this.updatePCBTable();
+            _Kernel.updateCPUTable();
+            _Kernel.updatePCBTable();
             //this.cycles++;
             //depending on thePCB.state, what output we get
             switch (this.thePCB.state) {
@@ -87,8 +87,17 @@ var TSOS;
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
-                    this.clearPCBTable();
-                    this.clearCPUTable();
+                    _Kernel.clearPCBTable();
+                    _Kernel.clearCPUTable();
+                    if (this.thePCB.base == 0) {
+                        _MemoryManager.partitionOneFree = true;
+                    }
+                    else if (this.thePCB.base == 256) {
+                        _MemoryManager.partitionTwoFree = true;
+                    }
+                    else if (this.thePCB.base == 512) {
+                        _MemoryManager.partitionThreeFree = true;
+                    }
                     break;
                 case "Break":
                     break;
@@ -247,46 +256,6 @@ var TSOS;
             var i = this.thePCB.base + parseInt((second + first), 16);
             //return the value at the memory address
             return parseInt(_Memory.mem[i], 16);
-        };
-        //update the cpu table on index.html
-        Cpu.prototype.updateCPUTable = function () {
-            document.getElementById("cpuPC").innerHTML = this.PC.toString(16);
-            document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
-            document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
-            document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
-            document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
-            document.getElementById("cpuIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
-        };
-        //update the pcb table on index.html
-        Cpu.prototype.updatePCBTable = function () {
-            document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
-            document.getElementById("pcbPC").innerHTML = this.PC.toString(16);
-            document.getElementById("pcbAcc").innerHTML = this.Acc.toString(16);
-            document.getElementById("pcbXreg").innerHTML = this.Xreg.toString(16);
-            document.getElementById("pcbYreg").innerHTML = this.Yreg.toString(16);
-            document.getElementById("pcbZflag").innerHTML = this.Zflag.toString(16);
-            document.getElementById("pcbIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
-            document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
-        };
-        //reset the pcb table on index.html
-        Cpu.prototype.clearPCBTable = function () {
-            document.getElementById("pcbPID").innerHTML = "--";
-            document.getElementById("pcbPC").innerHTML = "--";
-            document.getElementById("pcbAcc").innerHTML = "--";
-            document.getElementById("pcbXreg").innerHTML = "--";
-            document.getElementById("pcbYreg").innerHTML = "--";
-            document.getElementById("pcbZflag").innerHTML = "--";
-            document.getElementById("pcbIr").innerHTML = "--";
-            document.getElementById("pcbState").innerHTML = "--";
-        };
-        //reset the cpu table on index.html
-        Cpu.prototype.clearCPUTable = function () {
-            document.getElementById("cpuPC").innerHTML = "--";
-            document.getElementById("cpuAcc").innerHTML = "--";
-            document.getElementById("cpuX").innerHTML = "--";
-            document.getElementById("cpuY").innerHTML = "--";
-            document.getElementById("cpuZ").innerHTML = "--";
-            document.getElementById("cpuIr").innerHTML = "--";
         };
         return Cpu;
     }());

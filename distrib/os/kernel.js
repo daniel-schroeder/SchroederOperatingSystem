@@ -155,6 +155,46 @@ var TSOS;
                 }
             }
         };
+        //update the cpu table on index.html
+        Kernel.prototype.updateCPUTable = function () {
+            document.getElementById("cpuPC").innerHTML = _CPU.PC.toString(16);
+            document.getElementById("cpuAcc").innerHTML = _CPU.Acc.toString(16);
+            document.getElementById("cpuX").innerHTML = _CPU.Xreg.toString(16);
+            document.getElementById("cpuY").innerHTML = _CPU.Yreg.toString(16);
+            document.getElementById("cpuZ").innerHTML = _CPU.Zflag.toString(16);
+            document.getElementById("cpuIr").innerHTML = document.getElementById(_CPU.PC.toString()).innerHTML;
+        };
+        //update the pcb table on index.html
+        Kernel.prototype.updatePCBTable = function () {
+            document.getElementById("pcbPID").innerHTML = _CPU.thePCB.pid.toString(16);
+            document.getElementById("pcbPC").innerHTML = _CPU.PC.toString(16);
+            document.getElementById("pcbAcc").innerHTML = _CPU.Acc.toString(16);
+            document.getElementById("pcbXreg").innerHTML = _CPU.Xreg.toString(16);
+            document.getElementById("pcbYreg").innerHTML = _CPU.Yreg.toString(16);
+            document.getElementById("pcbZflag").innerHTML = _CPU.Zflag.toString(16);
+            document.getElementById("pcbIr").innerHTML = document.getElementById(_CPU.PC.toString()).innerHTML;
+            document.getElementById("pcbState").innerHTML = _CPU.thePCB.state.toString();
+        };
+        //reset the pcb table on index.html
+        Kernel.prototype.clearPCBTable = function () {
+            document.getElementById("pcbPID").innerHTML = "--";
+            document.getElementById("pcbPC").innerHTML = "--";
+            document.getElementById("pcbAcc").innerHTML = "--";
+            document.getElementById("pcbXreg").innerHTML = "--";
+            document.getElementById("pcbYreg").innerHTML = "--";
+            document.getElementById("pcbZflag").innerHTML = "--";
+            document.getElementById("pcbIr").innerHTML = "--";
+            document.getElementById("pcbState").innerHTML = "--";
+        };
+        //reset the cpu table on index.html
+        Kernel.prototype.clearCPUTable = function () {
+            document.getElementById("cpuPC").innerHTML = "--";
+            document.getElementById("cpuAcc").innerHTML = "--";
+            document.getElementById("cpuX").innerHTML = "--";
+            document.getElementById("cpuY").innerHTML = "--";
+            document.getElementById("cpuZ").innerHTML = "--";
+            document.getElementById("cpuIr").innerHTML = "--";
+        };
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             document.getElementById("display").style.background = "#5ce3f2";
