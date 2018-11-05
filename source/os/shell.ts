@@ -588,15 +588,25 @@ module TSOS {
             var temp;
             for (var i = 0; i < _ResidentQ.length; i++) {
                 temp = _ResidentQ[i];
-                this.shellRun(temp.pid);
+                _ReadyQ.push(i);
             }
+            _ResidentQ.splice(0,_ResidentQ.length);
         }
 
         //shows all processes in memory
         public shellPS() {
             var temp;
+            _StdOut.putText("Resident:")
+            _StdOut.advanceLine();
             for (var i = 0; i < _ResidentQ.length; i++) {
                 temp = _ResidentQ[i];
+                _StdOut.putText("PID " + temp.pid);
+                _StdOut.advanceLine();
+            }
+            _StdOut.putText("Running:")
+            _StdOut.advanceLine();
+            for (var i = 0; i < _ReadyQ.length; i++) {
+                temp = _ReadyQ[i];
                 _StdOut.putText("PID " + temp.pid);
                 _StdOut.advanceLine();
             }
@@ -605,7 +615,36 @@ module TSOS {
         //kills a process
         public shellKill(args) {
             if (args.length > 0) {
-
+                var test;
+                var found = false;
+                for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                    test = _ReadyQ[i];
+                    //test to see if the pid matches the given pid
+                    if (test.pid == args) {
+                        found = true;
+                        _CPU.thePCB = test;
+                        //stop execution immediately
+                        _CPU.isExecuting = false;
+                        //set state to terminated
+                        _CPU.thePCB.state = "Terminated";
+                        //update table
+                        _Kernel.updateMasterQTable(test.pid);
+                        //clear memory partition of killed process
+                        _MemoryManager.clearMemPartition(test.partition);
+                        //move the process from resident queue to ready queue
+                        _TerminatedQ.push(test);
+                        //remove the process from the resident queue
+                        _ReadyQ.splice(i,1);
+                        //message for completion
+                        _StdOut.putText("Process with ID " + args + " killed")
+                        _StdOut.advanceLine();
+                    }
+                }
+                if (found == false) {
+                    //message for if pid given not ok
+                    _StdOut.putText("No process with ID " + args + " running")
+                    _StdOut.advanceLine();
+                }
             } else {
                 _StdOut.putText("Usage: kill <pid>  Please supply a PID.");
             }

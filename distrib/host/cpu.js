@@ -112,9 +112,30 @@ var TSOS;
                 case "Break":
                     break;
                 case "Error":
-                    _MemoryManager.clearMem();
+                    this.isExecuting = false;
+                    _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an error");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
+                case "Terminated":
+                    console.log("here");
+                    this.isExecuting = false;
+                    _MemoryManager.clearMemPartition(this.thePCB.partition);
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i, 1);
+                        }
+                    }
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process " + this.thePCB.pid + " was terminated and removed from memory");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
                     break;
