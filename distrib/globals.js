@@ -51,6 +51,8 @@ var _GLaDOS = null; // If the above is linked in, this is the instantiated insta
 //Memory
 var _Memory;
 var _MemoryManager = null;
+//scheduler
+var _CPUScheduler;
 var _PCB;
 var _ResidentQ;
 var _ReadyQ;

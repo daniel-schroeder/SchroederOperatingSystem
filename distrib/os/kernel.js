@@ -164,27 +164,37 @@ var TSOS;
             document.getElementById("cpuZ").innerHTML = _CPU.Zflag.toString(16);
             document.getElementById("cpuIr").innerHTML = document.getElementById(_CPU.PC.toString()).innerHTML;
         };
-        //update the pcb table on index.html
-        Kernel.prototype.updatePCBTable = function () {
-            document.getElementById("pcbPID").innerHTML = _CPU.thePCB.pid.toString(16);
-            document.getElementById("pcbPC").innerHTML = _CPU.PC.toString(16);
-            document.getElementById("pcbAcc").innerHTML = _CPU.Acc.toString(16);
-            document.getElementById("pcbXreg").innerHTML = _CPU.Xreg.toString(16);
-            document.getElementById("pcbYreg").innerHTML = _CPU.Yreg.toString(16);
-            document.getElementById("pcbZflag").innerHTML = _CPU.Zflag.toString(16);
-            document.getElementById("pcbIr").innerHTML = document.getElementById(_CPU.PC.toString()).innerHTML;
-            document.getElementById("pcbState").innerHTML = _CPU.thePCB.state.toString();
+        //update the master q table on index.html
+        Kernel.prototype.updateMasterQTable = function (row) {
+            document.getElementById("masterQPID" + row).innerHTML = _PCB.pid.toString(16);
+            document.getElementById("masterQPC" + row).innerHTML = _PCB.pc.toString(16);
+            document.getElementById("masterQAcc" + row).innerHTML = _PCB.accumulator.toString(16);
+            document.getElementById("masterQXreg" + row).innerHTML = _PCB.xreg.toString(16);
+            document.getElementById("masterQYreg" + row).innerHTML = _PCB.yreg.toString(16);
+            document.getElementById("masterQZflag" + row).innerHTML = _PCB.zflag.toString(16);
+            document.getElementById("masterQIr" + row).innerHTML = document.getElementById(_PCB.pc.toString()).innerHTML;
+            document.getElementById("masterQState" + row).innerHTML = _PCB.state.toString();
         };
-        //reset the pcb table on index.html
-        Kernel.prototype.clearPCBTable = function () {
-            document.getElementById("pcbPID").innerHTML = "--";
-            document.getElementById("pcbPC").innerHTML = "--";
-            document.getElementById("pcbAcc").innerHTML = "--";
-            document.getElementById("pcbXreg").innerHTML = "--";
-            document.getElementById("pcbYreg").innerHTML = "--";
-            document.getElementById("pcbZflag").innerHTML = "--";
-            document.getElementById("pcbIr").innerHTML = "--";
-            document.getElementById("pcbState").innerHTML = "--";
+        Kernel.prototype.addRowToMasterQTable = function () {
+            var table = document.getElementById("tableMasterQ");
+            var row = table.insertRow();
+            var cell1 = row.insertCell();
+            var cell2 = row.insertCell();
+            var cell3 = row.insertCell();
+            var cell4 = row.insertCell();
+            var cell5 = row.insertCell();
+            var cell6 = row.insertCell();
+            var cell7 = row.insertCell();
+            var cell8 = row.insertCell();
+            cell1.id = "masterQPID" + row.rowIndex;
+            cell2.id = "masterQPC" + row.rowIndex;
+            cell3.id = "masterQIr" + row.rowIndex;
+            cell4.id = "masterQAcc" + row.rowIndex;
+            cell5.id = "masterQXreg" + row.rowIndex;
+            cell6.id = "masterQYreg" + row.rowIndex;
+            cell7.id = "masterQZflag" + row.rowIndex;
+            cell8.id = "masterQState" + row.rowIndex;
+            this.updateMasterQTable(row.rowIndex);
         };
         //reset the cpu table on index.html
         Kernel.prototype.clearCPUTable = function () {

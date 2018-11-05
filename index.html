@@ -27,9 +27,10 @@
     <script type="text/javascript" src="distrib/os/shell.js"></script>
     <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
     <script type="text/javascript" src="distrib/os/userCommand.js"></script>
-    <script type="text/javascript" src="distrib/os/kernel.js"></script>
     <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
     <script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
+    <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
+    <script type="text/javascript" src="distrib/os/kernel.js"></script>
 
     <!-- Other Routines -->
     <script type="text/javascript" src="distrib/utils.js"></script>
@@ -1221,31 +1222,21 @@
                     </label>
                 </div>
 
-                <div id="divPCB" style="margin-top:10px;">
+                <div id="divMasterQ" style="margin-top:10px;">
                     <label>
-                        PCB
+                        Master Queue
                         <br>
-                        <div id="pcbTable" style="overflow-x:hidden; overflow-y:scroll;max-height:140px;">
-                            <table id="tablePCB" style="border: 1px solid black; border-collapse:collapse; width:400px;">
+                        <div id="masterQTable" style="overflow-x:hidden; overflow-y:scroll;max-height:140px;">
+                            <table id="tableMasterQ" style="border: 1px solid black; border-collapse:collapse; width:400px;">
                                 <tr>
-                                    <th class="thPCB">PID</th>
-                                    <th class="thPCB">State</th>
-                                    <th class="thPCB">PC</th>
-                                    <th class="thPCB">IR</th>
-                                    <th class="thPCB">Acc</th>
-                                    <th class="thPCB">XReg</th>
-                                    <th class="thPCB">YReg</th>
-                                    <th class="thPCB">ZFlag</th>
-                                </tr>
-                                <tr>
-                                    <td class="tdPCB" id="pcbPID">--</td>
-                                    <td class="tdPCB" id="pcbState">--</td>
-                                    <td class="tdPCB" id="pcbPC">--</td>
-                                    <td class="tdPCB" id="pcbIr">--</td>
-                                    <td class="tdPCB" id="pcbAcc">--</td>
-                                    <td class="tdPCB" id="pcbXreg">--</td>
-                                    <td class="tdPCB" id="pcbYreg">--</td>
-                                    <td class="tdPCB" id="pcbZflag">--</td>
+                                    <th class="thMasterQ">PID</th>
+                                    <th class="thMasterQ">PC</th>
+                                    <th class="thMasterQ">IR</th>
+                                    <th class="thMasterQ">Acc</th>
+                                    <th class="thMasterQ">XReg</th>
+                                    <th class="thMasterQ">YReg</th>
+                                    <th class="thMasterQ">ZFlag</th>
+                                    <th class="thMasterQ">State</th>
                                 </tr>
                             </table>
                         </div>

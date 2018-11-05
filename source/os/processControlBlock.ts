@@ -53,10 +53,10 @@ module TSOS {
                 case 0:
                     base = 0;
                     break;
-                case 0:
+                case 1:
                     base = 256;
                     break;
-                case 0:
+                case 2:
                     base = 512;
                     break;
 

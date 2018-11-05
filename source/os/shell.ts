@@ -512,6 +512,7 @@ module TSOS {
                     _PCB.state = "Resident";
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
+                    _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
                 else {
@@ -531,8 +532,17 @@ module TSOS {
                 if (args <= _CPU.latestPID && args >= _CPU.latestPID - 2) {
                     //make sure the resident Q isnt empty
                     if (_ResidentQ.length > 0) {
-                        //move the process from resident queue to ready queue
-                        _ReadyQ.push(_ResidentQ[args]);
+                        var test;
+                        for (var i = _ResidentQ.length - 1; i >= 0; i--) {
+                            test = _ResidentQ[i];
+                            //test to see if the pid matches the given pid
+                            if (test.pid == args) {
+                                //move the process from resident queue to ready queue
+                                _ReadyQ.push(test);
+                                //remove the process from the resident queue
+                                _ResidentQ.splice(i,1);
+                            }
+                        }
                         //set _PCB to the most recent _PCB in _ReadyQ
                         _PCB = _ReadyQ[(_ReadyQ.length - 1)];
                         _CPU.thePCB = _PCB;
@@ -602,7 +612,9 @@ module TSOS {
         //sets quantum
         public shellQuantum(args) {
             if (args.length > 0) {
-
+                _CPUScheduler.setQuantum(args);
+                _StdOut.putText("Quantum set to " + args);
+                _StdOut.advanceLine();
             } else {
                 _StdOut.putText("Usage: quantum <int>  Please supply a quantum size.");
             }

@@ -69,6 +69,9 @@ var _GLaDOS: any = null; // If the above is linked in, this is the instantiated 
 var _Memory: TSOS.Memory;
 var _MemoryManager: any = null;
 
+//scheduler
+var _CPUScheduler: TSOS.CPUScheduler;
+
 var _PCB: TSOS.processControlBlock;
 var _ResidentQ;
 var _ReadyQ;

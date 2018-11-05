@@ -78,7 +78,7 @@ var TSOS;
             }
             //updates the cpu and pcb displays
             _Kernel.updateCPUTable();
-            _Kernel.updatePCBTable();
+            _Kernel.updateMasterQTable();
             //this.cycles++;
             //depending on thePCB.state, what output we get
             switch (this.thePCB.state) {
@@ -87,7 +87,6 @@ var TSOS;
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
-                    _Kernel.clearPCBTable();
                     _Kernel.clearCPUTable();
                     if (this.thePCB.base == 0) {
                         _MemoryManager.partitionOneFree = true;
