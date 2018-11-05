@@ -60,6 +60,7 @@ module TSOS {
                 this.Acc = this.thePCB.accumulator;
             }
 
+            console.log(this.PC);
             //run one instruction
             this.opCodes();
 
@@ -195,7 +196,7 @@ module TSOS {
                     if (this.Zflag === 0) {
                         //set this.PC to this location in
                         this.PC += this.loadWithConstant();
-                        while (this.PC > _MemoryManager.getLimit(this.thePCB.partition)) {
+                        while (this.PC > 255) {
                             this.PC = (this.PC - 256);
                         }
                         this.PC++;
@@ -241,7 +242,7 @@ module TSOS {
                         //get the starting address set by this.Yreg
                         var i = this.thePCB.base + this.Yreg;
                         while (_Memory.mem[i] != "00") {
-                            //print out the characters until 00 iss at the indexed location
+                            //print out the characters until 00 is at the indexed location
                             _StdOut.putText(String.fromCharCode(parseInt(_Memory.mem[i], 16)));
                             i++;
                         }
