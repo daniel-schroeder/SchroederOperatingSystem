@@ -447,21 +447,28 @@ var TSOS;
         Shell.prototype.shellRun = function (args) {
             //check for a pid given
             if (args.length > 0) {
-                //check to make sure the pid has been given out and is still in memory
-                if (args <= _CPU.latestPID && args >= _CPU.latestPID - 2) {
-                    //make sure the resident Q isnt empty
-                    if (_ResidentQ.length > 0) {
-                        var test;
-                        for (var i = _ResidentQ.length - 1; i >= 0; i--) {
-                            test = _ResidentQ[i];
-                            //test to see if the pid matches the given pid
-                            if (test.pid == args) {
-                                //move the process from resident queue to ready queue
-                                _ReadyQ.push(test);
-                                //remove the process from the resident queue
-                                _ResidentQ.splice(i, 1);
-                            }
+                //make sure the resident Q isnt empty
+                if (_ResidentQ.length > 0) {
+                    var test;
+                    var found = false;
+                    for (var i = _ResidentQ.length - 1; i >= 0; i--) {
+                        test = _ResidentQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == args) {
+                            //move the process from resident queue to ready queue
+                            _ReadyQ.push(test);
+                            //remove the process from the resident queue
+                            _ResidentQ.splice(i, 1);
+                            found = true;
                         }
+                    }
+                    if (found == false) {
+                        //message for if pid given not ok
+                        _StdOut.putText("Unable to run process " + args + ".");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("Either no longer in memory, or never loaded.");
+                    }
+                    else {
                         //set _PCB to the most recent _PCB in _ReadyQ
                         _PCB = _ReadyQ[(_ReadyQ.length - 1)];
                         _CPU.thePCB = _PCB;
@@ -476,21 +483,15 @@ var TSOS;
                             _CPU.isExecuting = true;
                         }
                     }
-                    //message for if pid given not in memory
-                    else {
-                        _StdOut.putText("Unable to run process " + args + ".");
-                        _StdOut.advanceLine();
-                        _StdOut.putText("No longer in memory.");
-                    }
                 }
-                //message for if pid given not ok
+                //message for if pid given not in memory
                 else {
-                    _StdOut.putText("Unable to run process " + args + ".");
+                    _StdOut.putText("No processes in memory");
                     _StdOut.advanceLine();
-                    _StdOut.putText("No longer in memory.");
+                    _StdOut.putText("Load a process first.");
                 }
-                //error in case pid is not given at all
             }
+            //error in case pid is not given at all
             else {
                 _StdOut.putText("Usage: run <pid>  Please supply a process id.");
             }

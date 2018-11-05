@@ -38,6 +38,7 @@ module TSOS {
             //initialize _ReadyQ and _ResidentQ
             _ReadyQ = new Array();
             _ResidentQ = new Array();
+            _TerminatedQ = new Array();
 
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");

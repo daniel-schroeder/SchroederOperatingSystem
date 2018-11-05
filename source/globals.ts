@@ -75,6 +75,7 @@ var _CPUScheduler: TSOS.CPUScheduler;
 var _PCB: TSOS.processControlBlock;
 var _ResidentQ;
 var _ReadyQ;
+var _TerminatedQ;
 
 var _SingleStep = false;
 

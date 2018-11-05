@@ -60,7 +60,6 @@ var TSOS;
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
-            console.log(this.PC);
             //run one instruction
             this.opCodes();
             //increment this.PC
@@ -97,6 +96,17 @@ var TSOS;
                     }
                     else if (this.thePCB.base == 512) {
                         _MemoryManager.partitionThreeFree = true;
+                    }
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i, 1);
+                        }
                     }
                     break;
                 case "Break":
