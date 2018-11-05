@@ -19,6 +19,7 @@ module TSOS {
                     public accumulator: number = 0,
                     public base: number = 0,
                     public limit: number = 0,
+                    public partition: number,
                     public state: String = "") {
         }
 
@@ -31,6 +32,7 @@ module TSOS {
             this.accumulator = 0;
             this.base = this.getBase();
             this.limit = this.base + this.getLimit();
+            this.partition = _MemoryManager.latestPartition;
             this.state = "Ready";
         }
 

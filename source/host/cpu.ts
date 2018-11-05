@@ -193,11 +193,12 @@ module TSOS {
                 case "D0":
                     //Branch n bytes if Z flag = 0
                     if (this.Zflag === 0) {
-                        //set this.PC to this locaiton in
+                        //set this.PC to this location in
                         this.PC += this.loadWithConstant();
-                        while (this.PC > _MemoryManager.getLimit()) {
-                            this.PC = (this.PC - _MemoryManager.getLimit());
+                        while (this.PC > _MemoryManager.getLimit(this.thePCB.partition)) {
+                            this.PC = (this.PC - 256);
                         }
+                        this.PC++;
                     }
                     else {
                         //move past it if this.Zflag is not equal to 0

@@ -9,7 +9,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, state) {
+        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, partition, state) {
             if (pid === void 0) { pid = 0; }
             if (pc === void 0) { pc = 0; }
             if (xreg === void 0) { xreg = 0; }
@@ -27,6 +27,7 @@ var TSOS;
             this.accumulator = accumulator;
             this.base = base;
             this.limit = limit;
+            this.partition = partition;
             this.state = state;
         }
         ProcessControlBlock.prototype.init = function () {
@@ -38,6 +39,7 @@ var TSOS;
             this.accumulator = 0;
             this.base = this.getBase();
             this.limit = this.base + this.getLimit();
+            this.partition = _MemoryManager.latestPartition;
             this.state = "Ready";
         };
         //gets and returns the next PID using latestPID
