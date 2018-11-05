@@ -177,7 +177,7 @@ var TSOS;
         };
         Kernel.prototype.addRowToMasterQTable = function () {
             var table = document.getElementById("tableMasterQ");
-            var row = table.insertRow();
+            var row = table.insertRow(1);
             var cell1 = row.insertCell();
             var cell2 = row.insertCell();
             var cell3 = row.insertCell();
@@ -186,15 +186,15 @@ var TSOS;
             var cell6 = row.insertCell();
             var cell7 = row.insertCell();
             var cell8 = row.insertCell();
-            cell1.id = "masterQPID" + row.rowIndex;
-            cell2.id = "masterQPC" + row.rowIndex;
-            cell3.id = "masterQIr" + row.rowIndex;
-            cell4.id = "masterQAcc" + row.rowIndex;
-            cell5.id = "masterQXreg" + row.rowIndex;
-            cell6.id = "masterQYreg" + row.rowIndex;
-            cell7.id = "masterQZflag" + row.rowIndex;
-            cell8.id = "masterQState" + row.rowIndex;
-            this.updateMasterQTable(row.rowIndex);
+            cell1.id = "masterQPID" + _PCB.pid;
+            cell2.id = "masterQPC" + _PCB.pid;
+            cell3.id = "masterQIr" + _PCB.pid;
+            cell4.id = "masterQAcc" + _PCB.pid;
+            cell5.id = "masterQXreg" + _PCB.pid;
+            cell6.id = "masterQYreg" + _PCB.pid;
+            cell7.id = "masterQZflag" + _PCB.pid;
+            cell8.id = "masterQState" + _PCB.pid;
+            this.updateMasterQTable(_PCB.pid);
         };
         //reset the cpu table on index.html
         Kernel.prototype.clearCPUTable = function () {

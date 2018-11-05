@@ -78,7 +78,7 @@ var TSOS;
             }
             //updates the cpu and pcb displays
             _Kernel.updateCPUTable();
-            _Kernel.updateMasterQTable();
+            _Kernel.updateMasterQTable(this.thePCB.pid);
             //this.cycles++;
             //depending on thePCB.state, what output we get
             switch (this.thePCB.state) {
