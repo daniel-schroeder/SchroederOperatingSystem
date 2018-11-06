@@ -526,7 +526,9 @@ module TSOS {
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
                 else {
-                    _StdOut.putText("No memory available. Run a program first");
+                    _StdOut.putText("No memory available.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Run a program or clear memory with clearmem first");
                 }
             }
             else {

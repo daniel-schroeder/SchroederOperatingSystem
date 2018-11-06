@@ -139,7 +139,6 @@ module TSOS {
             // This is the Interrupt Handler Routine.  See pages 8 and 560.
             // Trace our entrance here so we can compute Interrupt Latency by analyzing the log file later on. Page 766.
             this.krnTrace("Handling IRQ~" + irq);
-
             // Invoke the requested Interrupt Service Routine via Switch/Case rather than an Interrupt Vector.
             // TODO: Consider using an Interrupt Vector in the future.
             // Note: There is no need to "dismiss" or acknowledge the interrupts in our design here.
@@ -154,6 +153,9 @@ module TSOS {
                     break;
                 case SWITCH_IRQ:
                     _CPUScheduler.switch();
+                    break;
+                case TERMINATE_IRQ:
+                    _CPU.terminate(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -212,14 +214,14 @@ module TSOS {
 
         //update the master q table on index.html
         public updateMasterQTable(row): void {
-            document.getElementById("masterQPID" + row).innerHTML = _CPU.thePCB.pid.toString(16);
-            document.getElementById("masterQPC" + row).innerHTML = _CPU.thePCB.pc.toString(16);
-            document.getElementById("masterQAcc" + row).innerHTML = _CPU.thePCB.accumulator.toString(16);
-            document.getElementById("masterQXreg" + row).innerHTML = _CPU.thePCB.xreg.toString(16);
-            document.getElementById("masterQYreg" + row).innerHTML = _CPU.thePCB.yreg.toString(16);
-            document.getElementById("masterQZflag" + row).innerHTML = _CPU.thePCB.zflag.toString(16);
-            document.getElementById("masterQIr" + row).innerHTML = document.getElementById(_CPU.thePCB.pc.toString()).innerHTML;
-            document.getElementById("masterQState" + row).innerHTML = _CPU.thePCB.state.toString();
+            document.getElementById("masterQPID" + row.pid).innerHTML = row.pid.toString();
+            document.getElementById("masterQPC" + row.pid).innerHTML = row.pc.toString(16);
+            document.getElementById("masterQAcc" + row.pid).innerHTML = row.accumulator.toString(16);
+            document.getElementById("masterQXreg" + row.pid).innerHTML = row.xreg.toString(16);
+            document.getElementById("masterQYreg" + row.pid).innerHTML = row.yreg.toString(16);
+            document.getElementById("masterQZflag" + row.pid).innerHTML = row.zflag.toString(16);
+            document.getElementById("masterQIr" + row.pid).innerHTML = document.getElementById(row.pc.toString()).innerHTML;
+            document.getElementById("masterQState" + row.pid).innerHTML = row.state.toString();
         }
 
         public addRowToMasterQTable(): void {
@@ -241,7 +243,7 @@ module TSOS {
             cell6.id = "masterQYreg" + _PCB.pid;
             cell7.id = "masterQZflag" + _PCB.pid;
             cell8.id = "masterQState" + _PCB.pid;
-            this.updateMasterQTable(_PCB.pid);
+            this.updateMasterQTable(_PCB);
         }
 
         //reset the cpu table on index.html

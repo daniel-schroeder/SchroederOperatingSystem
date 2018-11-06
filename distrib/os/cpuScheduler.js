@@ -24,24 +24,37 @@ var TSOS;
         };
         CPUScheduler.prototype.runAll = function () {
             this.counter = 0;
+            //set up the processes queue and ready queue
             for (var i = 0; i < _ResidentQ.length; i++) {
                 this.processes[i] = _ResidentQ[i];
                 _ReadyQ[i] = _ResidentQ[i];
+                //set the state of all processes in processes to waiting
                 this.processes[i].state = "Waiting";
             }
             _CPU.thePCB = this.processes[this.counter];
-            _CPU.isExecuting = true;
+            //if simgle step is on dont start until user presses step
+            if (_SingleStep) {
+            }
+            //otherwise run free
+            else {
+                _CPU.isExecuting = true;
+            }
         };
         CPUScheduler.prototype["switch"] = function () {
-            if (_CPU.thePCB.state != "Completed") {
+            if (_CPU.thePCB.state != "Completed" && _CPU.thePCB.state != "Terminated"
+                && this.processes.length != 1) {
+                //set the state to waiting if its not completed or terminated
                 _CPU.thePCB.state = "Waiting";
             }
-            _Kernel.updateMasterQTable(_CPU.thePCB.pid);
+            //update the master q
+            _Kernel.updateMasterQTable(_CPU.thePCB);
             this.counter++;
             if (this.counter > this.processes.length - 1) {
                 this.counter = 0;
             }
             _CPU.thePCB = this.processes[this.counter];
+            _CPU.thePCB.state = "Running";
+            //reset cyclesToDo
             this.cyclesToDo = this.quantum;
         };
         CPUScheduler.prototype.kill = function (args) {
@@ -52,26 +65,7 @@ var TSOS;
                 //test to see if the pid matches the given pid
                 if (test.pid == args) {
                     found = true;
-                    _CPU.thePCB = test;
-                    //set state to terminated
-                    _CPU.thePCB.state = "Terminated";
-                    console.log(_CPU.thePCB);
-                    //stop execution if its the only process Running
-                    if (_CPUScheduler.processes.length <= 1) {
-                        _CPU.isExecuting = false;
-                    }
-                    _CPUScheduler.counter--;
-                    //update table
-                    _Kernel.updateMasterQTable(test.pid);
-                    //clear memory partition of killed process
-                    _MemoryManager.clearMemPartition(test.partition);
-                    //move the process from ready queue to terminated queue
-                    _TerminatedQ.push(test);
-                    //remove the process from the ready queue
-                    _ReadyQ.splice(i, 1);
-                    //message for completion
-                    _StdOut.putText("Process with ID " + args + " killed");
-                    _StdOut.advanceLine();
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(TERMINATE_IRQ, test));
                 }
             }
             if (found == false) {
@@ -84,7 +78,6 @@ var TSOS;
             var test;
             for (var i = 0; i < this.processes.length; i++) {
                 test = this.processes[i];
-                console.log(test.pid);
                 this.kill(test.pid);
             }
         };

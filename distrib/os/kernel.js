@@ -139,6 +139,9 @@ var TSOS;
                 case SWITCH_IRQ:
                     _CPUScheduler["switch"]();
                     break;
+                case TERMINATE_IRQ:
+                    _CPU.terminate(params);
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
@@ -191,14 +194,14 @@ var TSOS;
         };
         //update the master q table on index.html
         Kernel.prototype.updateMasterQTable = function (row) {
-            document.getElementById("masterQPID" + row).innerHTML = _CPU.thePCB.pid.toString(16);
-            document.getElementById("masterQPC" + row).innerHTML = _CPU.thePCB.pc.toString(16);
-            document.getElementById("masterQAcc" + row).innerHTML = _CPU.thePCB.accumulator.toString(16);
-            document.getElementById("masterQXreg" + row).innerHTML = _CPU.thePCB.xreg.toString(16);
-            document.getElementById("masterQYreg" + row).innerHTML = _CPU.thePCB.yreg.toString(16);
-            document.getElementById("masterQZflag" + row).innerHTML = _CPU.thePCB.zflag.toString(16);
-            document.getElementById("masterQIr" + row).innerHTML = document.getElementById(_CPU.thePCB.pc.toString()).innerHTML;
-            document.getElementById("masterQState" + row).innerHTML = _CPU.thePCB.state.toString();
+            document.getElementById("masterQPID" + row.pid).innerHTML = row.pid.toString();
+            document.getElementById("masterQPC" + row.pid).innerHTML = row.pc.toString(16);
+            document.getElementById("masterQAcc" + row.pid).innerHTML = row.accumulator.toString(16);
+            document.getElementById("masterQXreg" + row.pid).innerHTML = row.xreg.toString(16);
+            document.getElementById("masterQYreg" + row.pid).innerHTML = row.yreg.toString(16);
+            document.getElementById("masterQZflag" + row.pid).innerHTML = row.zflag.toString(16);
+            document.getElementById("masterQIr" + row.pid).innerHTML = document.getElementById(row.pc.toString()).innerHTML;
+            document.getElementById("masterQState" + row.pid).innerHTML = row.state.toString();
         };
         Kernel.prototype.addRowToMasterQTable = function () {
             var table = document.getElementById("tableMasterQ");
@@ -219,7 +222,7 @@ var TSOS;
             cell6.id = "masterQYreg" + _PCB.pid;
             cell7.id = "masterQZflag" + _PCB.pid;
             cell8.id = "masterQState" + _PCB.pid;
-            this.updateMasterQTable(_PCB.pid);
+            this.updateMasterQTable(_PCB);
         };
         //reset the cpu table on index.html
         Kernel.prototype.clearCPUTable = function () {

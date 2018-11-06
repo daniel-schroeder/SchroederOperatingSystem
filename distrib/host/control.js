@@ -128,7 +128,25 @@ var TSOS;
         };
         //on click of the step button one cycle
         Control.hostBtnStep_click = function (btn) {
-            _CPU.cycle();
+            if (_CPUScheduler.cyclesToDo > 0) {
+                _CPU.cycle();
+                _CPU.thePCB.cyclesToComplete++;
+                for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                    if (_CPUScheduler.processes[i] != _CPU.thePCB) {
+                        _CPUScheduler.processes[i].waitTime++;
+                    }
+                }
+            }
+            else if (_CPUScheduler.processes.length > 0) {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
+                _CPU.cycle();
+                _CPU.thePCB.cyclesToComplete++;
+                for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                    if (_CPUScheduler.processes[i] != _CPU.thePCB) {
+                        _CPUScheduler.processes[i].waitTime++;
+                    }
+                }
+            }
         };
         return Control;
     }());

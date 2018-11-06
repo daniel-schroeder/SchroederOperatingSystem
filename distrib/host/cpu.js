@@ -85,7 +85,7 @@ var TSOS;
             }
             //updates the cpu and pcb displays
             _Kernel.updateCPUTable();
-            _Kernel.updateMasterQTable(this.thePCB.pid);
+            _Kernel.updateMasterQTable(this.thePCB);
             //depending on thePCB.state, what output we get
             switch (this.thePCB.state) {
                 case "Completed":
@@ -145,12 +145,6 @@ var TSOS;
                     _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an invalid op code error");
-                    _StdOut.advanceLine();
-                    _OsShell.putPrompt();
-                    break;
-                case "Terminated":
-                    _StdOut.advanceLine();
-                    _StdOut.putText("Process " + this.thePCB.pid + " was terminated and removed from memory");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
                     break;
@@ -309,6 +303,45 @@ var TSOS;
             var i = this.thePCB.base + parseInt((second + first), 16);
             //return the value at the memory address
             return parseInt(_Memory.mem[i], 16);
+        };
+        Cpu.prototype.terminate = function (pcb) {
+            pcb.state = "Terminated";
+            _StdOut.advanceLine();
+            //update table
+            _Kernel.updateMasterQTable(pcb);
+            //clear memory partition of killed process
+            _MemoryManager.clearMemPartition(pcb.partition);
+            //move the process from ready queue to terminated queue
+            _TerminatedQ.push(pcb);
+            //remove the process from the ready queue
+            for (var i = 0; i < _ReadyQ.length; i++) {
+                if (pcb.pid == _ReadyQ[i].pid) {
+                    _ReadyQ.splice(i, 1);
+                }
+            }
+            //remove the process from the processes queue
+            for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                if (pcb.pid == _CPUScheduler.processes[i].pid) {
+                    _CPUScheduler.processes.splice(i, 1);
+                }
+            }
+            //stop execution if its the only process Running
+            if (_CPUScheduler.processes.length < 1) {
+                this.isExecuting = false;
+            }
+            else {
+                _CPUScheduler.counter--;
+                if (_CPUScheduler.counter < 0) {
+                    _CPUScheduler.counter = 0;
+                }
+                _CPUScheduler.cyclesToDo = _CPUScheduler.quantum;
+            }
+            //message for completion
+            _StdOut.putText("Process with ID " + pcb.pid + " killed");
+            _StdOut.advanceLine();
+            _StdOut.putText("Process " + pcb.pid + " was terminated and removed from memory");
+            _StdOut.advanceLine();
+            _OsShell.putPrompt();
         };
         return Cpu;
     }());
