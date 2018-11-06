@@ -153,7 +153,6 @@ var TSOS;
         };
         Cpu.prototype.opCodes = function () {
             //make sure all input is uppercase
-            console.log(this.thePCB.base + this.PC);
             this.instruction = _Memory.mem[this.thePCB.base + this.PC].toUpperCase();
             switch (this.instruction) {
                 case "A9":
