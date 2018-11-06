@@ -132,6 +132,7 @@ module TSOS {
                         this.isExecuting = false;
                     }
                     _CPUScheduler.counter--;
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
                     break;
                 case "Break":
                     break;
@@ -158,6 +159,7 @@ module TSOS {
 
         public opCodes(): void {
             //make sure all input is uppercase
+            console.log(this.thePCB.base + this.PC);
             this.instruction = _Memory.mem[this.thePCB.base + this.PC].toUpperCase();
             switch (this.instruction) {
                 case "A9":
@@ -324,7 +326,6 @@ module TSOS {
 
         public terminate(pcb): void {
             pcb.state = "Terminated";
-            _StdOut.advanceLine();
             //update table
             _Kernel.updateMasterQTable(pcb);
             //clear memory partition of killed process

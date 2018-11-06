@@ -52,10 +52,10 @@ var TSOS;
             if (this.counter > this.processes.length - 1) {
                 this.counter = 0;
             }
-            _CPU.thePCB = this.processes[this.counter];
-            _CPU.thePCB.state = "Running";
             //reset cyclesToDo
             this.cyclesToDo = this.quantum;
+            _CPU.thePCB = this.processes[this.counter];
+            _CPU.thePCB.state = "Running";
         };
         CPUScheduler.prototype.kill = function (args) {
             var test;
