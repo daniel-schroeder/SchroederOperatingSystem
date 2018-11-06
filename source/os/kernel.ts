@@ -94,10 +94,22 @@ module TSOS {
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 if (_CPUScheduler.cyclesToDo > 0) {
                     _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if(_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
+                    }
                 }
                 else if (_CPUScheduler.processes.length != 0){
                     _CPUScheduler.switch();
                     _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if(_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
+                    }
                 }
                 else {
                     _CPU.isExecuting = false;

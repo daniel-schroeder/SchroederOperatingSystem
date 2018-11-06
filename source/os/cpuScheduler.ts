@@ -16,6 +16,7 @@ module TSOS {
             this.cyclesToDo = this.quantum;
             this.processes = new Array();
             this.counter = 0;
+
         }
 
         public setQuantum(q): void {
@@ -26,6 +27,7 @@ module TSOS {
         public runAll(): void {
             for (var i = 0; i < _ResidentQ.length; i++) {
                 this.processes[i] = _ResidentQ[i];
+                _ReadyQ[i] = _ResidentQ[i];
                 this.processes[i].state = "Waiting";
             }
             _CPU.thePCB = this.processes[this.counter];

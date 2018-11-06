@@ -20,7 +20,9 @@ module TSOS {
                     public base: number = 0,
                     public limit: number = 0,
                     public partition: number,
-                    public state: String = "") {
+                    public state: String = "",
+                    public cyclesToComplete: number,
+                    public waitTime: number) {
         }
 
         public init(): void {
@@ -34,6 +36,8 @@ module TSOS {
             this.limit = this.base + this.getLimit();
             this.partition = _MemoryManager.latestPartition;
             this.state = "Ready";
+            this.cyclesToComplete = 0;
+            this.waitTime = 0;
         }
 
         //gets and returns the next PID using latestPID

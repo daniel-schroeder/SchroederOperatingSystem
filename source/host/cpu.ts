@@ -61,7 +61,7 @@ module TSOS {
             }
 
             this.thePCB.state = "Running";
-            
+
             //run one instruction
             this.opCodes();
 
@@ -82,15 +82,12 @@ module TSOS {
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
                 this.thePCB.state = "Completed"
             }
-
             if (this.thePCB.base + this.PC >= _MemoryManager.getLimit(this.thePCB.partition)) {
-                this.thePCB.state = "Error";
+                this.thePCB.state = "Out of Bounds Error";
             }
             //updates the cpu and pcb displays
             _Kernel.updateCPUTable();
             _Kernel.updateMasterQTable(this.thePCB.pid);
-            //this.cycles++;
-
 
             //depending on thePCB.state, what output we get
             switch(this.thePCB.state) {
@@ -99,7 +96,14 @@ module TSOS {
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
+                    var turnaroundTime = this.thePCB.cyclesToComplete + this.thePCB.waitTime;
+                    _StdOut.putText("Turnaround Time: " + turnaroundTime);
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    _StdOut.putText("Wait Time: " + this.thePCB.waitTime);
                     _Kernel.clearCPUTable();
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
                     if (this.thePCB.base == 0) {
                         _MemoryManager.partitionOneFree = true;
                     }
@@ -128,11 +132,19 @@ module TSOS {
                     break;
                 case "Waiting":
                     break;
-                case "Error":
+                case "Out of Bounds Error":
                     this.isExecuting = false;
                     _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
-                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an error");
+                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an out of bounds error");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
+                case "Invalid Op Code Error":
+                    this.isExecuting = false;
+                    _MemoryManager.clearMemPartition(this.thePCB.partition);
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an invalid op code error");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
                     break;
@@ -163,8 +175,6 @@ module TSOS {
             //make sure all input is uppercase
             this.instruction = _Memory.mem[this.thePCB.base + this.PC].toUpperCase();
             switch (this.instruction) {
-                default:
-                    break;
                 case "A9":
                     //load the accumulator with a constant
                     this.Acc = this.loadWithConstant();
@@ -181,11 +191,15 @@ module TSOS {
                     this.PC++;
                     var second = _Memory.mem[this.thePCB.base + this.PC];
                     var i = this.thePCB.base + parseInt((second + first), 16);
-
+                    if (i >= _MemoryManager.getLimit(this.thePCB.partition)) {
+                        this.thePCB.state = "Out of Bounds Error";
+                        break;
+                    }
                     //adds a 0 before the number if it only has one digit
                     if (this.Acc.toString(16).length == 1) {
                         var temp = "0" + this.Acc.toString(16);
                         //store accumulator in memory at index i
+
                         _Memory.mem[i] = temp;
                         //update the memory table
                         document.getElementById(i.toString()).innerHTML = temp;
@@ -266,7 +280,7 @@ module TSOS {
                     if (i > _Memory.mem.limit) {
                         _StdOut.advanceLine();
                         _StdOut.putText("Out of Memory");
-                        this.thePCB.state = "Error";
+                        this.thePCB.state = "Out of Bounds Error";
                         return;
                     }
 
@@ -288,6 +302,11 @@ module TSOS {
                             i++;
                         }
                     }
+                    break;
+                default:
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Invalid Op Code");
+                    this.thePCB.state = "Invalid Op Code Error";
                     break;
             }
         }
