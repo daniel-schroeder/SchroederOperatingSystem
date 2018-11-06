@@ -141,6 +141,7 @@ var TSOS;
                     break;
                 case TERMINATE_IRQ:
                     _CPU.terminate(params);
+                    _CPU.thePCB = _CPUScheduler.processes[_CPUScheduler.counter];
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
