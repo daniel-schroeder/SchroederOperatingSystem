@@ -49,7 +49,7 @@ module TSOS {
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.thePCB == null) {
                 //if thePCB is null set it to the latest pcb in the list
-                this.thePCB = (_Processes.length - 1);
+                this.thePCB = (_ReadyQ.length - 1);
             }
             else {
                 //initialize the variables used
@@ -59,6 +59,10 @@ module TSOS {
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
+            if (this.thePCB.state != "Terminated" && this.thePCB.state != "Completed") {
+                this.thePCB.state = "Running";
+            }
+
 
             //run one instruction
             this.opCodes();
@@ -66,6 +70,8 @@ module TSOS {
             //increment this.PC
             this.PC++;
 
+            //decrement cyclesToDo;
+            _CPUScheduler.cyclesToDo--;
             //update thePCB with new values
             this.thePCB.pc = this.PC;
             this.thePCB.xreg = this.Xreg;
@@ -76,15 +82,14 @@ module TSOS {
             //check to see if this.PC is over the processes limit
             //if so stop executing
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
-                this.isExecuting = false;
                 this.thePCB.state = "Completed"
             }
-
+            if (this.thePCB.base + this.PC >= _MemoryManager.getLimit(this.thePCB.partition)) {
+                this.thePCB.state = "Out of Bounds Error";
+            }
             //updates the cpu and pcb displays
-            this.updateCPU();
-            this.updatePCB();
-            //this.cycles++;
-
+            _Kernel.updateCPUTable();
+            _Kernel.updateMasterQTable(this.thePCB);
 
             //depending on thePCB.state, what output we get
             switch(this.thePCB.state) {
@@ -93,15 +98,59 @@ module TSOS {
                     _StdOut.putText("Process " + this.thePCB.pid + " ran successfully!");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
-                    this.clearPCB();
-                    this.clearCPU();
+                    var turnaroundTime = this.thePCB.cyclesToComplete + this.thePCB.waitTime;
+                    _StdOut.putText("Turnaround Time: " + turnaroundTime);
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    _StdOut.putText("Wait Time: " + this.thePCB.waitTime);
+                    _Kernel.clearCPUTable();
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    if (this.thePCB.base == 0) {
+                        _MemoryManager.partitionOneFree = true;
+                    }
+                    else if (this.thePCB.base == 256) {
+                        _MemoryManager.partitionTwoFree = true;
+                    }
+                    else if (this.thePCB.base == 512) {
+                        _MemoryManager.partitionThreeFree = true;
+                    }
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i,1);
+                        }
+                    }
+                    _CPUScheduler.cyclesToDo = 0;
+                    _CPUScheduler.processes.splice(_CPUScheduler.counter,1);
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                    }
+                    _CPUScheduler.counter--;
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
                     break;
                 case "Break":
                     break;
-                case "Error":
-                    _MemoryManager.clearMem();
+                case "Waiting":
+                    break;
+                case "Out of Bounds Error":
+                    this.isExecuting = false;
+                    _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
-                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an error");
+                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an out of bounds error");
+                    _StdOut.advanceLine();
+                    _OsShell.putPrompt();
+                    break;
+                case "Invalid Op Code Error":
+                    this.isExecuting = false;
+                    _MemoryManager.clearMemPartition(this.thePCB.partition);
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an invalid op code error");
                     _StdOut.advanceLine();
                     _OsShell.putPrompt();
                     break;
@@ -112,8 +161,6 @@ module TSOS {
             //make sure all input is uppercase
             this.instruction = _Memory.mem[this.thePCB.base + this.PC].toUpperCase();
             switch (this.instruction) {
-                default:
-                    break;
                 case "A9":
                     //load the accumulator with a constant
                     this.Acc = this.loadWithConstant();
@@ -130,11 +177,15 @@ module TSOS {
                     this.PC++;
                     var second = _Memory.mem[this.thePCB.base + this.PC];
                     var i = this.thePCB.base + parseInt((second + first), 16);
-
+                    if (i >= _MemoryManager.getLimit(this.thePCB.partition)) {
+                        this.thePCB.state = "Out of Bounds Error";
+                        break;
+                    }
                     //adds a 0 before the number if it only has one digit
                     if (this.Acc.toString(16).length == 1) {
                         var temp = "0" + this.Acc.toString(16);
                         //store accumulator in memory at index i
+
                         _Memory.mem[i] = temp;
                         //update the memory table
                         document.getElementById(i.toString()).innerHTML = temp;
@@ -170,9 +221,7 @@ module TSOS {
                     //No operation
                     break;
                 case "00":
-                    //break. end the process. set this.PC = 254 so that it ends the cycles
                     this.thePCB.state = "Completed";
-                    this.PC = 254;
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal
@@ -186,11 +235,12 @@ module TSOS {
                 case "D0":
                     //Branch n bytes if Z flag = 0
                     if (this.Zflag === 0) {
-                        //set this.PC to this locaiton in
+                        //set this.PC to this location in
                         this.PC += this.loadWithConstant();
-                        while (this.PC > _MemoryManager.getLimit()) {
-                            this.PC = (this.PC - _MemoryManager.getLimit());
+                        while (this.PC > 255) {
+                            this.PC = (this.PC - 256);
                         }
+                        this.PC++;
                     }
                     else {
                         //move past it if this.Zflag is not equal to 0
@@ -216,7 +266,7 @@ module TSOS {
                     if (i > _Memory.mem.limit) {
                         _StdOut.advanceLine();
                         _StdOut.putText("Out of Memory");
-                        this.thePCB.state = "Error";
+                        this.thePCB.state = "Out of Bounds Error";
                         return;
                     }
 
@@ -233,11 +283,16 @@ module TSOS {
                         //get the starting address set by this.Yreg
                         var i = this.thePCB.base + this.Yreg;
                         while (_Memory.mem[i] != "00") {
-                            //print out the characters until 00 iss at the indexed location
+                            //print out the characters until 00 is at the indexed location
                             _StdOut.putText(String.fromCharCode(parseInt(_Memory.mem[i], 16)));
                             i++;
                         }
                     }
+                    break;
+                default:
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Invalid Op Code");
+                    this.thePCB.state = "Invalid Op Code Error";
                     break;
             }
         }
@@ -268,48 +323,46 @@ module TSOS {
             return parseInt(_Memory.mem[i], 16);
         }
 
-        //update the cpu table on index.html
-        public updateCPU(): void {
-            document.getElementById("cpuPC").innerHTML = this.PC.toString(16);
-            document.getElementById("cpuAcc").innerHTML = this.Acc.toString(16);
-            document.getElementById("cpuX").innerHTML = this.Xreg.toString(16);
-            document.getElementById("cpuY").innerHTML = this.Yreg.toString(16);
-            document.getElementById("cpuZ").innerHTML = this.Zflag.toString(16);
-            document.getElementById("cpuIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
-        }
+        public terminate(pcb): void {
+            pcb.state = "Terminated";
+            //update table
+            _Kernel.updateMasterQTable(pcb);
+            //clear memory partition of killed process
+            _MemoryManager.clearMemPartition(pcb.partition);
 
-        //update the pcb table on index.html
-        public updatePCB(): void {
-            document.getElementById("pcbPID").innerHTML = this.thePCB.pid.toString(16);
-            document.getElementById("pcbPC").innerHTML = this.PC.toString(16);
-            document.getElementById("pcbAcc").innerHTML = this.Acc.toString(16);
-            document.getElementById("pcbXreg").innerHTML = this.Xreg.toString(16);
-            document.getElementById("pcbYreg").innerHTML = this.Yreg.toString(16);
-            document.getElementById("pcbZflag").innerHTML = this.Zflag.toString(16);
-            document.getElementById("pcbIr").innerHTML = document.getElementById(this.PC.toString()).innerHTML;
-            document.getElementById("pcbState").innerHTML = this.thePCB.state.toString();
-        }
+            //move the process from ready queue to terminated queue
+            _TerminatedQ.push(pcb);
+            //remove the process from the ready queue
+            for (var i = 0; i < _ReadyQ.length; i++) {
+                if (pcb.pid == _ReadyQ[i].pid) {
+                    _ReadyQ.splice(i,1);
+                }
+            }
+            //remove the process from the processes queue
+            for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                if (pcb.pid == _CPUScheduler.processes[i].pid) {
+                    _CPUScheduler.processes.splice(i,1);
+                }
+            }
 
-        //reset the pcb table on index.html
-        public clearPCB(): void {
-            document.getElementById("pcbPID").innerHTML = "--";
-            document.getElementById("pcbPC").innerHTML = "--";
-            document.getElementById("pcbAcc").innerHTML = "--";
-            document.getElementById("pcbXreg").innerHTML = "--";
-            document.getElementById("pcbYreg").innerHTML = "--";
-            document.getElementById("pcbZflag").innerHTML = "--";
-            document.getElementById("pcbIr").innerHTML = "--";
-            document.getElementById("pcbState").innerHTML = "--";
-        }
-
-        //reset the cpu table on index.html
-        public clearCPU(): void {
-            document.getElementById("cpuPC").innerHTML = "--";
-            document.getElementById("cpuAcc").innerHTML = "--";
-            document.getElementById("cpuX").innerHTML = "--";
-            document.getElementById("cpuY").innerHTML = "--";
-            document.getElementById("cpuZ").innerHTML = "--";
-            document.getElementById("cpuIr").innerHTML = "--";
+            //stop execution if its the only process Running
+            if (_CPUScheduler.processes.length < 1) {
+                this.isExecuting = false;
+            }
+            else {
+                _CPUScheduler.counter--;
+                if (_CPUScheduler.counter < 0) {
+                    _CPUScheduler.counter = 0;
+                }
+                _CPUScheduler.cyclesToDo = _CPUScheduler.quantum;
+            }
+            //message for completion
+            _StdOut.putText("Process with ID " + pcb.pid + " killed")
+            _StdOut.advanceLine();
+            _StdOut.putText("Process " + pcb.pid + " was terminated and removed from memory");
+            _StdOut.advanceLine();
+            _OsShell.putPrompt();
         }
     }
 }
+//A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00

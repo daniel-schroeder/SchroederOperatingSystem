@@ -19,7 +19,10 @@ module TSOS {
                     public accumulator: number = 0,
                     public base: number = 0,
                     public limit: number = 0,
-                    public state: String = "") {
+                    public partition: number,
+                    public state: String = "",
+                    public cyclesToComplete: number,
+                    public waitTime: number) {
         }
 
         public init(): void {
@@ -29,9 +32,12 @@ module TSOS {
             this.yreg = 0;
             this.zflag = 0;
             this.accumulator = 0;
-            this.base = 0;
-            this.limit = this.getLimit();
+            this.base = this.getBase();
+            this.limit = this.base + this.getLimit();
+            this.partition = _MemoryManager.latestPartition;
             this.state = "Ready";
+            this.cyclesToComplete = 0;
+            this.waitTime = 0;
         }
 
         //gets and returns the next PID using latestPID
@@ -44,6 +50,24 @@ module TSOS {
         public getLimit(): number {
             var limit = document.getElementById("taProgramInput").value.split(" ").length;
             return limit;
+        }
+
+        //gets the base of a program
+        public getBase(): number {
+            var base;
+            switch (_MemoryManager.latestPartition) {
+                case 0:
+                    base = 0;
+                    break;
+                case 1:
+                    base = 256;
+                    break;
+                case 2:
+                    base = 512;
+                    break;
+
+            }
+            return base;
         }
     }
 }

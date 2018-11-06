@@ -15,7 +15,7 @@ var TSOS;
         }
         //initialize memory to "00"
         Memory.prototype.init = function () {
-            for (var i = 0; i <= 255; i++) {
+            for (var i = 0; i <= 767; i++) {
                 this.mem[i] = "00";
             }
         };

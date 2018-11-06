@@ -31,6 +31,10 @@ var TSOS;
             // Initialize standard input and output to the _Console.
             _StdIn = _Console;
             _StdOut = _Console;
+            //initialize _ReadyQ and _ResidentQ
+            _ReadyQ = new Array();
+            _ResidentQ = new Array();
+            _TerminatedQ = new Array();
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
@@ -50,8 +54,6 @@ var TSOS;
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
-            //initialize _Processes
-            _Processes = new Array();
         };
         Kernel.prototype.krnShutdown = function () {
             this.krnTrace("begin shutdown OS");
@@ -78,7 +80,28 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
             else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _CPU.cycle();
+                if (_CPUScheduler.cyclesToDo > 0) {
+                    _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if (_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
+                    }
+                }
+                else if (_CPUScheduler.processes.length > 0) {
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
+                    _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if (_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
+                    }
+                }
+                else {
+                    _CPU.isExecuting = false;
+                }
             }
             else { // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
@@ -112,6 +135,13 @@ var TSOS;
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case SWITCH_IRQ:
+                    _CPUScheduler["switch"]();
+                    break;
+                case TERMINATE_IRQ:
+                    _CPU.terminate(params);
+                    _CPU.thePCB = _CPUScheduler.processes[_CPUScheduler.counter];
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -153,6 +183,56 @@ var TSOS;
                     TSOS.Control.hostLog(msg, "OS");
                 }
             }
+        };
+        //update the cpu table on index.html
+        Kernel.prototype.updateCPUTable = function () {
+            document.getElementById("cpuPC").innerHTML = _CPU.PC.toString(16);
+            document.getElementById("cpuAcc").innerHTML = _CPU.Acc.toString(16);
+            document.getElementById("cpuX").innerHTML = _CPU.Xreg.toString(16);
+            document.getElementById("cpuY").innerHTML = _CPU.Yreg.toString(16);
+            document.getElementById("cpuZ").innerHTML = _CPU.Zflag.toString(16);
+            document.getElementById("cpuIr").innerHTML = document.getElementById(_CPU.PC.toString()).innerHTML;
+        };
+        //update the master q table on index.html
+        Kernel.prototype.updateMasterQTable = function (row) {
+            document.getElementById("masterQPID" + row.pid).innerHTML = row.pid.toString();
+            document.getElementById("masterQPC" + row.pid).innerHTML = row.pc.toString(16);
+            document.getElementById("masterQAcc" + row.pid).innerHTML = row.accumulator.toString(16);
+            document.getElementById("masterQXreg" + row.pid).innerHTML = row.xreg.toString(16);
+            document.getElementById("masterQYreg" + row.pid).innerHTML = row.yreg.toString(16);
+            document.getElementById("masterQZflag" + row.pid).innerHTML = row.zflag.toString(16);
+            document.getElementById("masterQIr" + row.pid).innerHTML = document.getElementById(row.pc.toString()).innerHTML;
+            document.getElementById("masterQState" + row.pid).innerHTML = row.state.toString();
+        };
+        Kernel.prototype.addRowToMasterQTable = function () {
+            var table = document.getElementById("tableMasterQ");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell();
+            var cell2 = row.insertCell();
+            var cell3 = row.insertCell();
+            var cell4 = row.insertCell();
+            var cell5 = row.insertCell();
+            var cell6 = row.insertCell();
+            var cell7 = row.insertCell();
+            var cell8 = row.insertCell();
+            cell1.id = "masterQPID" + _PCB.pid;
+            cell2.id = "masterQPC" + _PCB.pid;
+            cell3.id = "masterQIr" + _PCB.pid;
+            cell4.id = "masterQAcc" + _PCB.pid;
+            cell5.id = "masterQXreg" + _PCB.pid;
+            cell6.id = "masterQYreg" + _PCB.pid;
+            cell7.id = "masterQZflag" + _PCB.pid;
+            cell8.id = "masterQState" + _PCB.pid;
+            this.updateMasterQTable(_PCB);
+        };
+        //reset the cpu table on index.html
+        Kernel.prototype.clearCPUTable = function () {
+            document.getElementById("cpuPC").innerHTML = "--";
+            document.getElementById("cpuAcc").innerHTML = "--";
+            document.getElementById("cpuX").innerHTML = "--";
+            document.getElementById("cpuY").innerHTML = "--";
+            document.getElementById("cpuZ").innerHTML = "--";
+            document.getElementById("cpuIr").innerHTML = "--";
         };
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
