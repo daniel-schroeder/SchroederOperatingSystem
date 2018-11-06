@@ -433,7 +433,6 @@ var TSOS;
                     _CPU.thePCB = _PCB;
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
-                    _CPUScheduler.processes.push(_PCB);
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
@@ -474,6 +473,7 @@ var TSOS;
                         //set _PCB to the most recent _PCB in _ReadyQ
                         _PCB = _ReadyQ[(_ReadyQ.length - 1)];
                         _CPU.thePCB = _PCB;
+                        _CPUScheduler.processes.push(_PCB);
                         //if single step is on, do one cycle then wait
                         if (_SingleStep) {
                             _PCB.state = "Running";
