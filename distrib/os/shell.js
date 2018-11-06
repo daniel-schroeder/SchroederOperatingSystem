@@ -85,6 +85,9 @@ var TSOS;
             //quantum
             sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - set the length of the quantum.");
             this.commandList[this.commandList.length] = sc;
+            //killall <pid>
+            sc = new TSOS.ShellCommand(this.shellKillAll, "killall", " - Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -288,6 +291,9 @@ var TSOS;
                         break;
                     case "kill":
                         _StdOut.putText("<pid> - Kills the process with process id of <pid>");
+                        break;
+                    case "killall":
+                        _StdOut.putText("Kills all processes");
                         break;
                     case "quantum":
                         _StdOut.putText("<int> - Sets the quantum to <int>");
@@ -530,40 +536,15 @@ var TSOS;
         //kills a process
         Shell.prototype.shellKill = function (args) {
             if (args.length > 0) {
-                var test;
-                var found = false;
-                for (var i = _ReadyQ.length - 1; i >= 0; i--) {
-                    test = _ReadyQ[i];
-                    //test to see if the pid matches the given pid
-                    if (test.pid == args) {
-                        found = true;
-                        _CPU.thePCB = test;
-                        //stop execution immediately
-                        _CPU.isExecuting = false;
-                        //set state to terminated
-                        _CPU.thePCB.state = "Terminated";
-                        //update table
-                        _Kernel.updateMasterQTable(test.pid);
-                        //clear memory partition of killed process
-                        _MemoryManager.clearMemPartition(test.partition);
-                        //move the process from resident queue to ready queue
-                        _TerminatedQ.push(test);
-                        //remove the process from the resident queue
-                        _ReadyQ.splice(i, 1);
-                        //message for completion
-                        _StdOut.putText("Process with ID " + args + " killed");
-                        _StdOut.advanceLine();
-                    }
-                }
-                if (found == false) {
-                    //message for if pid given not ok
-                    _StdOut.putText("No process with ID " + args + " running");
-                    _StdOut.advanceLine();
-                }
+                _CPUScheduler.kill(args);
             }
             else {
                 _StdOut.putText("Usage: kill <pid>  Please supply a PID.");
             }
+        };
+        //kills a process
+        Shell.prototype.shellKillAll = function () {
+            _CPUScheduler.killAll();
         };
         //sets quantum
         Shell.prototype.shellQuantum = function (args) {

@@ -101,8 +101,8 @@ module TSOS {
                         }
                     }
                 }
-                else if (_CPUScheduler.processes.length != 0){
-                    _CPUScheduler.switch();
+                else if (_CPUScheduler.processes.length > 0){
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
                     _CPU.cycle();
                     _CPU.thePCB.cyclesToComplete++;
                     for (var i = 0; i < _CPUScheduler.processes.length; i++) {
@@ -151,6 +151,9 @@ module TSOS {
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case SWITCH_IRQ:
+                    _CPUScheduler.switch();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

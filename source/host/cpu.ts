@@ -59,8 +59,10 @@ module TSOS {
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
+            if (this.thePCB.state != "Terminated" && this.thePCB.state != "Completed") {
+                this.thePCB.state = "Running";
+            }
 
-            this.thePCB.state = "Running";
 
             //run one instruction
             this.opCodes();
@@ -126,6 +128,9 @@ module TSOS {
                     }
                     _CPUScheduler.cyclesToDo = 0;
                     _CPUScheduler.processes.splice(_CPUScheduler.counter,1);
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                    }
                     _CPUScheduler.counter--;
                     break;
                 case "Break":
@@ -149,20 +154,6 @@ module TSOS {
                     _OsShell.putPrompt();
                     break;
                 case "Terminated":
-                    console.log("here");
-                    this.isExecuting = false;
-                    _MemoryManager.clearMemPartition(this.thePCB.partition);
-                    var test;
-                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
-                        test = _ReadyQ[i];
-                        //test to see if the pid matches the given pid
-                        if (test.pid == this.thePCB.pid) {
-                            //move the process from ready queue to terminator queue
-                            _TerminatedQ.push(test);
-                            //remove the process from the resident queue
-                            _ReadyQ.splice(i,1);
-                        }
-                    }
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was terminated and removed from memory");
                     _StdOut.advanceLine();
@@ -338,3 +329,4 @@ module TSOS {
         }
     }
 }
+//A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00
