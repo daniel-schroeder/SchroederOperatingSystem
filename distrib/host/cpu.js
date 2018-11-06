@@ -60,6 +60,7 @@ var TSOS;
                 this.Zflag = this.thePCB.zflag;
                 this.Acc = this.thePCB.accumulator;
             }
+            this.thePCB.state = "Running";
             //run one instruction
             this.opCodes();
             //increment this.PC
@@ -76,6 +77,9 @@ var TSOS;
             //if so stop executing
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
                 this.thePCB.state = "Completed";
+            }
+            if (this.thePCB.base + this.PC >= _MemoryManager.getLimit(this.thePCB.partition)) {
+                this.thePCB.state = "Error";
             }
             //updates the cpu and pcb displays
             _Kernel.updateCPUTable();
@@ -111,9 +115,7 @@ var TSOS;
                     }
                     _CPUScheduler.cyclesToDo = 0;
                     _CPUScheduler.processes.splice(_CPUScheduler.counter, 1);
-                    if (_CPUScheduler.processes.length == 0) {
-                        this.isExecuting = false;
-                    }
+                    _CPUScheduler.counter--;
                     break;
                 case "Break":
                     break;
@@ -211,7 +213,6 @@ var TSOS;
                     break;
                 case "00":
                     this.thePCB.state = "Completed";
-                    this.isExecuting = false;
                     break;
                 case "EC":
                     //Compare a byte in memory to the X reg sets the Z (zero) flag if equal

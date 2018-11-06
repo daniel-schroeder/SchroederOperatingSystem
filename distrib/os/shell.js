@@ -430,6 +430,7 @@ var TSOS;
                     //initialize _PCB
                     _PCB.init();
                     _PCB.state = "Resident";
+                    _CPU.thePCB = _PCB;
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
                     _CPUScheduler.processes.push(_PCB);

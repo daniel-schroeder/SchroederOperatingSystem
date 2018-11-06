@@ -99,8 +99,9 @@ module TSOS {
                     _CPUScheduler.switch();
                     _CPU.cycle();
                 }
-
-
+                else {
+                    _CPU.isExecuting = false;
+                }
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
@@ -196,14 +197,14 @@ module TSOS {
 
         //update the master q table on index.html
         public updateMasterQTable(row): void {
-            document.getElementById("masterQPID" + row).innerHTML = _PCB.pid.toString(16);
-            document.getElementById("masterQPC" + row).innerHTML = _PCB.pc.toString(16);
-            document.getElementById("masterQAcc" + row).innerHTML = _PCB.accumulator.toString(16);
-            document.getElementById("masterQXreg" + row).innerHTML = _PCB.xreg.toString(16);
-            document.getElementById("masterQYreg" + row).innerHTML = _PCB.yreg.toString(16);
-            document.getElementById("masterQZflag" + row).innerHTML = _PCB.zflag.toString(16);
-            document.getElementById("masterQIr" + row).innerHTML = document.getElementById(_PCB.pc.toString()).innerHTML;
-            document.getElementById("masterQState" + row).innerHTML = _PCB.state.toString();
+            document.getElementById("masterQPID" + row).innerHTML = _CPU.thePCB.pid.toString(16);
+            document.getElementById("masterQPC" + row).innerHTML = _CPU.thePCB.pc.toString(16);
+            document.getElementById("masterQAcc" + row).innerHTML = _CPU.thePCB.accumulator.toString(16);
+            document.getElementById("masterQXreg" + row).innerHTML = _CPU.thePCB.xreg.toString(16);
+            document.getElementById("masterQYreg" + row).innerHTML = _CPU.thePCB.yreg.toString(16);
+            document.getElementById("masterQZflag" + row).innerHTML = _CPU.thePCB.zflag.toString(16);
+            document.getElementById("masterQIr" + row).innerHTML = document.getElementById(_CPU.thePCB.pc.toString()).innerHTML;
+            document.getElementById("masterQState" + row).innerHTML = _CPU.thePCB.state.toString();
         }
 
         public addRowToMasterQTable(): void {
