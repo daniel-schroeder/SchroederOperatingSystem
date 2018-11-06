@@ -512,6 +512,7 @@ module TSOS {
                     _PCB.state = "Resident";
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
+                    _CPUScheduler.processes.push(_PCB);
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
@@ -585,11 +586,7 @@ module TSOS {
 
         //runs all processes
         public shellRunAll() {
-            var temp;
-            for (var i = 0; i < _ResidentQ.length; i++) {
-                temp = _ResidentQ[i];
-                _ReadyQ.push(i);
-            }
+            _CPUScheduler.runAll();
             _ResidentQ.splice(0,_ResidentQ.length);
         }
 
@@ -598,6 +595,7 @@ module TSOS {
             var temp;
             _StdOut.putText("Resident:")
             _StdOut.advanceLine();
+            //Go through the resident Q and display processes there
             for (var i = 0; i < _ResidentQ.length; i++) {
                 temp = _ResidentQ[i];
                 _StdOut.putText("PID " + temp.pid);
@@ -605,6 +603,7 @@ module TSOS {
             }
             _StdOut.putText("Running:")
             _StdOut.advanceLine();
+            //then go through the ready Q and display processes there
             for (var i = 0; i < _ReadyQ.length; i++) {
                 temp = _ReadyQ[i];
                 _StdOut.putText("PID " + temp.pid);

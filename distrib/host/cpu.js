@@ -64,6 +64,8 @@ var TSOS;
             this.opCodes();
             //increment this.PC
             this.PC++;
+            //decrement cyclesToDo;
+            _CPUScheduler.cyclesToDo--;
             //update thePCB with new values
             this.thePCB.pc = this.PC;
             this.thePCB.xreg = this.Xreg;
@@ -73,7 +75,6 @@ var TSOS;
             //check to see if this.PC is over the processes limit
             //if so stop executing
             if (this.thePCB.base + this.PC > this.thePCB.limit) {
-                this.isExecuting = false;
                 this.thePCB.state = "Completed";
             }
             //updates the cpu and pcb displays
@@ -108,8 +109,15 @@ var TSOS;
                             _ReadyQ.splice(i, 1);
                         }
                     }
+                    _CPUScheduler.cyclesToDo = 0;
+                    _CPUScheduler.processes.splice(_CPUScheduler.counter, 1);
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                    }
                     break;
                 case "Break":
+                    break;
+                case "Waiting":
                     break;
                 case "Error":
                     this.isExecuting = false;
