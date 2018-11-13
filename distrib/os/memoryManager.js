@@ -64,7 +64,6 @@ var TSOS;
             this.partitionOneFree = true;
             this.partitionTwoFree = true;
             this.partitionThreeFree = true;
-            _ResidentQ.length = 0;
             _Memory.mem = this.memory;
         };
         memoryManager.prototype.clearMemPartition = function (part) {

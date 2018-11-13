@@ -509,11 +509,19 @@ var TSOS;
         //clears memory
         Shell.prototype.shellClearMem = function () {
             _MemoryManager.clearMem();
+            _ResidentQ.splice(0, _ResidentQ.length);
         };
         //runs all processes
         Shell.prototype.shellRunAll = function () {
-            _CPUScheduler.runAll();
-            _ResidentQ.splice(0, _ResidentQ.length);
+            //make sure the resident q is not empty
+            if (_ResidentQ.length > 0) {
+                _CPUScheduler.runAll();
+                _ResidentQ.splice(0, _ResidentQ.length);
+            }
+            //if it is let the user know
+            else {
+                _StdOut.putText("Memory is empty. Load a program first");
+            }
         };
         //shows all processes in memory
         Shell.prototype.shellPS = function () {
