@@ -88,6 +88,21 @@ var TSOS;
             //killall <pid>
             sc = new TSOS.ShellCommand(this.shellKillAll, "killall", " - Kills all processes.");
             this.commandList[this.commandList.length] = sc;
+            //killall <pid>
+            sc = new TSOS.ShellCommand(this.shellCreate, "create", "<filename> - Creates new file <filename>.");
+            this.commandList[this.commandList.length] = sc;
+            //killall <pid>
+            sc = new TSOS.ShellCommand(this.shellRead, "read", "<filename> - Reads and displays contents of <filename>.");
+            this.commandList[this.commandList.length] = sc;
+            //killall <pid>
+            sc = new TSOS.ShellCommand(this.shellWrite, "write", "<filename>, \"text\" - writes \"text\" to <filename>.");
+            this.commandList[this.commandList.length] = sc;
+            //killall <pid>
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", "<filename> - Removes <filename> from storage.");
+            this.commandList[this.commandList.length] = sc;
+            //killall <pid>
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", " - Initializes all blocks in all sectors in all tracks.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -297,6 +312,21 @@ var TSOS;
                         break;
                     case "quantum":
                         _StdOut.putText("<int> - Sets the quantum to <int>");
+                        break;
+                    case "create":
+                        _StdOut.putText("<filename> - creates file <filename>");
+                        break;
+                    case "read":
+                        _StdOut.putText("<filename> - Reads and displays contents of <filename>");
+                        break;
+                    case "write":
+                        _StdOut.putText("<filename> \"text\" - Writes \"text\" to <filename>");
+                        break;
+                    case "delete":
+                        _StdOut.putText("<filename> - Removes <filename> from storage");
+                        break;
+                    case "format":
+                        _StdOut.putText("Initializes all blocks in all secors in all tracks");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -555,6 +585,21 @@ var TSOS;
         //kills a process
         Shell.prototype.shellKillAll = function () {
             _CPUScheduler.killAll();
+        };
+        //Creates file <filename>
+        Shell.prototype.shellCreate = function () {
+        };
+        //Read and display contents of file <filename>
+        Shell.prototype.shellRead = function () {
+        };
+        //Write data inside "" to file <filename>
+        Shell.prototype.shellWrite = function () {
+        };
+        //Deletes file <filename>
+        Shell.prototype.shellDelete = function () {
+        };
+        //Initialize all blocks in all sectors in all tracks
+        Shell.prototype.shellFormat = function () {
         };
         //sets quantum
         Shell.prototype.shellQuantum = function (args) {

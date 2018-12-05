@@ -157,6 +157,35 @@ module TSOS {
                                   " - Kills all processes.");
             this.commandList[this.commandList.length] = sc;
 
+            //killall <pid>
+            sc = new ShellCommand(this.shellCreate,
+                                  "create",
+                                  "<filename> - Creates new file <filename>.");
+            this.commandList[this.commandList.length] = sc;
+
+            //killall <pid>
+            sc = new ShellCommand(this.shellRead,
+                                  "read",
+                                  "<filename> - Reads and displays contents of <filename>.");
+            this.commandList[this.commandList.length] = sc;
+
+            //killall <pid>
+            sc = new ShellCommand(this.shellWrite,
+                                  "write",
+                                  "<filename>, \"text\" - writes \"text\" to <filename>.");
+            this.commandList[this.commandList.length] = sc;
+
+            //killall <pid>
+            sc = new ShellCommand(this.shellDelete,
+                                  "delete",
+                                  "<filename> - Removes <filename> from storage.");
+            this.commandList[this.commandList.length] = sc;
+
+            //killall <pid>
+            sc = new ShellCommand(this.shellFormat,
+                                  "format",
+                                  " - Initializes all blocks in all sectors in all tracks.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -377,6 +406,21 @@ module TSOS {
                         break;
                     case "quantum":
                         _StdOut.putText("<int> - Sets the quantum to <int>");
+                        break;
+                    case "create":
+                        _StdOut.putText("<filename> - creates file <filename>");
+                        break;
+                    case "read":
+                        _StdOut.putText("<filename> - Reads and displays contents of <filename>");
+                        break;
+                    case "write":
+                        _StdOut.putText("<filename> \"text\" - Writes \"text\" to <filename>");
+                        break;
+                    case "delete":
+                        _StdOut.putText("<filename> - Removes <filename> from storage");
+                        break;
+                    case "format":
+                        _StdOut.putText("Initializes all blocks in all secors in all tracks");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -643,6 +687,28 @@ module TSOS {
         //kills a process
         public shellKillAll() {
             _CPUScheduler.killAll();
+        }
+
+        //Creates file <filename>
+        public shellCreate() {
+
+        }
+
+        //Read and display contents of file <filename>
+        public shellRead() {
+
+        }
+        //Write data inside "" to file <filename>
+        public shellWrite() {
+
+        }
+        //Deletes file <filename>
+        public shellDelete() {
+
+        }
+        //Initialize all blocks in all sectors in all tracks
+        public shellFormat() {
+
         }
 
         //sets quantum

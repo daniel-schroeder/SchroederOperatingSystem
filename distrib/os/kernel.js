@@ -206,6 +206,9 @@ var TSOS;
         };
         Kernel.prototype.addRowToMasterQTable = function () {
             var table = document.getElementById("tableMasterQ");
+            if (document.getElementById("tempMQ")) {
+                table.deleteRow(1);
+            }
             var row = table.insertRow(1);
             var cell1 = row.insertCell();
             var cell2 = row.insertCell();
