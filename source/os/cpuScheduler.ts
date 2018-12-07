@@ -25,6 +25,7 @@ module TSOS {
         }
 
         public runAll(): void {
+            _ShouldRun = true;
             this.counter = 0;
             //set up the processes queue and ready queue
             for (var i = 0; i < _ResidentQ.length; i++) {
@@ -78,6 +79,9 @@ module TSOS {
                 _StdOut.putText("No process with ID " + args + " running")
                 _StdOut.advanceLine();
             }
+            if (_ReadyQ.length == 0) {
+                _ShouldRun = false;
+            }
         }
 
         public killAll(): void {
@@ -86,6 +90,7 @@ module TSOS {
                 test = this.processes[i];
                 this.kill(test.pid);
             }
+            _ShouldRun = false;
         }
     }
 }

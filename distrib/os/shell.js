@@ -88,20 +88,29 @@ var TSOS;
             //killall <pid>
             sc = new TSOS.ShellCommand(this.shellKillAll, "killall", " - Kills all processes.");
             this.commandList[this.commandList.length] = sc;
-            //killall <pid>
+            //create <filename>
             sc = new TSOS.ShellCommand(this.shellCreate, "create", "<filename> - Creates new file <filename>.");
             this.commandList[this.commandList.length] = sc;
-            //killall <pid>
+            //read <filename>
             sc = new TSOS.ShellCommand(this.shellRead, "read", "<filename> - Reads and displays contents of <filename>.");
             this.commandList[this.commandList.length] = sc;
-            //killall <pid>
+            //write <filename>, "text"
             sc = new TSOS.ShellCommand(this.shellWrite, "write", "<filename>, \"text\" - writes \"text\" to <filename>.");
             this.commandList[this.commandList.length] = sc;
-            //killall <pid>
+            //delete <filename>
             sc = new TSOS.ShellCommand(this.shellDelete, "delete", "<filename> - Removes <filename> from storage.");
             this.commandList[this.commandList.length] = sc;
-            //killall <pid>
+            //format
             sc = new TSOS.ShellCommand(this.shellFormat, "format", " - Initializes all blocks in all sectors in all tracks.");
+            this.commandList[this.commandList.length] = sc;
+            //ls
+            sc = new TSOS.ShellCommand(this.shellLs, "ls", " - Shows all files on disk.");
+            this.commandList[this.commandList.length] = sc;
+            //setschedule <schedule>
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<schedule> - Sets scheduling algoritm to <schedule>.");
+            this.commandList[this.commandList.length] = sc;
+            //getschedule
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", " - Gets the current scheduling algorithm.");
             this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
@@ -326,7 +335,16 @@ var TSOS;
                         _StdOut.putText("<filename> - Removes <filename> from storage");
                         break;
                     case "format":
-                        _StdOut.putText("Initializes all blocks in all secors in all tracks");
+                        _StdOut.putText("Initializes all blocks in all sectors in all tracks");
+                        break;
+                    case "ls":
+                        _StdOut.putText("Lists all files on disk");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("<schedule> - Sets the scheduling algoritm to <schedule>");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Gets the current scheduling algorithm");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -515,11 +533,13 @@ var TSOS;
                         //if single step is on, do one cycle then wait
                         if (_SingleStep) {
                             _PCB.state = "Running";
+                            _ShouldRun = true;
                             _CPU.cycle();
                         }
                         //otherwise run free
                         else {
                             _PCB.state = "Running";
+                            _ShouldRun = true;
                             _CPU.isExecuting = true;
                         }
                     }
@@ -600,6 +620,15 @@ var TSOS;
         };
         //Initialize all blocks in all sectors in all tracks
         Shell.prototype.shellFormat = function () {
+        };
+        //List all files on disk
+        Shell.prototype.shellLs = function () {
+        };
+        //set scheduling algorithm to <schedule>
+        Shell.prototype.shellSetSchedule = function () {
+        };
+        //gets current scheduling algorithm
+        Shell.prototype.shellGetSchedule = function () {
         };
         //sets quantum
         Shell.prototype.shellQuantum = function (args) {

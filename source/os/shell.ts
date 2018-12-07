@@ -157,34 +157,52 @@ module TSOS {
                                   " - Kills all processes.");
             this.commandList[this.commandList.length] = sc;
 
-            //killall <pid>
+            //create <filename>
             sc = new ShellCommand(this.shellCreate,
                                   "create",
                                   "<filename> - Creates new file <filename>.");
             this.commandList[this.commandList.length] = sc;
 
-            //killall <pid>
+            //read <filename>
             sc = new ShellCommand(this.shellRead,
                                   "read",
                                   "<filename> - Reads and displays contents of <filename>.");
             this.commandList[this.commandList.length] = sc;
 
-            //killall <pid>
+            //write <filename>, "text"
             sc = new ShellCommand(this.shellWrite,
                                   "write",
                                   "<filename>, \"text\" - writes \"text\" to <filename>.");
             this.commandList[this.commandList.length] = sc;
 
-            //killall <pid>
+            //delete <filename>
             sc = new ShellCommand(this.shellDelete,
                                   "delete",
                                   "<filename> - Removes <filename> from storage.");
             this.commandList[this.commandList.length] = sc;
 
-            //killall <pid>
+            //format
             sc = new ShellCommand(this.shellFormat,
                                   "format",
                                   " - Initializes all blocks in all sectors in all tracks.");
+            this.commandList[this.commandList.length] = sc;
+
+            //ls
+            sc = new ShellCommand(this.shellLs,
+                                  "ls",
+                                  " - Shows all files on disk.");
+            this.commandList[this.commandList.length] = sc;
+
+            //setschedule <schedule>
+            sc = new ShellCommand(this.shellSetSchedule,
+                                  "setschedule",
+                                  "<schedule> - Sets scheduling algoritm to <schedule>.");
+            this.commandList[this.commandList.length] = sc;
+
+            //getschedule
+            sc = new ShellCommand(this.shellGetSchedule,
+                                  "getschedule",
+                                  " - Gets the current scheduling algorithm.");
             this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
@@ -420,7 +438,16 @@ module TSOS {
                         _StdOut.putText("<filename> - Removes <filename> from storage");
                         break;
                     case "format":
-                        _StdOut.putText("Initializes all blocks in all secors in all tracks");
+                        _StdOut.putText("Initializes all blocks in all sectors in all tracks");
+                        break;
+                    case "ls":
+                        _StdOut.putText("Lists all files on disk");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("<schedule> - Sets the scheduling algoritm to <schedule>");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Gets the current scheduling algorithm");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -613,11 +640,13 @@ module TSOS {
                         //if single step is on, do one cycle then wait
                         if (_SingleStep) {
                             _PCB.state = "Running";
+                            _ShouldRun = true;
                             _CPU.cycle();
                         }
                         //otherwise run free
                         else {
                             _PCB.state = "Running";
+                            _ShouldRun = true;
                             _CPU.isExecuting = true;
                         }
                     }
@@ -698,16 +727,34 @@ module TSOS {
         public shellRead() {
 
         }
+
         //Write data inside "" to file <filename>
         public shellWrite() {
 
         }
+
         //Deletes file <filename>
         public shellDelete() {
 
         }
+
         //Initialize all blocks in all sectors in all tracks
         public shellFormat() {
+
+        }
+
+        //List all files on disk
+        public shellLs() {
+
+        }
+
+        //set scheduling algorithm to <schedule>
+        public shellSetSchedule() {
+
+        }
+
+        //gets current scheduling algorithm
+        public shellGetSchedule() {
 
         }
 

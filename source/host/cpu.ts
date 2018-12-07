@@ -130,6 +130,7 @@ module TSOS {
                     _CPUScheduler.processes.splice(_CPUScheduler.counter,1);
                     if (_CPUScheduler.processes.length == 0) {
                         this.isExecuting = false;
+                        _ShouldRun = false;
                     }
                     _CPUScheduler.counter--;
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
@@ -348,6 +349,7 @@ module TSOS {
             //stop execution if its the only process Running
             if (_CPUScheduler.processes.length < 1) {
                 this.isExecuting = false;
+                _ShouldRun = false;
             }
             else {
                 _CPUScheduler.counter--;

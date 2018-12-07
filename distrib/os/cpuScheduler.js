@@ -23,6 +23,7 @@ var TSOS;
             this.cyclesToDo = this.quantum;
         };
         CPUScheduler.prototype.runAll = function () {
+            _ShouldRun = true;
             this.counter = 0;
             //set up the processes queue and ready queue
             for (var i = 0; i < _ResidentQ.length; i++) {
@@ -73,6 +74,9 @@ var TSOS;
                 _StdOut.putText("No process with ID " + args + " running");
                 _StdOut.advanceLine();
             }
+            if (_ReadyQ.length == 0) {
+                _ShouldRun = false;
+            }
         };
         CPUScheduler.prototype.killAll = function () {
             var test;
@@ -80,6 +84,7 @@ var TSOS;
                 test = this.processes[i];
                 this.kill(test.pid);
             }
+            _ShouldRun = false;
         };
         return CPUScheduler;
     }());

@@ -118,7 +118,9 @@ var TSOS;
             if (document.getElementById("btnStep").disabled == false) {
                 document.getElementById("btnStep").disabled = true;
                 _SingleStep = false;
-                _CPU.isExecuting = true;
+                if (_ShouldRun) {
+                    _CPU.isExecuting = true;
+                }
             }
             else {
                 document.getElementById("btnStep").disabled = false;
@@ -128,22 +130,24 @@ var TSOS;
         };
         //on click of the step button one cycle
         Control.hostBtnStep_click = function (btn) {
-            if (_CPUScheduler.cyclesToDo > 0) {
-                _CPU.cycle();
-                _CPU.thePCB.cyclesToComplete++;
-                for (var i = 0; i < _CPUScheduler.processes.length; i++) {
-                    if (_CPUScheduler.processes[i] != _CPU.thePCB) {
-                        _CPUScheduler.processes[i].waitTime++;
+            if (_ShouldRun) {
+                if (_CPUScheduler.cyclesToDo > 0) {
+                    _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if (_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
                     }
                 }
-            }
-            else if (_CPUScheduler.processes.length > 0) {
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
-                _CPU.cycle();
-                _CPU.thePCB.cyclesToComplete++;
-                for (var i = 0; i < _CPUScheduler.processes.length; i++) {
-                    if (_CPUScheduler.processes[i] != _CPU.thePCB) {
-                        _CPUScheduler.processes[i].waitTime++;
+                else if (_CPUScheduler.processes.length > 0) {
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
+                    _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if (_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
                     }
                 }
             }

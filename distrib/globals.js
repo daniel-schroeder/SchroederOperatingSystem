@@ -60,6 +60,7 @@ var _ResidentQ;
 var _ReadyQ;
 var _TerminatedQ;
 var _SingleStep = false;
+var _ShouldExecute = false;
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };
