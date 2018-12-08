@@ -266,6 +266,24 @@ module TSOS {
             document.getElementById("cpuIr").innerHTML = "--";
         }
 
+        //update the disk display on index.html
+        public updateDiskDisplay(row, data): void {
+            var table = document.getElementById("tableDisk");
+            for (var i = 0; i < table.rows.length; i++) {
+                if (table.rows[i].cells[0].innerHTML == row) {
+                    if (data == "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000") {
+                        table.rows[i].cells[1].innerHTML = "0";
+                        table.rows[i].cells[2].innerHTML = "0:0:0";
+                        table.rows[i].cells[3].innerHTML = data.slice(8);
+                    } else {
+                        table.rows[i].cells[1].innerHTML = data.substring(1,2);
+                        table.rows[i].cells[2].innerHTML = data.substring(3,4) + ":" + data.substring(5,6) + ":" + data.substring(7,8);
+                        table.rows[i].cells[3].innerHTML = data.slice(8);
+                    }
+                }
+            }
+        }
+
         public krnTrapError(msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             document.getElementById("display").style.background = "#5ce3f2";

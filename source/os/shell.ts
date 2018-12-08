@@ -88,25 +88,25 @@ module TSOS {
             //funFact
             sc = new ShellCommand(this.shellFunFact,
                                   "funfact",
-                                  "- Displays a fun fact");
+                                  "- Displays a fun fact.");
             this.commandList[this.commandList.length] = sc;
 
             //status <string>
             sc = new ShellCommand(this.shellStatus,
                                   "status",
-                                  "<string> - Displays a status equal to <string>");
+                                  "<string> - Displays a status equal to <string>.");
             this.commandList[this.commandList.length] = sc;
 
             //load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "- Checks to see if the user code is valid");
+                                  "- Checks to see if the user code is valid.");
             this.commandList[this.commandList.length] = sc;
 
             //bsod
             sc = new ShellCommand(this.shellBSOD,
                                   "bsod",
-                                  "- Displays blue screen of death");
+                                  "- Displays blue screen of death.");
             this.commandList[this.commandList.length] = sc;
 
             // man <topic>
@@ -142,7 +142,7 @@ module TSOS {
             //ps
             sc = new ShellCommand(this.shellPS,
                                   "ps",
-                                  " - Shows all processes in memory");
+                                  " - Shows all processes in memory.");
             this.commandList[this.commandList.length] = sc;
 
             //quantum
@@ -405,49 +405,49 @@ module TSOS {
                         _StdOut.putText("Tests the BSOD.");
                         break;
                     case "run":
-                        _StdOut.putText("<pid> - Runs the process with process id of <pid>");
+                        _StdOut.putText("<pid> - Runs the process with process id of <pid>.");
                         break;
                     case "clearmem":
-                        _StdOut.putText("Clears memory");
+                        _StdOut.putText("Clears memory.");
                         break;
                     case "runall":
-                        _StdOut.putText("Runs all processes in memory");
+                        _StdOut.putText("Runs all processes in memory.");
                         break;
                     case "ps":
-                        _StdOut.putText("shows the PID of all processes in memory");
+                        _StdOut.putText("shows the PID of all processes in memory.");
                         break;
                     case "kill":
-                        _StdOut.putText("<pid> - Kills the process with process id of <pid>");
+                        _StdOut.putText("<pid> - Kills the process with process id of <pid>.");
                         break;
                     case "killall":
-                        _StdOut.putText("Kills all processes");
+                        _StdOut.putText("Kills all processes.");
                         break;
                     case "quantum":
-                        _StdOut.putText("<int> - Sets the quantum to <int>");
+                        _StdOut.putText("<int> - Sets the quantum to <int>.");
                         break;
                     case "create":
-                        _StdOut.putText("<filename> - creates file <filename>");
+                        _StdOut.putText("<filename> - creates file <filename>.");
                         break;
                     case "read":
-                        _StdOut.putText("<filename> - Reads and displays contents of <filename>");
+                        _StdOut.putText("<filename> - Reads and displays contents of <filename>.");
                         break;
                     case "write":
-                        _StdOut.putText("<filename> \"text\" - Writes \"text\" to <filename>");
+                        _StdOut.putText("<filename> \"text\" - Writes \"text\" to <filename>.");
                         break;
                     case "delete":
-                        _StdOut.putText("<filename> - Removes <filename> from storage");
+                        _StdOut.putText("<filename> - Removes <filename> from storage.");
                         break;
                     case "format":
-                        _StdOut.putText("Initializes all blocks in all sectors in all tracks");
+                        _StdOut.putText("Initializes all blocks in all sectors in all tracks.");
                         break;
                     case "ls":
-                        _StdOut.putText("Lists all files on disk");
+                        _StdOut.putText("Lists all files on disk.");
                         break;
                     case "setschedule":
-                        _StdOut.putText("<schedule> - Sets the scheduling algoritm to <schedule>");
+                        _StdOut.putText("<schedule> - Sets the scheduling algoritm to <schedule>.");
                         break;
                     case "getschedule":
-                        _StdOut.putText("Gets the current scheduling algorithm");
+                        _StdOut.putText("Gets the current scheduling algorithm.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -719,38 +719,87 @@ module TSOS {
         }
 
         //Creates file <filename>
-        public shellCreate() {
-
+        public shellCreate(args) {
+            if (args.length > 0) {
+                if (args != "") {
+                    var status = _krnFSDriver.createFile(args);
+                    switch (status) {
+                        case 1:
+                            _StdOut.putText("File already exists");
+                            break;
+                        case 2:
+                            _StdOut.putText("Not enough space on disk");
+                            break;
+                        case 3:
+                            _StdOut.putText("File created successfully");
+                            break;
+                    }
+                }
+            } else {
+                _StdOut.putText("Usage: create <filename>  Please supply a filename.");
+            }
         }
 
         //Read and display contents of file <filename>
-        public shellRead() {
-
+        public shellRead(args) {
+            if (args.length > 0) {
+                _StdOut.putText(_krnFSDriver.readFromDisk(args[0]));
+            } else {
+                _StdOut.putText("Usage: read <filename>  Please supply a filename.");
+            }
         }
 
         //Write data inside "" to file <filename>
-        public shellWrite() {
-
+        public shellWrite(args) {
+            if (args.length > 0) {
+                if (args.length == 2) {
+                    if (args[1].substring(0,1) == '"' && args[1].substring(args[1].length-1,args[1].length) == '"') {
+                        _krnFSDriver.writeToDisk(args[0], args[1]);
+                    } else {
+                        _StdOut.putText("Please enclose what you're writing to the file in double quotes (\").");
+                    }
+                } else {
+                    _StdOut.putText("Not the proper number of parameters. Two is what we're looking for.");
+                }
+            } else {
+                _StdOut.putText("Usage: write <filename> \"text\" Please supply a filename and some text enclosed in quotes.");
+            }
         }
 
         //Deletes file <filename>
-        public shellDelete() {
+        public shellDelete(args) {
+            if (args.length > 0) {
 
+            } else {
+                _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
+            }
         }
 
         //Initialize all blocks in all sectors in all tracks
         public shellFormat() {
-
+            if (_ReadyQ.length > 0) {
+                _StdOut.putText("Please terminate all processes before fomating.");
+            } else {
+                _Disk.formatDisk();
+            }
         }
 
         //List all files on disk
         public shellLs() {
-
+            var files = _krnFSDriver.getAllFiles();
+            for (var i = 0; i < files.length; i++) {
+                _StdOut.putText(files[i]);
+                _StdOut.advanceLine();
+            }
         }
 
         //set scheduling algorithm to <schedule>
-        public shellSetSchedule() {
+        public shellSetSchedule(args) {
+            if (args.length > 0) {
 
+            } else {
+                _StdOut.putText("Usage: setschedule <schedule>  Please supply a schedule.");
+            }
         }
 
         //gets current scheduling algorithm

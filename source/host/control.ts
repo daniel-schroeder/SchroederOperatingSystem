@@ -110,6 +110,9 @@ module TSOS {
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
 
+            // initialize Disk
+            _Disk = new TSOS.Disk();
+
             document.getElementById("cpuPC").innerHTML = "000";
             document.getElementById("cpuAcc").innerHTML = "00";
             document.getElementById("cpuX").innerHTML = "00";
