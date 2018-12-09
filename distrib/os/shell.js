@@ -640,9 +640,10 @@ var TSOS;
         //Write data inside "" to file <filename>
         Shell.prototype.shellWrite = function (args) {
             if (args.length > 0) {
-                if (args.length == 2) {
-                    if (args[1].substring(0, 1) == '"' && args[1].substring(args[1].length - 1, args[1].length) == '"') {
-                        _krnFSDriver.writeToDisk(args[0], args[1]);
+                if (args.length >= 2) {
+                    if (args[1].substring(0, 1) == '"' && args[args.length - 1].charAt(args[args.length - 1].length - 1) == '"') {
+                        var text = args.slice(1).join(" ");
+                        _krnFSDriver.writeToDisk(args[0], text);
                     }
                     else {
                         _StdOut.putText("Please enclose what you're writing to the file in double quotes (\").");

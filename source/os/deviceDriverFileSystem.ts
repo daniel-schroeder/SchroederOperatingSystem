@@ -42,7 +42,7 @@ module TSOS {
             return filenames;
         }
 
-        public findOpenSpace(): any {
+        public findOpenBlock(): any {
             var tsb;
             for (var track = 1; track < _Disk.numTracks; track++) {
                 for (var sector = 0; sector < _Disk.numSectors; sector++) {
@@ -97,7 +97,7 @@ module TSOS {
             if (tsbForDirectory == -1) {
                 return 1;
             }
-            var tsbForData = this.findOpenSpace();
+            var tsbForData = this.findOpenBlock();
             if (tsbForData == null) {
                 return 2;
             }
@@ -145,6 +145,51 @@ module TSOS {
             }
         }
 
+        public clearFile(filename, tsb = null): void {
+            if (tsb != null) {
+                var data = sessionStorage.getItem(tsb);
+                if (data == null) {
+                    return;
+                } else {
+                    var nextData;
+                    do {
+                        nextData = sessionStorage.getItem(data[3] + ':' + data[5] + ':' + data[7]);
+                        _Disk.writeToDisk(data[3] + ':' + data[5] + ':' + data[7], "");
+                        data = nextData;
+                    } while ((data[3] != nextData[3]) || (data[5] != nextData[5]) || (data[7] != nextData[7]))
+                    _Disk.writeToDisk(data[3] + ':' + data[5] + ':' + data[7], "");
+                }
+            } else {
+                var tsb;
+                for (var sector = 0; sector < _Disk.numSectors; sector++) {
+                    for (var block = 0; block < _Disk.numblocks; block++) {
+                        //dont need to check 0:0:0
+                        if (sector == 0 && block == 0) {
+                            block++;
+                        }
+                        tsb = [0, sector, block];
+                        var data = _Disk.readFromDisk(tsb);
+                        var j = 8;
+                        var fileExists = true;
+                        if (data[0] + data[1] == "01") {
+                            for (var i = 0; i < filename.length; i++) {
+                                if (filename[i] == String.fromCharCode(parseInt(data[j], 16) + parseInt(data[j+1], 16))) {
+                                    j += 2;
+                                }
+                                else {
+                                    i = filename.length
+                                    fileExists = false;
+                                }
+                            }
+                            if (data[j] + data[j+1] != "00") {
+                                fileExists = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public writeToDisk(filename, text): any {
             var tsb;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
@@ -172,11 +217,30 @@ module TSOS {
                         }
                         if (fileExists) {
                             tsb = [data.substring(3,4), data.substring(5,6), data.substring(7,8)];
-                            var temp = "010" + tsb[0] + "0" + tsb[1] + "0" + tsb[2];
-                            for (var i = 1; i < text.length - 1; i++) {
-                                temp += text.charCodeAt(i).toString(16);
+                            this.clearFile(filename, tsb);
+                            var trimmedText = text.substring(1, text.length-1);
+                            if (trimmedText.length > _Disk.blockSize - 4) {
+                                var numBlocksNeeded = Math.ceil(trimmedText.length / (_Disk.blockSize - 4));
+                                for (var i = 0; i < numBlocksNeeded; i++) {
+                                    var nextTSB = this.findOpenBlock();
+                                    var temp = "010" + nextTSB[0] + "0" + nextTSB[1] + "0" + nextTSB[2];
+                                    for (var j = 0; j < _Disk.blockSize-4; j++) {
+                                        if ((i*_Disk.blockSize-4) + j >= trimmedText.length) {
+                                            j = _Disk.blockSize;
+                                        } else {
+                                            temp += trimmedText.charCodeAt((i*_Disk.blockSize-4) + j).toString(16);
+                                        }
+                                    }
+                                    _Disk.writeToDisk(tsb, temp);
+                                    tsb = nextTSB;
+                                }
+                            } else {
+                                var temp = "010" + tsb[0] + "0" + tsb[1] + "0" + tsb[2];
+                                for (var i = 0; i < trimmedText.length; i++) {
+                                    temp += trimmedText.charCodeAt(i).toString(16);
+                                }
+                                _Disk.writeToDisk(tsb, temp);
                             }
-                            _Disk.writeToDisk(tsb, temp);
                         }
                     }
                 }
