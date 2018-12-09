@@ -51,7 +51,8 @@ module TSOS {
 
         public readStringFromDisk(tsb): String {
             var data = sessionStorage.getItem(tsb[0] + ':' + tsb[1] + ':' + tsb[2]);
-            if ((data[3] == tsb[0]) && (data[1] == tsb[5]) && (data[7] == tsb[2])) {
+            if (((data[3] == tsb[0]) && (data[1] == tsb[5]) && (data[7] == tsb[2]))
+                || tsb[0] == 0) {
                 var stringData = ""
                 for (var i = 8; i < data.length; i+=2) {
                     if ((data[i] + data[i+1]) == "00") {
@@ -62,9 +63,12 @@ module TSOS {
                 }
             } else {
                 var nextData;
+                var stringData = "";
                 do {
+                    if (nextData != null) {
+                        data = nextData;
+                    }
                     nextData = sessionStorage.getItem(data[3] + ':' + data[5] + ':' + data[7]);
-                    var stringData = ""
                     for (var i = 8; i < data.length; i+=2) {
                         if ((data[i] + data[i+1]) == "00") {
                             i = data.length;
@@ -72,8 +76,8 @@ module TSOS {
                             stringData += String.fromCharCode(parseInt((data[i] + data[i+1]), 16));
                         }
                     }
-                    data = nextData;
-                } while ((data[3] != nextData[3]) || (data[5] != nextData[5]) || (data[7] != nextData[7]))
+                    console.log((nextData[3] + ':' + nextData[5] + ':' + nextData[7]))
+                } while ((nextData[3] + ':' + nextData[5] + ':' + nextData[7]) != data[3] + ":" + data[5] + ":" + data[7])
                 for (var i = 8; i < nextData.length; i+=2) {
                     if ((nextData[i] + nextData[i+1]) == "00") {
                         i = nextData.length;

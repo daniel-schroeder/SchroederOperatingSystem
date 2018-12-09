@@ -244,7 +244,7 @@ module TSOS {
 
                                 _Disk.writeToDisk([data[3], data[5], data[7]], "");
                             } while ((data[3] != nextData[3]) || (data[5] != nextData[5]) || (data[7] != nextData[7]))
-                            _Disk.writeToDisk([data[3], data[5], data[7]], "");
+                            _Disk.writeToDisk([nextData[3], nextData[5], nextData[7]], "");
                         } else {
 
                         }
@@ -286,9 +286,9 @@ module TSOS {
                             var trimmedText = text.substring(1, text.length-1);
                             var counter = 0;
                             if (trimmedText.length > _Disk.blockSize - 4) {
+                                var nextTSB = this.findOpenBlock();
                                 var numBlocksNeeded = Math.ceil(trimmedText.length / (_Disk.blockSize - 4));
                                 for (var i = 0; i < numBlocksNeeded; i++) {
-                                    var nextTSB = this.findOpenBlock();
                                     if ((i + 1) != numBlocksNeeded) {
                                         var temp = "010" + nextTSB[0] + "0" + nextTSB[1] + "0" + nextTSB[2];
                                     } else {
@@ -303,7 +303,11 @@ module TSOS {
                                         }
                                     }
                                     _Disk.writeToDisk(tsb, temp);
+                                    if ((i + 1) != numBlocksNeeded) {
+                                        _Disk.writeToDisk(nextTSB, "01");
+                                    }
                                     tsb = nextTSB;
+                                    nextTSB = this.findOpenBlock();
                                 }
                             } else {
                                 var temp = "010" + tsb[0] + "0" + tsb[1] + "0" + tsb[2];
