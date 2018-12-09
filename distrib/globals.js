@@ -21,6 +21,7 @@ var TERMINATE_IRQ = 3;
 var ROUND_ROBIN = 0;
 var PRIORITY = 1;
 var FCFS = 2;
+var DEFAULT_QUANTUM = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

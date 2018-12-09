@@ -27,6 +27,7 @@ var TSOS;
         CPUScheduler.prototype.runAll = function () {
             _ShouldRun = true;
             this.counter = 0;
+            this.cyclesToDo = this.quantum;
             //set up the processes queue and ready queue
             for (var i = 0; i < _ResidentQ.length; i++) {
                 this.processes[i] = _ResidentQ[i];
@@ -92,12 +93,14 @@ var TSOS;
             switch (sched) {
                 case "rr":
                     this.schedule = ROUND_ROBIN;
+                    this.quantum = DEFAULT_QUANTUM;
                     break;
                 case "priority":
                     this.schedule = PRIORITY;
                     break;
                 case "fcfs":
                     this.schedule = FCFS;
+                    this.quantum = 99999999999999;
                     break;
             }
         };

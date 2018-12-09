@@ -47,13 +47,13 @@ module TSOS {
         }
 
         //gets the limit of a program
-        public getLimit(): number {
+        public getLimit(): any {
             var limit = document.getElementById("taProgramInput").value.split(" ").length;
             return limit;
         }
 
         //gets the base of a program
-        public getBase(): number {
+        public getBase(): any {
             var base;
             switch (_MemoryManager.latestPartition) {
                 case 0:
@@ -65,6 +65,7 @@ module TSOS {
                 case 2:
                     base = 512;
                     break;
+                default = null;
 
             }
             return base;

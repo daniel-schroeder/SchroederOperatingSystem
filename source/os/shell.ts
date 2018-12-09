@@ -597,9 +597,18 @@ module TSOS {
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
                 else {
-                    _StdOut.putText("No memory available.");
-                    _StdOut.advanceLine();
-                    _StdOut.putText("Run a program or clear memory with clearmem first");
+                    //load onto disk instead
+                    _PCB = new TSOS.ProcessControlBlock();
+                    //initialize _PCB
+                    _PCB.init();
+                    _PCB.state = "Resident";
+                    _CPU.thePCB = _PCB;
+                    //store _PCB into _ResidentQ
+                    _ResidentQ.push(_PCB);
+                    _krnFSDriver.createFile(["~" + _PCB.pid.toString()]);
+                    _krnFSDriver.writeUserInputToDisk("~" + _PCB.pid.toString(), userInput.split(" "));
+                    _Kernel.addRowToMasterQTable();
+                    _StdOut.putText("Process id = " + _PCB.pid);
                 }
             }
             else {
@@ -722,20 +731,24 @@ module TSOS {
         public shellCreate(args) {
             if (args.length > 0) {
                 if (args != "") {
-                    var status = _krnFSDriver.createFile(args);
-                    switch (status) {
-                        case 1:
-                            _StdOut.putText("File already exists");
-                            break;
-                        case 2:
-                            _StdOut.putText("Not enough space on disk");
-                            break;
-                        case 3:
-                            _StdOut.putText("File created successfully");
-                            break;
-                        case 4:
-                            _StdOut.putText("File created successfully but name shortened because it was too long");
-                            break;
+                    if (args[0].substring(0,1) != "~") {
+                        var status = _krnFSDriver.createFile(args);
+                        switch (status) {
+                            case 1:
+                                _StdOut.putText("File already exists");
+                                break;
+                            case 2:
+                                _StdOut.putText("Not enough space on disk");
+                                break;
+                            case 3:
+                                _StdOut.putText("File created successfully");
+                                break;
+                            case 4:
+                                _StdOut.putText("File created successfully but name shortened because it was too long");
+                                break;
+                        }
+                    } else {
+                        _StdOut.putText("Please dont start a file name with \"~\"");
                     }
                 }
             } else {

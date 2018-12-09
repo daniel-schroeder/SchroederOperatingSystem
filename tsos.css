@@ -74,6 +74,10 @@ table, tr, td, th {
     text-align: left;
 }
 
+.thMasterQ {
+    height: 22px;
+}
+
 .thMasterQState {
     width: 23%;
     text-align: left;
@@ -85,7 +89,7 @@ table, tr, td, th {
 
 #memoryTable {
     width:450px;
-    max-height:188px;
+    max-height:165px;
     overflow-y:scroll;
     overflow-x:hidden;
 }
@@ -121,7 +125,8 @@ table, tr, td, th {
 #masterQTable {
     overflow-x:hidden;
     overflow-y:scroll;
-    max-height:89px;
+    max-height:114px;
+    height:114px;
 }
 
 #tableMasterQ {
@@ -129,6 +134,7 @@ table, tr, td, th {
      border-collapse:collapse;
      width:450px;
      background-color: white;
+     height:114px;
 }
 
 #divLog, #divUserProgramInput, #taHostLog, #taProgramInput {

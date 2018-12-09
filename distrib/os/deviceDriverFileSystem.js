@@ -328,6 +328,76 @@ var TSOS;
                 }
             }
         };
+        FSDeviceDriver.prototype.writeUserInputToDisk = function (filename, text) {
+            var tsb;
+            for (var sector = 0; sector < _Disk.numSectors; sector++) {
+                for (var block = 0; block < _Disk.numblocks; block++) {
+                    //dont need to check 0:0:0
+                    if (sector == 0 && block == 0) {
+                        block++;
+                    }
+                    tsb = [0, sector, block];
+                    var data = _Disk.readFromDisk(tsb);
+                    var j = 8;
+                    var i = 0;
+                    var fileExists = false;
+                    if (data[0] + data[1] == "01") {
+                        while (i < filename.length) {
+                            if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j + 1], 16))) {
+                                j += 2;
+                            }
+                            else {
+                                break;
+                                fileExists = false;
+                            }
+                            i++;
+                        }
+                        if (data[j] + data[j + 1] == "00" && filename[i] == null) {
+                            fileExists = true;
+                        }
+                        if (fileExists) {
+                            tsb = [data.substring(3, 4), data.substring(5, 6), data.substring(7, 8)];
+                            this.clearFile(filename, tsb);
+                            var counter = 0;
+                            if (text.length > _Disk.blockSize - 4) {
+                                var nextTSB = this.findOpenBlock();
+                                var numBlocksNeeded = Math.ceil(text.length / (_Disk.blockSize - 4));
+                                for (var i = 0; i < numBlocksNeeded; i++) {
+                                    if ((i + 1) != numBlocksNeeded) {
+                                        var temp = "010" + nextTSB[0] + "0" + nextTSB[1] + "0" + nextTSB[2];
+                                    }
+                                    else {
+                                        var temp = "010" + tsb[0] + "0" + tsb[1] + "0" + tsb[2];
+                                    }
+                                    for (var j = 0; j < _Disk.blockSize - 4; j++) {
+                                        if (counter >= text.length) {
+                                            j = _Disk.blockSize;
+                                        }
+                                        else {
+                                            temp += text[counter];
+                                            counter++;
+                                        }
+                                    }
+                                    _Disk.writeToDisk(tsb, temp);
+                                    if ((i + 1) != numBlocksNeeded) {
+                                        _Disk.writeToDisk(nextTSB, "01");
+                                    }
+                                    tsb = nextTSB;
+                                    nextTSB = this.findOpenBlock();
+                                }
+                            }
+                            else {
+                                var temp = "010" + tsb[0] + "0" + tsb[1] + "0" + tsb[2];
+                                for (var i = 0; i < text.length; i++) {
+                                    temp += text[i];
+                                }
+                                _Disk.writeToDisk(tsb, temp);
+                            }
+                        }
+                    }
+                }
+            }
+        };
         return FSDeviceDriver;
     }(TSOS.DeviceDriver));
     TSOS.FSDeviceDriver = FSDeviceDriver;

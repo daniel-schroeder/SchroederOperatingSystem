@@ -76,7 +76,6 @@ module TSOS {
                             stringData += String.fromCharCode(parseInt((data[i] + data[i+1]), 16));
                         }
                     }
-                    console.log((nextData[3] + ':' + nextData[5] + ':' + nextData[7]))
                 } while ((nextData[3] + ':' + nextData[5] + ':' + nextData[7]) != data[3] + ":" + data[5] + ":" + data[7])
                 for (var i = 8; i < nextData.length; i+=2) {
                     if ((nextData[i] + nextData[i+1]) == "00") {

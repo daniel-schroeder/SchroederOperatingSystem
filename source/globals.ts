@@ -25,6 +25,8 @@ const TERMINATE_IRQ: number = 3;
 const ROUND_ROBIN: number = 0;
 const PRIORITY: number = 1;
 const FCFS: number = 2;
+
+const DEFAULT_QUANTUM: number = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
