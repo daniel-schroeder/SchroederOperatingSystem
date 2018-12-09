@@ -800,7 +800,20 @@ module TSOS {
         //set scheduling algorithm to <schedule>
         public shellSetSchedule(args) {
             if (args.length > 0) {
-
+                switch (args[0]) {
+                    case "rr":
+                        _CPUScheduler.setSchedule("rr")
+                        break;
+                    case "priority":
+                    _CPUScheduler.setSchedule("priority")
+                        break;
+                    case "fcfs":
+                    _CPUScheduler.setSchedule("fcfs")
+                        break;
+                    default:
+                        _StdOut.putText("Please use rr for round robin, fcfs for first come first serve, or priority for priority.");
+                        break;
+                }
             } else {
                 _StdOut.putText("Usage: setschedule <schedule>  Please supply a schedule.");
             }
@@ -808,7 +821,7 @@ module TSOS {
 
         //gets current scheduling algorithm
         public shellGetSchedule() {
-
+            _StdOut.putText("Current schedule is: " + _CPUScheduler.getSchedule() + ".");
         }
 
         //sets quantum

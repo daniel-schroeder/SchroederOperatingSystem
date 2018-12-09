@@ -8,15 +8,17 @@
 var TSOS;
 (function (TSOS) {
     var CPUScheduler = /** @class */ (function () {
-        function CPUScheduler(quantum, cyclesToDo, processes, counter) {
+        function CPUScheduler(quantum, cyclesToDo, processes, counter, schedule) {
             this.quantum = quantum;
             this.cyclesToDo = cyclesToDo;
             this.processes = processes;
             this.counter = counter;
+            this.schedule = schedule;
             this.quantum = 6;
             this.cyclesToDo = this.quantum;
             this.processes = new Array();
             this.counter = 0;
+            this.schedule = ROUND_ROBIN;
         }
         CPUScheduler.prototype.setQuantum = function (q) {
             this.quantum = q;
@@ -85,6 +87,32 @@ var TSOS;
                 this.kill(test.pid);
             }
             _ShouldRun = false;
+        };
+        CPUScheduler.prototype.setSchedule = function (sched) {
+            switch (sched) {
+                case "rr":
+                    this.schedule = ROUND_ROBIN;
+                    break;
+                case "priority":
+                    this.schedule = PRIORITY;
+                    break;
+                case "fcfs":
+                    this.schedule = FCFS;
+                    break;
+            }
+        };
+        CPUScheduler.prototype.getSchedule = function () {
+            switch (this.schedule) {
+                case ROUND_ROBIN:
+                    return "Round Robin";
+                    break;
+                case PRIORITY:
+                    return "Priority";
+                    break;
+                case FCFS:
+                    return "First Come First Serve";
+                    break;
+            }
         };
         return CPUScheduler;
     }());

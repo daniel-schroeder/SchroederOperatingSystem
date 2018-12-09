@@ -11,12 +11,13 @@ module TSOS {
         constructor(public quantum: number,
                     public cyclesToDo: number,
                     public processes: any,
-                    public counter: number) {
+                    public counter: number,
+                    public schedule: any) {
             this.quantum = 6;
             this.cyclesToDo = this.quantum;
             this.processes = new Array();
             this.counter = 0;
-
+            this.schedule = ROUND_ROBIN;
         }
 
         public setQuantum(q): void {
@@ -91,6 +92,34 @@ module TSOS {
                 this.kill(test.pid);
             }
             _ShouldRun = false;
+        }
+
+        public setSchedule(sched): void {
+            switch (sched) {
+                case "rr":
+                    this.schedule = ROUND_ROBIN;
+                    break;
+                case "priority":
+                    this.schedule = PRIORITY;
+                    break;
+                case "fcfs":
+                    this.schedule = FCFS;
+                    break;
+            }
+        }
+
+        public getSchedule(): String {
+            switch (this.schedule) {
+                case ROUND_ROBIN:
+                    return "Round Robin";
+                    break;
+                case PRIORITY:
+                    return "Priority";
+                    break;
+                case FCFS:
+                    return "First Come First Serve";
+                    break;
+            }
         }
     }
 }

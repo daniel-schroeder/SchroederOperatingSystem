@@ -18,6 +18,9 @@ var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prior
 var KEYBOARD_IRQ = 1;
 var SWITCH_IRQ = 2;
 var TERMINATE_IRQ = 3;
+var ROUND_ROBIN = 0;
+var PRIORITY = 1;
+var FCFS = 2;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
