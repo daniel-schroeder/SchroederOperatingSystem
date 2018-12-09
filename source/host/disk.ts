@@ -18,12 +18,18 @@ module TSOS {
         }
 
         public writeToDisk(tsb, data): void {
+            var editedData = data;
             //fill in rest of block will null character 0
-            while (data.length < this.blockSize * 2) {
-                data += "00";
+            while (editedData.length < this.blockSize * 2) {
+                editedData += "00";
             }
-            sessionStorage.setItem((tsb[0] + ":" + tsb[1] + ":" + tsb[2]), data);
-            _Kernel.updateDiskDisplay((tsb[0] + ":" + tsb[1] + ":" + tsb[2]), data);
+            sessionStorage.setItem((tsb[0] + ":" + tsb[1] + ":" + tsb[2]), editedData);
+            if (data == "") {
+                _Kernel.updateDiskDisplay((tsb[0] + ":" + tsb[1] + ":" + tsb[2]), data);
+            }
+            else {
+                _Kernel.updateDiskDisplay((tsb[0] + ":" + tsb[1] + ":" + tsb[2]), editedData);
+            }
         }
 
         public formatDisk(): void {

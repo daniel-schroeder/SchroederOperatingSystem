@@ -247,10 +247,10 @@ var TSOS;
             var table = document.getElementById("tableDisk");
             for (var i = 0; i < table.rows.length; i++) {
                 if (table.rows[i].cells[0].innerHTML == row) {
-                    if (data == "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000") {
+                    if (data == "") {
                         table.rows[i].cells[1].innerHTML = "0";
                         table.rows[i].cells[2].innerHTML = "0:0:0";
-                        table.rows[i].cells[3].innerHTML = data.slice(8);
+                        table.rows[i].cells[3].innerHTML = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
                     }
                     else {
                         table.rows[i].cells[1].innerHTML = data.substring(1, 2);

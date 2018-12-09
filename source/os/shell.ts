@@ -733,6 +733,9 @@ module TSOS {
                         case 3:
                             _StdOut.putText("File created successfully");
                             break;
+                        case 4:
+                            _StdOut.putText("File created successfully but name shortened because it was too long");
+                            break;
                     }
                 }
             } else {
@@ -770,7 +773,7 @@ module TSOS {
         //Deletes file <filename>
         public shellDelete(args) {
             if (args.length > 0) {
-
+                _krnFSDriver.deleteFile(args[0]);
             } else {
                 _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
             }

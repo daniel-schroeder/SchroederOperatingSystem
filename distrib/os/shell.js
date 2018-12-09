@@ -621,6 +621,9 @@ var TSOS;
                         case 3:
                             _StdOut.putText("File created successfully");
                             break;
+                        case 4:
+                            _StdOut.putText("File created successfully but name shortened because it was too long");
+                            break;
                     }
                 }
             }
@@ -660,6 +663,7 @@ var TSOS;
         //Deletes file <filename>
         Shell.prototype.shellDelete = function (args) {
             if (args.length > 0) {
+                _krnFSDriver.deleteFile(args[0]);
             }
             else {
                 _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
