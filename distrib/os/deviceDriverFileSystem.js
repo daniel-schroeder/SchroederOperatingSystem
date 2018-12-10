@@ -398,7 +398,24 @@ var TSOS;
                 }
             }
         };
-        FSDeviceDriver.prototype.rollIn = function () {
+        FSDeviceDriver.prototype.rollIn = function (pcb) {
+            if (_MemoryManager.partitionOneFree) {
+                pcb.needToSwap = false;
+                _MemoryManager.partitionOneFree;
+                _MemoryManager.clearMemPartition(0);
+            }
+            else if (_MemoryManager.partitionTwoFree) {
+                pcb.needToSwap = false;
+                _MemoryManager.partitionTwoFree;
+                _MemoryManager.clearMemPartition(1);
+            }
+            else if (_MemoryManager.partitionThreeFree) {
+                pcb.needToSwap = false;
+                _MemoryManager.partitionThreeFree;
+                _MemoryManager.clearMemPartition(2);
+            }
+            else {
+            }
         };
         FSDeviceDriver.prototype.rollOut = function () {
             var partition = _CPUScheduler.nextToSwap.location;

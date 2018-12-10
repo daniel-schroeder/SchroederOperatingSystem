@@ -60,7 +60,6 @@ var TSOS;
             //reset cyclesToDo
             this.cyclesToDo = this.quantum;
             this.nextToSwap = _CPU.thePCB;
-            console.log(this.nextToSwap);
             _CPU.thePCB = this.processes[this.counter];
             _CPU.thePCB.state = "Running";
         };
