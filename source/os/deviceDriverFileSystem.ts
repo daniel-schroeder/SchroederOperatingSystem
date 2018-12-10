@@ -59,6 +59,7 @@ module TSOS {
 
         public findInDirectory(filename): any {
             var tsb;
+            var fileExists = false;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
                 for (var block = 0; block < _Disk.numblocks; block++) {
                     //dont need to check 0:0:0
@@ -69,7 +70,6 @@ module TSOS {
                     var data = _Disk.readFromDisk(tsb);
                     var j = 8;
                     var i = 0;
-                    var fileExists = false;
                     if (data[0] + data[1] == "01") {
                         while (i < filename[0].length) {
                             if (filename[0].substring(i,i+1) == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -77,7 +77,6 @@ module TSOS {
                             }
                             else {
                                 break;
-                                fileExists = false;
                             }
                             i++;
                         }
@@ -86,16 +85,16 @@ module TSOS {
                         }
                         if (fileExists) {
                             return tsb;
-                        } else {
-                            return -1;
                         }
                     }
                 }
             }
+            return -1;
         }
 
         public findSpotInDirectory(filename): any {
             var tsb;
+            var fileExists = false;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
                 for (var block = 0; block < _Disk.numblocks; block++) {
                     //dont need to check 0:0:0
@@ -106,7 +105,6 @@ module TSOS {
                     var data = _Disk.readFromDisk(tsb);
                     var j = 8;
                     var i = 0;
-                    var fileExists = false;
                     if (data[0] + data[1] == "01") {
                         while (i < filename.length) {
                             if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -157,6 +155,7 @@ module TSOS {
 
         public readFromDisk(filename): any {
             var tsb;
+            var fileExists = false;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
                 for (var block = 0; block < _Disk.numblocks; block++) {
                     //dont need to check 0:0:0
@@ -167,7 +166,6 @@ module TSOS {
                     var data = _Disk.readFromDisk(tsb);
                     var j = 8;
                     var i = 0;
-                    var fileExists = false;
                     if (data[0] + data[1] == "01") {
                         while (i < filename.length) {
                             if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -193,6 +191,7 @@ module TSOS {
 
         public deleteFile(filename): void {
             var tsb;
+            var fileExists = false;
             this.clearFile(filename);
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
                 for (var block = 0; block < _Disk.numblocks; block++) {
@@ -204,7 +203,6 @@ module TSOS {
                     var data = _Disk.readFromDisk(tsb);
                     var j = 8;
                     var i = 0;
-                    var fileExists = false;
                     if (data[0] + data[1] == "01") {
                         while (i < filename.length) {
                             if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -235,14 +233,15 @@ module TSOS {
                 } else {
                     var nextData;
                     do {
-                        nextData = sessionStorage.getItem(data[3] + ':' + data[5] + ':' + data[7]);
-                        _Disk.writeToDisk(data[3] + ':' + data[5] + ':' + data[7], "");
+                        nextData = sessionStorage.getItem(data[3] + ":" + data[5] + ":" + data[7]);
+                        _Disk.writeToDisk(data[3] + ":" + data[5] + ":" + data[7], "");
                         data = nextData;
                     } while ((data[3] != nextData[3]) || (data[5] != nextData[5]) || (data[7] != nextData[7]))
-                    _Disk.writeToDisk(data[3] + ':' + data[5] + ':' + data[7], "");
+                    _Disk.writeToDisk(data[3] + ":" + data[5] + ":" + data[7], "");
                 }
             } else {
                 var tsb;
+                var fileExists = false;
                 for (var sector = 0; sector < _Disk.numSectors; sector++) {
                     for (var block = 0; block < _Disk.numblocks; block++) {
                         //dont need to check 0:0:0
@@ -253,7 +252,6 @@ module TSOS {
                         var data = _Disk.readFromDisk(tsb);
                         var j = 8;
                         var i = 0;
-                        var fileExists = false;
                         if (data[0] + data[1] == "01") {
                             while (i < filename.length) {
                                 if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -275,7 +273,7 @@ module TSOS {
                                 if (nextData != null) {
                                     data = nextData;
                                 }
-                                nextData = sessionStorage.getItem(data[3] + ':' + data[5] + ':' + data[7]);
+                                nextData = sessionStorage.getItem(data[3] + ":" + data[5] + ":" + data[7]);
 
                                 _Disk.writeToDisk([data[3], data[5], data[7]], "");
                             } while ((data[3] != nextData[3]) || (data[5] != nextData[5]) || (data[7] != nextData[7]))
@@ -290,6 +288,7 @@ module TSOS {
 
         public writeToDisk(filename, text): any {
             var tsb;
+            var fileExists = false;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
                 for (var block = 0; block < _Disk.numblocks; block++) {
                     //dont need to check 0:0:0
@@ -300,7 +299,6 @@ module TSOS {
                     var data = _Disk.readFromDisk(tsb);
                     var j = 8;
                     var i = 0;
-                    var fileExists = false;
                     if (data[0] + data[1] == "01") {
                         while (i < filename.length) {
                             if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -359,6 +357,7 @@ module TSOS {
 
         public writeUserInputToDisk(filename, text): any {
             var tsb;
+            var fileExists = false;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
                 for (var block = 0; block < _Disk.numblocks; block++) {
                     //dont need to check 0:0:0
@@ -369,7 +368,6 @@ module TSOS {
                     var data = _Disk.readFromDisk(tsb);
                     var j = 8;
                     var i = 0;
-                    var fileExists = false;
                     if (data[0] + data[1] == "01") {
                         while (i < filename.length) {
                             if (filename[i] == String.fromCharCode((data[j] * 16) + parseInt(data[j+1], 16))) {
@@ -427,25 +425,27 @@ module TSOS {
         }
 
         public rollIn(pcb): void {
-            var data = _Disk.readFromDisk(pcb.tsb[0] + ":" + pcb.tsb[1] + ":" + pcb.tsb[2]);
+            var data = _Disk.readFromDisk([pcb.tsb[0], pcb.tsb[1], pcb.tsb[2]]);
+            var tsbOfData = [data.substring(3,4), data.substring(5,6), data.substring(7,8)];
+            var text = _Disk.readOpCodesFromDisk(tsbOfData);
             if (_MemoryManager.partitionOneFree) {
                 pcb.needToSwap = false;
                 pcb.location = 0;
                 _MemoryManager.partitionOneFree
                 _MemoryManager.clearMemPartition(0);
-                _Disk.readStringFromDisk(data[3] + ":" + data[5] + ":" + data[7])
+                _MemoryManager.loadProgram(text.split(" "))
             } else if (_MemoryManager.partitionTwoFree) {
                 pcb.needToSwap = false;
                 pcb.location = 1;
                 _MemoryManager.partitionTwoFree
                 _MemoryManager.clearMemPartition(1);
-                _Disk.readStringFromDisk(data[3] + ":" + data[5] + ":" + data[7])
+                _MemoryManager.loadProgram(text.split(" "))
             } else if (_MemoryManager.partitionThreeFree) {
                 pcb.needToSwap = false;
                 pcb.location = 2;
                 _MemoryManager.partitionThreeFree
                 _MemoryManager.clearMemPartition(2);
-                _Disk.readStringFromDisk(data[3] + ":" + data[5] + ":" + data[7])
+                _MemoryManager.loadProgram(text.split(" "))
             } else {
 
             }
@@ -467,11 +467,12 @@ module TSOS {
             pcb.location = 4;
             pcb.needToSwap = true;
             this.createFile(["~" + pcb.pid]);
+            pcb.tsb = this.findInDirectory(["~" + pcb.pid.toString()])
             var stuffToRollOut = "";
             for (var i = pcb.base; i < pcb.limit; i++) {
-                stuffToRollOut += _Memory.mem[i];
+                stuffToRollOut += _Memory.mem[i] + ",";
             }
-            this.writeUserInputToDisk(["~" + pcb.pid], stuffToRollOut);
+            this.writeUserInputToDisk("~" + pcb.pid.toString(), stuffToRollOut);
         }
     }
 }

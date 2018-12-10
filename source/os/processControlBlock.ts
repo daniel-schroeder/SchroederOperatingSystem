@@ -35,7 +35,7 @@ module TSOS {
             this.yreg = 0;
             this.zflag = 0;
             this.accumulator = 0;
-            this.base = this.getBase();
+            this.base = this.getBase(_MemoryManager.latestPartition);
             this.limit = this.base + this.getLimit();
             this.location = location;
             this.state = "Ready";
@@ -63,9 +63,9 @@ module TSOS {
         }
 
         //gets the base of a program
-        public getBase(): any {
+        public getBase(partition): any {
             var base;
-            switch (_MemoryManager.latestPartition) {
+            switch (partition) {
                 case 0:
                     base = 0;
                     break;

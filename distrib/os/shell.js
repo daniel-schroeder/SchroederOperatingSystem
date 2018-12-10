@@ -486,7 +486,7 @@ var TSOS;
                     _MemoryManager.partitionTwoFree ||
                     _MemoryManager.partitionThreeFree) {
                     //loadProgram
-                    _MemoryManager.loadProgram();
+                    _MemoryManager.loadProgram(userInput.split(" "));
                     //create a new pcb for process and store it in _PCB
                     _PCB = new TSOS.ProcessControlBlock();
                     //initialize _PCB
@@ -513,7 +513,6 @@ var TSOS;
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
-                console.log(_PCB);
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");

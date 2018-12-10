@@ -65,8 +65,8 @@ module TSOS {
             this.nextToSwap = _CPU.thePCB;
             _CPU.thePCB = this.processes[this.counter];
             if (_CPU.thePCB.needToSwap) {
-                _krnFSDriver.RollOut(this.nextToSwap);
-                _krnFSDriver.RollOut(_CPU.thePCB);
+                _krnFSDriver.rollOut(this.nextToSwap);
+                _krnFSDriver.rollIn(_CPU.thePCB);
             }
             _CPU.thePCB.state = "Running"
         }

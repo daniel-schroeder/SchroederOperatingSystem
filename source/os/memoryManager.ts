@@ -22,7 +22,7 @@ module TSOS {
         }
 
         //load the program into memory
-        public loadProgram(): void {
+        public loadProgram(userInput): void {
             var partitionBase;
             if (this.partitionOneFree) {
                 partitionBase = 0;
@@ -45,9 +45,6 @@ module TSOS {
                 this.partitionThreeFree = false;
                 this.latestPartition = 2;
             }
-
-            //splits the userInput on " "
-            var userInput = document.getElementById("taProgramInput").value.split(" ");
             //sets each loacation in memory to the user input starting at 0000
             for (var i = 0; i < userInput.length; i++) {
                 this.memory[partitionBase] = userInput[i];
