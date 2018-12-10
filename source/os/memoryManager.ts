@@ -46,6 +46,7 @@ module TSOS {
                 this.latestPartition = 2;
             }
             //sets each loacation in memory to the user input starting at 0000
+            console.log(userInput)
             for (var i = 0; i < userInput.length; i++) {
                 this.memory[partitionBase] = userInput[i];
                 //update memory table

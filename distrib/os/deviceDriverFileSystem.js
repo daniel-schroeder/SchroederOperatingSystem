@@ -442,6 +442,8 @@ var TSOS;
                 pcb.location = 0;
                 _MemoryManager.partitionOneFree;
                 _MemoryManager.clearMemPartition(0);
+                pcb.base = pcb.getBase(0);
+                pcb.limit = pcb.base + text.split(" ").length;
                 _MemoryManager.loadProgram(text.split(" "));
             }
             else if (_MemoryManager.partitionTwoFree) {
@@ -449,6 +451,8 @@ var TSOS;
                 pcb.location = 1;
                 _MemoryManager.partitionTwoFree;
                 _MemoryManager.clearMemPartition(1);
+                pcb.base = pcb.getBase(1);
+                pcb.limit = pcb.base + text.split(" ").length;
                 _MemoryManager.loadProgram(text.split(" "));
             }
             else if (_MemoryManager.partitionThreeFree) {
@@ -456,6 +460,8 @@ var TSOS;
                 pcb.location = 2;
                 _MemoryManager.partitionThreeFree;
                 _MemoryManager.clearMemPartition(2);
+                pcb.base = pcb.getBase(2);
+                pcb.limit = pcb.base + text.split(" ").length;
                 _MemoryManager.loadProgram(text.split(" "));
             }
             else {

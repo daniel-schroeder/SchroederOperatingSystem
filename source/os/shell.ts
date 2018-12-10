@@ -599,6 +599,7 @@ module TSOS {
                     _PCB.init(priority);
                     _PCB.state = "Resident";
                     _CPU.thePCB = _PCB;
+                    _CPUScheduler.nextToSwap = _PCB;
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
                     _Kernel.addRowToMasterQTable();

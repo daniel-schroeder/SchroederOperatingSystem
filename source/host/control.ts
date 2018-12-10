@@ -108,10 +108,11 @@ module TSOS {
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
-            _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
 
             // initialize Disk
             _Disk = new TSOS.Disk();
+
+            _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
 
             document.getElementById("cpuPC").innerHTML = "000";
             document.getElementById("cpuAcc").innerHTML = "00";
