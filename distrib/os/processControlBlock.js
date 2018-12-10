@@ -9,7 +9,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, location, state, cyclesToComplete, waitTime, needToSwap, priority) {
+        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, location, state, cyclesToComplete, waitTime, needToSwap, priority, tsb) {
             if (pid === void 0) { pid = 0; }
             if (pc === void 0) { pc = 0; }
             if (xreg === void 0) { xreg = 0; }
@@ -33,10 +33,11 @@ var TSOS;
             this.waitTime = waitTime;
             this.needToSwap = needToSwap;
             this.priority = priority;
+            this.tsb = tsb;
         }
-        ProcessControlBlock.prototype.init = function (priority, loaction) {
+        ProcessControlBlock.prototype.init = function (priority, location) {
             if (priority === void 0) { priority = 32; }
-            if (loaction === void 0) { loaction = _MemoryManager.latestPartition; }
+            if (location === void 0) { location = _MemoryManager.latestPartition; }
             this.pid = this.nextPID();
             this.pc = 0;
             this.xreg = 0;
@@ -49,8 +50,9 @@ var TSOS;
             this.state = "Ready";
             this.cyclesToComplete = 0;
             this.waitTime = 0;
-            if (this.base == null) {
+            if (this.location == 4) {
                 this.needToSwap = true;
+                this.tsb = _krnFSDriver.findInDirectory(["~" + this.pid.toString()]);
             }
             else {
                 this.needToSwap = false;

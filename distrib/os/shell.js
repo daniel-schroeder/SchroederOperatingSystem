@@ -508,10 +508,12 @@ var TSOS;
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
                     _krnFSDriver.createFile(["~" + _PCB.pid.toString()]);
+                    _PCB.tsb = _krnFSDriver.findInDirectory(["~" + _PCB.pid.toString()]);
                     _krnFSDriver.writeUserInputToDisk("~" + _PCB.pid.toString(), userInput.split(" "));
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
+                console.log(_PCB);
             }
             else {
                 _StdOut.putText("Text in input area is not valid code");

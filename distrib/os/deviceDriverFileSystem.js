@@ -65,6 +65,43 @@ var TSOS;
                 }
             }
         };
+        FSDeviceDriver.prototype.findInDirectory = function (filename) {
+            var tsb;
+            for (var sector = 0; sector < _Disk.numSectors; sector++) {
+                for (var block = 0; block < _Disk.numblocks; block++) {
+                    //dont need to check 0:0:0
+                    if (sector == 0 && block == 0) {
+                        block++;
+                    }
+                    tsb = [0, sector, block];
+                    var data = _Disk.readFromDisk(tsb);
+                    var j = 8;
+                    var i = 0;
+                    var fileExists = false;
+                    if (data[0] + data[1] == "01") {
+                        while (i < filename[0].length) {
+                            if (filename[0].substring(i, i + 1) == String.fromCharCode((data[j] * 16) + parseInt(data[j + 1], 16))) {
+                                j += 2;
+                            }
+                            else {
+                                break;
+                                fileExists = false;
+                            }
+                            i++;
+                        }
+                        if (data[j] + data[j + 1] == "00" && filename[0].substring(i, i + 1) == "") {
+                            fileExists = true;
+                        }
+                        if (fileExists) {
+                            return tsb;
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                }
+            }
+        };
         FSDeviceDriver.prototype.findSpotInDirectory = function (filename) {
             var tsb;
             for (var sector = 0; sector < _Disk.numSectors; sector++) {
@@ -359,6 +396,7 @@ var TSOS;
                             tsb = [data.substring(3, 4), data.substring(5, 6), data.substring(7, 8)];
                             this.clearFile(filename, tsb);
                             var counter = 0;
+                            text = text.toString().toLowerCase().split(",");
                             if (text.length > _Disk.blockSize - 4) {
                                 var nextTSB = this.findOpenBlock();
                                 var numBlocksNeeded = Math.ceil(text.length / (_Disk.blockSize - 4));
@@ -399,44 +437,52 @@ var TSOS;
             }
         };
         FSDeviceDriver.prototype.rollIn = function (pcb) {
+            var data = _Disk.readFromDisk(pcb.tsb[0] + ":" + pcb.tsb[1] + ":" + pcb.tsb[2]);
             if (_MemoryManager.partitionOneFree) {
                 pcb.needToSwap = false;
+                pcb.location = 0;
                 _MemoryManager.partitionOneFree;
                 _MemoryManager.clearMemPartition(0);
+                _Disk.readStringFromDisk(data[3] + ":" + data[5] + ":" + data[7]);
             }
             else if (_MemoryManager.partitionTwoFree) {
                 pcb.needToSwap = false;
+                pcb.location = 1;
                 _MemoryManager.partitionTwoFree;
                 _MemoryManager.clearMemPartition(1);
+                _Disk.readStringFromDisk(data[3] + ":" + data[5] + ":" + data[7]);
             }
             else if (_MemoryManager.partitionThreeFree) {
                 pcb.needToSwap = false;
+                pcb.location = 2;
                 _MemoryManager.partitionThreeFree;
                 _MemoryManager.clearMemPartition(2);
+                _Disk.readStringFromDisk(data[3] + ":" + data[5] + ":" + data[7]);
             }
             else {
             }
         };
-        FSDeviceDriver.prototype.rollOut = function () {
-            var partition = _CPUScheduler.nextToSwap.location;
+        FSDeviceDriver.prototype.rollOut = function (pcb) {
+            var partition = pcb.location;
             switch (partition) {
-                case 1:
+                case 0:
                     _MemoryManager.partitionOneFree = true;
                     break;
-                case 2:
+                case 1:
                     _MemoryManager.partitionTwoFree = true;
                     break;
-                case 3:
+                case 2:
                     _MemoryManager.partitionThreeFree = true;
                     break;
             }
-            _CPUScheduler.nextToSwap.location = 4;
-            this.createFile(["~" + _CPUScheduler.nextToSwap.pid]);
+            pcb.location = 4;
+            pcb.needToSwap = true;
+            this.createFile(["~" + pcb.pid]);
             var stuffToRollOut = "";
-            for (var i = _CPUScheduler.nextToSwap.base; i < _CPUScheduler.nextToSwap.limit; i++) {
+            for (var i = pcb.base; i < pcb.limit; i++) {
                 stuffToRollOut += _Memory.mem[i];
             }
-            this.writeUserInputToDisk(["~" + _CPUScheduler.nextToSwap.pid], stuffToRollOut);
+            this.writeUserInputToDisk(["~" + pcb.pid], stuffToRollOut);
         };
         return FSDeviceDriver;
     }(TSOS.DeviceDriver));

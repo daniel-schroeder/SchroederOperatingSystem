@@ -24,10 +24,11 @@ module TSOS {
                     public cyclesToComplete: number,
                     public waitTime: number,
                     public needToSwap: boolean,
-                    public priority: number) {
+                    public priority: number,
+                    public tsb: any) {
         }
 
-        public init(priority = 32, loaction = _MemoryManager.latestPartition): void {
+        public init(priority = 32, location = _MemoryManager.latestPartition): void {
             this.pid = this.nextPID();
             this.pc = 0;
             this.xreg = 0;
@@ -40,8 +41,9 @@ module TSOS {
             this.state = "Ready";
             this.cyclesToComplete = 0;
             this.waitTime = 0;
-            if (this.base == null) {
+            if (this.location == 4) {
                 this.needToSwap = true;
+                this.tsb = _krnFSDriver.findInDirectory(["~" + this.pid.toString()]);
             } else {
                 this.needToSwap = false;
             }
