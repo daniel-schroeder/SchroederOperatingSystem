@@ -715,12 +715,15 @@ var TSOS;
                 switch (args[0]) {
                     case "rr":
                         _CPUScheduler.setSchedule("rr");
+                        document.getElementById("schedule").innerHTML = "Master Queue &nbsp;&nbsp;&nbsp; Schedule: Round Robin";
                         break;
                     case "priority":
                         _CPUScheduler.setSchedule("priority");
+                        document.getElementById("schedule").innerHTML = "Master Queue &nbsp;&nbsp;&nbsp; Schedule: Priority";
                         break;
                     case "fcfs":
                         _CPUScheduler.setSchedule("fcfs");
+                        document.getElementById("schedule").innerHTML = "Master Queue &nbsp;&nbsp;&nbsp; Schedule: First Come First Serve";
                         break;
                     default:
                         _StdOut.putText("Please use rr for round robin, fcfs for first come first serve, or priority for priority.");

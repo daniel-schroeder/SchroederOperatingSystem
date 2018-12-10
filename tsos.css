@@ -30,6 +30,11 @@ h3 {
   font-style: normal;
 }
 
+#schedule {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
 #display {
   background-color:#DFDBC3;
   border: 2px solid red;
@@ -195,7 +200,7 @@ table, tr, td, th {
 
 #diskTable {
     overflow:scroll;
-    max-height:182px;
+    max-height:175px;
     max-width: 450px;
 }
 
