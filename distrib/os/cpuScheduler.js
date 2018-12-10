@@ -8,12 +8,13 @@
 var TSOS;
 (function (TSOS) {
     var CPUScheduler = /** @class */ (function () {
-        function CPUScheduler(quantum, cyclesToDo, processes, counter, schedule) {
+        function CPUScheduler(quantum, cyclesToDo, processes, counter, schedule, nextToSwap) {
             this.quantum = quantum;
             this.cyclesToDo = cyclesToDo;
             this.processes = processes;
             this.counter = counter;
             this.schedule = schedule;
+            this.nextToSwap = nextToSwap;
             this.quantum = 6;
             this.cyclesToDo = this.quantum;
             this.processes = new Array();
@@ -58,6 +59,8 @@ var TSOS;
             }
             //reset cyclesToDo
             this.cyclesToDo = this.quantum;
+            this.nextToSwap = _CPU.thePCB;
+            console.log(this.nextToSwap);
             _CPU.thePCB = this.processes[this.counter];
             _CPU.thePCB.state = "Running";
         };

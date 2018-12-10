@@ -12,7 +12,8 @@ module TSOS {
                     public cyclesToDo: number,
                     public processes: any,
                     public counter: number,
-                    public schedule: any) {
+                    public schedule: any,
+                    public nextToSwap: any) {
             this.quantum = 6;
             this.cyclesToDo = this.quantum;
             this.processes = new Array();
@@ -61,6 +62,7 @@ module TSOS {
             }
             //reset cyclesToDo
             this.cyclesToDo = this.quantum;
+            this.nextToSwap = _CPU.thePCB;
             _CPU.thePCB = this.processes[this.counter];
             _CPU.thePCB.state = "Running"
         }

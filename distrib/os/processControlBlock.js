@@ -9,7 +9,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, partition, state, cyclesToComplete, waitTime) {
+        function ProcessControlBlock(pid, pc, xreg, yreg, zflag, accumulator, base, limit, location, state, cyclesToComplete, waitTime, needToSwap, priority) {
             if (pid === void 0) { pid = 0; }
             if (pc === void 0) { pc = 0; }
             if (xreg === void 0) { xreg = 0; }
@@ -27,12 +27,16 @@ var TSOS;
             this.accumulator = accumulator;
             this.base = base;
             this.limit = limit;
-            this.partition = partition;
+            this.location = location;
             this.state = state;
             this.cyclesToComplete = cyclesToComplete;
             this.waitTime = waitTime;
+            this.needToSwap = needToSwap;
+            this.priority = priority;
         }
-        ProcessControlBlock.prototype.init = function () {
+        ProcessControlBlock.prototype.init = function (priority, loaction) {
+            if (priority === void 0) { priority = 32; }
+            if (loaction === void 0) { loaction = _MemoryManager.latestPartition; }
             this.pid = this.nextPID();
             this.pc = 0;
             this.xreg = 0;
@@ -41,10 +45,17 @@ var TSOS;
             this.accumulator = 0;
             this.base = this.getBase();
             this.limit = this.base + this.getLimit();
-            this.partition = _MemoryManager.latestPartition;
+            this.location = location;
             this.state = "Ready";
             this.cyclesToComplete = 0;
             this.waitTime = 0;
+            if (this.base == null) {
+                this.needToSwap = true;
+            }
+            else {
+                this.needToSwap = false;
+            }
+            this.priority = priority;
         };
         //gets and returns the next PID using latestPID
         ProcessControlBlock.prototype.nextPID = function () {
@@ -69,6 +80,8 @@ var TSOS;
                 case 2:
                     base = 512;
                     break;
+                default:
+                    base = null;
             }
             return base;
         };

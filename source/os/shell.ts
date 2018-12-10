@@ -575,10 +575,18 @@ module TSOS {
         }
 
         //check if the text in the user input area is valid and load into memory
-        public shellLoad() {
+        public shellLoad(args) {
             var userInput = document.getElementById("taProgramInput").value;
             //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
+                var priority;
+                if (args[0] != undefined) {
+                    priority = parseInt(args[0]);
+                    if (isNaN(priority)) {
+                        _StdOut.putText("Priority must be a number.");
+                        priority == null;
+                    }
+                }
                 if (_MemoryManager.partitionOneFree ||
                     _MemoryManager.partitionTwoFree ||
                     _MemoryManager.partitionThreeFree) {
@@ -588,19 +596,18 @@ module TSOS {
                     //create a new pcb for process and store it in _PCB
                     _PCB = new TSOS.ProcessControlBlock();
                     //initialize _PCB
-                    _PCB.init();
+                    _PCB.init(priority);
                     _PCB.state = "Resident";
                     _CPU.thePCB = _PCB;
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
-                }
-                else {
+                } else {
                     //load onto disk instead
                     _PCB = new TSOS.ProcessControlBlock();
                     //initialize _PCB
-                    _PCB.init();
+                    _PCB.init(priority, 4);
                     _PCB.state = "Resident";
                     _CPU.thePCB = _PCB;
                     //store _PCB into _ResidentQ
@@ -610,8 +617,7 @@ module TSOS {
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
-            }
-            else {
+            } else {
                 _StdOut.putText("Text in input area is not valid code");
             }
         }

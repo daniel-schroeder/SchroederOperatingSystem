@@ -470,10 +470,18 @@ var TSOS;
             }
         };
         //check if the text in the user input area is valid and load into memory
-        Shell.prototype.shellLoad = function () {
+        Shell.prototype.shellLoad = function (args) {
             var userInput = document.getElementById("taProgramInput").value;
             //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
+                var priority;
+                if (args[0] != undefined) {
+                    priority = parseInt(args[0]);
+                    if (isNaN(priority)) {
+                        _StdOut.putText("Priority must be a number.");
+                        priority == null;
+                    }
+                }
                 if (_MemoryManager.partitionOneFree ||
                     _MemoryManager.partitionTwoFree ||
                     _MemoryManager.partitionThreeFree) {
@@ -482,7 +490,7 @@ var TSOS;
                     //create a new pcb for process and store it in _PCB
                     _PCB = new TSOS.ProcessControlBlock();
                     //initialize _PCB
-                    _PCB.init();
+                    _PCB.init(priority);
                     _PCB.state = "Resident";
                     _CPU.thePCB = _PCB;
                     //store _PCB into _ResidentQ
@@ -494,7 +502,7 @@ var TSOS;
                     //load onto disk instead
                     _PCB = new TSOS.ProcessControlBlock();
                     //initialize _PCB
-                    _PCB.init();
+                    _PCB.init(priority, 4);
                     _PCB.state = "Resident";
                     _CPU.thePCB = _PCB;
                     //store _PCB into _ResidentQ

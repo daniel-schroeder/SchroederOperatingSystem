@@ -19,13 +19,15 @@ module TSOS {
                     public accumulator: number = 0,
                     public base: number = 0,
                     public limit: number = 0,
-                    public partition: number,
+                    public location: number,
                     public state: String = "",
                     public cyclesToComplete: number,
-                    public waitTime: number) {
+                    public waitTime: number,
+                    public needToSwap: boolean,
+                    public priority: number) {
         }
 
-        public init(): void {
+        public init(priority = 32, loaction = _MemoryManager.latestPartition): void {
             this.pid = this.nextPID();
             this.pc = 0;
             this.xreg = 0;
@@ -34,10 +36,16 @@ module TSOS {
             this.accumulator = 0;
             this.base = this.getBase();
             this.limit = this.base + this.getLimit();
-            this.partition = _MemoryManager.latestPartition;
+            this.location = location;
             this.state = "Ready";
             this.cyclesToComplete = 0;
             this.waitTime = 0;
+            if (this.base == null) {
+                this.needToSwap = true;
+            } else {
+                this.needToSwap = false;
+            }
+            this.priority = priority;
         }
 
         //gets and returns the next PID using latestPID
@@ -65,7 +73,8 @@ module TSOS {
                 case 2:
                     base = 512;
                     break;
-                default = null;
+                default:
+                    base = null;
 
             }
             return base;

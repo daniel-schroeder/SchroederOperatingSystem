@@ -387,5 +387,48 @@ module TSOS {
                 }
             }
         }
+
+        public rollIn(pcb): void {
+            if (_MemoryManager.partitionOneFree) {
+                pcb.needToSwap = false;
+                _MemoryManager.partitionOneFree
+                _MemoryManager.clearMemPartition(0);
+
+            } else if (_MemoryManager.partitionTwoFree) {
+                pcb.needToSwap = false;
+                _MemoryManager.partitionTwoFree
+                _MemoryManager.clearMemPartition(1);
+
+            } else if (_MemoryManager.partitionThreeFree) {
+                pcb.needToSwap = false;
+                _MemoryManager.partitionThreeFree
+                _MemoryManager.clearMemPartition(2);
+
+            } else {
+
+            }
+        }
+
+        public rollOut(): void {
+            var partition = _CPUScheduler.nextToSwap.location;
+            switch (partition) {
+                case 1:
+                    _MemoryManager.partitionOneFree = true;
+                    break;
+                case 2:
+                    _MemoryManager.partitionTwoFree = true;
+                    break;
+                case 3:
+                    _MemoryManager.partitionThreeFree = true;
+                    break;
+            }
+            _CPUScheduler.nextToSwap.location = 4;
+            this.createFile(["~" + _CPUScheduler.nextToSwap.pid]);
+            var stuffToRollOut = "";
+            for (var i = _CPUScheduler.nextToSwap.base; i < _CPUScheduler.nextToSwap.limit; i++) {
+                stuffToRollOut += _Memory.mem[i];
+            }
+            this.writeUserInputToDisk(["~" + _CPUScheduler.nextToSwap.pid], stuffToRollOut);
+        }
     }
 }

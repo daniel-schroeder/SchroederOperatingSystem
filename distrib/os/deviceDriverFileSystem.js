@@ -398,6 +398,29 @@ var TSOS;
                 }
             }
         };
+        FSDeviceDriver.prototype.rollIn = function () {
+        };
+        FSDeviceDriver.prototype.rollOut = function () {
+            var partition = _CPUScheduler.nextToSwap.location;
+            switch (partition) {
+                case 1:
+                    _MemoryManager.partitionOneFree = true;
+                    break;
+                case 2:
+                    _MemoryManager.partitionTwoFree = true;
+                    break;
+                case 3:
+                    _MemoryManager.partitionThreeFree = true;
+                    break;
+            }
+            _CPUScheduler.nextToSwap.location = 4;
+            this.createFile(["~" + _CPUScheduler.nextToSwap.pid]);
+            var stuffToRollOut = "";
+            for (var i = _CPUScheduler.nextToSwap.base; i < _CPUScheduler.nextToSwap.limit; i++) {
+                stuffToRollOut += _Memory.mem[i];
+            }
+            this.writeUserInputToDisk(["~" + _CPUScheduler.nextToSwap.pid], stuffToRollOut);
+        };
         return FSDeviceDriver;
     }(TSOS.DeviceDriver));
     TSOS.FSDeviceDriver = FSDeviceDriver;
