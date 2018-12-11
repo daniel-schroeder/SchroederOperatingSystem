@@ -49,12 +49,13 @@ var TSOS;
         };
         Disk.prototype.readStringFromDisk = function (tsb) {
             var data = sessionStorage.getItem(tsb[0] + ":" + tsb[1] + ":" + tsb[2]);
-            if (((data[3] == tsb[0]) && (data[1] == tsb[5]) && (data[7] == tsb[2]))
+            if (((data[3] == tsb[0]) && (data[5] == tsb[1]) && (data[7] == tsb[2]))
                 || tsb[0] == 0) {
                 var stringData = "";
                 for (var i = 8; i < data.length; i += 2) {
                     if ((data[i] + data[i + 1]) == "00") {
                         i = data.length;
+                        break;
                     }
                     else {
                         stringData += String.fromCharCode(parseInt((data[i] + data[i + 1]), 16));

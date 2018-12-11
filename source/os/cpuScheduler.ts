@@ -126,6 +126,9 @@ module TSOS {
                 this.kill(test.pid);
             }
             _ShouldRun = false;
+            for (var i = 0; i < _TerminatedQ.length; i++) {
+                _krnFSDriver.deleteFile("~" + _TerminatedQ[i].pid.toString());
+            }
         }
 
         public setSchedule(sched): void {

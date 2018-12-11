@@ -389,7 +389,6 @@ module TSOS {
                         if (fileExists) {
                             tsb = [data.substring(3,4), data.substring(5,6), data.substring(7,8)];
                             this.clearFile(filename, tsb);
-                            console.log(filename)
                             _Disk.writeToDisk(tsb, "01");
                             var counter = 0;
                             text = text.toString().toLowerCase().split(",");
