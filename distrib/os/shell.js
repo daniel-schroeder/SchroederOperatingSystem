@@ -53,16 +53,16 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Returns the user location.");
             this.commandList[this.commandList.length] = sc;
             //funFact
-            sc = new TSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact");
+            sc = new TSOS.ShellCommand(this.shellFunFact, "funfact", "- Displays a fun fact.");
             this.commandList[this.commandList.length] = sc;
             //status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays a status equal to <string>");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays a status equal to <string>.");
             this.commandList[this.commandList.length] = sc;
             //load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks to see if the user code is valid.");
             this.commandList[this.commandList.length] = sc;
             //bsod
-            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death");
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays blue screen of death.");
             this.commandList[this.commandList.length] = sc;
             // man <topic>
             sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
@@ -80,13 +80,37 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellRunAll, "runall", " - Runs all processes in memory.");
             this.commandList[this.commandList.length] = sc;
             //ps
-            sc = new TSOS.ShellCommand(this.shellPS, "ps", " - Shows all processes in memory");
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", " - Shows all processes in memory.");
             this.commandList[this.commandList.length] = sc;
             //quantum
             sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - set the length of the quantum.");
             this.commandList[this.commandList.length] = sc;
             //killall <pid>
             sc = new TSOS.ShellCommand(this.shellKillAll, "killall", " - Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
+            //create <filename>
+            sc = new TSOS.ShellCommand(this.shellCreate, "create", "<filename> - Creates new file <filename>.");
+            this.commandList[this.commandList.length] = sc;
+            //read <filename>
+            sc = new TSOS.ShellCommand(this.shellRead, "read", "<filename> - Reads and displays contents of <filename>.");
+            this.commandList[this.commandList.length] = sc;
+            //write <filename>, "text"
+            sc = new TSOS.ShellCommand(this.shellWrite, "write", "<filename>, \"text\" - writes \"text\" to <filename>.");
+            this.commandList[this.commandList.length] = sc;
+            //delete <filename>
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", "<filename> - Removes <filename> from storage.");
+            this.commandList[this.commandList.length] = sc;
+            //format
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", " - Initializes all blocks in all sectors in all tracks.");
+            this.commandList[this.commandList.length] = sc;
+            //ls
+            sc = new TSOS.ShellCommand(this.shellLs, "ls", " - Shows all files on disk.");
+            this.commandList[this.commandList.length] = sc;
+            //setschedule <schedule>
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<schedule> - Sets scheduling algoritm to <schedule>.");
+            this.commandList[this.commandList.length] = sc;
+            //getschedule
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", " - Gets the current scheduling algorithm.");
             this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
@@ -278,25 +302,49 @@ var TSOS;
                         _StdOut.putText("Tests the BSOD.");
                         break;
                     case "run":
-                        _StdOut.putText("<pid> - Runs the process with process id of <pid>");
+                        _StdOut.putText("<pid> - Runs the process with process id of <pid>.");
                         break;
                     case "clearmem":
-                        _StdOut.putText("Clears memory");
+                        _StdOut.putText("Clears memory.");
                         break;
                     case "runall":
-                        _StdOut.putText("Runs all processes in memory");
+                        _StdOut.putText("Runs all processes in memory.");
                         break;
                     case "ps":
-                        _StdOut.putText("shows the PID of all processes in memory");
+                        _StdOut.putText("shows the PID of all processes in memory.");
                         break;
                     case "kill":
-                        _StdOut.putText("<pid> - Kills the process with process id of <pid>");
+                        _StdOut.putText("<pid> - Kills the process with process id of <pid>.");
                         break;
                     case "killall":
-                        _StdOut.putText("Kills all processes");
+                        _StdOut.putText("Kills all processes.");
                         break;
                     case "quantum":
-                        _StdOut.putText("<int> - Sets the quantum to <int>");
+                        _StdOut.putText("<int> - Sets the quantum to <int>.");
+                        break;
+                    case "create":
+                        _StdOut.putText("<filename> - creates file <filename>.");
+                        break;
+                    case "read":
+                        _StdOut.putText("<filename> - Reads and displays contents of <filename>.");
+                        break;
+                    case "write":
+                        _StdOut.putText("<filename> \"text\" - Writes \"text\" to <filename>.");
+                        break;
+                    case "delete":
+                        _StdOut.putText("<filename> - Removes <filename> from storage.");
+                        break;
+                    case "format":
+                        _StdOut.putText("Initializes all blocks in all sectors in all tracks.");
+                        break;
+                    case "ls":
+                        _StdOut.putText("Lists all files on disk.");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("<schedule> - Sets the scheduling algoritm to <schedule>.");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Gets the current scheduling algorithm.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -422,30 +470,49 @@ var TSOS;
             }
         };
         //check if the text in the user input area is valid and load into memory
-        Shell.prototype.shellLoad = function () {
+        Shell.prototype.shellLoad = function (args) {
             var userInput = document.getElementById("taProgramInput").value;
             //check validity
             if (userInput.match(/^[a-fA-f 0-9]+$/)) {
+                var priority;
+                if (args[0] != undefined) {
+                    priority = parseInt(args[0]);
+                    if (isNaN(priority)) {
+                        _StdOut.putText("Priority must be a number.");
+                        priority == null;
+                    }
+                }
                 if (_MemoryManager.partitionOneFree ||
                     _MemoryManager.partitionTwoFree ||
                     _MemoryManager.partitionThreeFree) {
                     //loadProgram
-                    _MemoryManager.loadProgram();
+                    _MemoryManager.loadProgram(userInput.split(" "));
                     //create a new pcb for process and store it in _PCB
                     _PCB = new TSOS.ProcessControlBlock();
                     //initialize _PCB
-                    _PCB.init();
+                    _PCB.init(priority);
                     _PCB.state = "Resident";
                     _CPU.thePCB = _PCB;
+                    _CPUScheduler.nextToSwap = _PCB;
                     //store _PCB into _ResidentQ
                     _ResidentQ.push(_PCB);
                     _Kernel.addRowToMasterQTable();
                     _StdOut.putText("Process id = " + _PCB.pid);
                 }
                 else {
-                    _StdOut.putText("No memory available.");
-                    _StdOut.advanceLine();
-                    _StdOut.putText("Run a program or clear memory with clearmem first");
+                    //load onto disk instead
+                    _PCB = new TSOS.ProcessControlBlock();
+                    //initialize _PCB
+                    _PCB.init(priority, 4);
+                    _PCB.state = "Resident";
+                    _CPU.thePCB = _PCB;
+                    //store _PCB into _ResidentQ
+                    _ResidentQ.push(_PCB);
+                    _krnFSDriver.createFile(["~" + _PCB.pid.toString()]);
+                    _PCB.tsb = _krnFSDriver.findInDirectory(["~" + _PCB.pid.toString()]);
+                    _krnFSDriver.writeUserInputToDisk("~" + _PCB.pid.toString(), userInput.split(" "));
+                    _Kernel.addRowToMasterQTable();
+                    _StdOut.putText("Process id = " + _PCB.pid);
                 }
             }
             else {
@@ -485,11 +552,13 @@ var TSOS;
                         //if single step is on, do one cycle then wait
                         if (_SingleStep) {
                             _PCB.state = "Running";
+                            _ShouldRun = true;
                             _CPU.cycle();
                         }
                         //otherwise run free
                         else {
                             _PCB.state = "Running";
+                            _ShouldRun = true;
                             _CPU.isExecuting = true;
                         }
                     }
@@ -509,11 +578,19 @@ var TSOS;
         //clears memory
         Shell.prototype.shellClearMem = function () {
             _MemoryManager.clearMem();
+            _ResidentQ.splice(0, _ResidentQ.length);
         };
         //runs all processes
         Shell.prototype.shellRunAll = function () {
-            _CPUScheduler.runAll();
-            _ResidentQ.splice(0, _ResidentQ.length);
+            //make sure the resident q is not empty
+            if (_ResidentQ.length > 0) {
+                _CPUScheduler.runAll();
+                _ResidentQ.splice(0, _ResidentQ.length);
+            }
+            //if it is let the user know
+            else {
+                _StdOut.putText("Memory is empty. Load a program first");
+            }
         };
         //shows all processes in memory
         Shell.prototype.shellPS = function () {
@@ -547,6 +624,120 @@ var TSOS;
         //kills a process
         Shell.prototype.shellKillAll = function () {
             _CPUScheduler.killAll();
+        };
+        //Creates file <filename>
+        Shell.prototype.shellCreate = function (args) {
+            if (args.length > 0) {
+                if (args != "") {
+                    if (args[0].substring(0, 1) != "~") {
+                        var status = _krnFSDriver.createFile(args);
+                        switch (status) {
+                            case 1:
+                                _StdOut.putText("File already exists");
+                                break;
+                            case 2:
+                                _StdOut.putText("Not enough space on disk");
+                                break;
+                            case 3:
+                                _StdOut.putText("File created successfully");
+                                break;
+                            case 4:
+                                _StdOut.putText("File created successfully but name shortened because it was too long");
+                                break;
+                        }
+                    }
+                    else {
+                        _StdOut.putText("Please dont start a file name with \"~\"");
+                    }
+                }
+            }
+            else {
+                _StdOut.putText("Usage: create <filename>  Please supply a filename.");
+            }
+        };
+        //Read and display contents of file <filename>
+        Shell.prototype.shellRead = function (args) {
+            if (args.length > 0) {
+                _StdOut.putText(_krnFSDriver.readFromDisk(args[0]));
+            }
+            else {
+                _StdOut.putText("Usage: read <filename>  Please supply a filename.");
+            }
+        };
+        //Write data inside "" to file <filename>
+        Shell.prototype.shellWrite = function (args) {
+            if (args.length > 0) {
+                if (args.length >= 2) {
+                    if (args[1].substring(0, 1) == '"' && args[args.length - 1].charAt(args[args.length - 1].length - 1) == '"') {
+                        var text = args.slice(1).join(" ");
+                        _krnFSDriver.writeToDisk(args[0], text);
+                    }
+                    else {
+                        _StdOut.putText("Please enclose what you're writing to the file in double quotes (\").");
+                    }
+                }
+                else {
+                    _StdOut.putText("Not the proper number of parameters. Two is what we're looking for.");
+                }
+            }
+            else {
+                _StdOut.putText("Usage: write <filename> \"text\" Please supply a filename and some text enclosed in quotes.");
+            }
+        };
+        //Deletes file <filename>
+        Shell.prototype.shellDelete = function (args) {
+            if (args.length > 0) {
+                _krnFSDriver.deleteFile(args[0]);
+            }
+            else {
+                _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
+            }
+        };
+        //Initialize all blocks in all sectors in all tracks
+        Shell.prototype.shellFormat = function () {
+            if (_ReadyQ.length > 0) {
+                _StdOut.putText("Please terminate all processes before fomating.");
+            }
+            else {
+                _Disk.formatDisk();
+            }
+        };
+        //List all files on disk
+        Shell.prototype.shellLs = function () {
+            var files = _krnFSDriver.getAllFiles();
+            for (var i = 0; i < files.length; i++) {
+                _StdOut.putText(files[i]);
+                _StdOut.advanceLine();
+            }
+        };
+        //set scheduling algorithm to <schedule>
+        Shell.prototype.shellSetSchedule = function (args) {
+            if (args.length > 0) {
+                switch (args[0]) {
+                    case "rr":
+                        _CPUScheduler.setSchedule("rr");
+                        document.getElementById("schedule").innerHTML = "Master Queue &nbsp;&nbsp;&nbsp; Schedule: Round Robin";
+                        break;
+                    case "priority":
+                        _CPUScheduler.setSchedule("priority");
+                        document.getElementById("schedule").innerHTML = "Master Queue &nbsp;&nbsp;&nbsp; Schedule: Priority";
+                        break;
+                    case "fcfs":
+                        _CPUScheduler.setSchedule("fcfs");
+                        document.getElementById("schedule").innerHTML = "Master Queue &nbsp;&nbsp;&nbsp; Schedule: First Come First Serve";
+                        break;
+                    default:
+                        _StdOut.putText("Please use rr for round robin, fcfs for first come first serve, or priority for priority.");
+                        break;
+                }
+            }
+            else {
+                _StdOut.putText("Usage: setschedule <schedule>  Please supply a schedule.");
+            }
+        };
+        //gets current scheduling algorithm
+        Shell.prototype.shellGetSchedule = function () {
+            _StdOut.putText("Current schedule is: " + _CPUScheduler.getSchedule() + ".");
         };
         //sets quantum
         Shell.prototype.shellQuantum = function (args) {

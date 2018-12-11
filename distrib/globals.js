@@ -18,11 +18,16 @@ var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prior
 var KEYBOARD_IRQ = 1;
 var SWITCH_IRQ = 2;
 var TERMINATE_IRQ = 3;
+var ROUND_ROBIN = 0;
+var PRIORITY = 1;
+var FCFS = 2;
+var DEFAULT_QUANTUM = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var _Disk;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().
@@ -46,6 +51,7 @@ var _OsShell;
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnFSDriver = null;
 var _hardwareClockID = null;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados.js on Labouseur.com.
@@ -60,6 +66,7 @@ var _ResidentQ;
 var _ReadyQ;
 var _TerminatedQ;
 var _SingleStep = false;
+var _ShouldExecute = false;
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };

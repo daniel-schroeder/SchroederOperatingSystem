@@ -108,6 +108,10 @@ module TSOS {
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
+
+            // initialize Disk
+            _Disk = new TSOS.Disk();
+
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
 
             document.getElementById("cpuPC").innerHTML = "000";
@@ -142,7 +146,9 @@ module TSOS {
             if ((<HTMLButtonElement>document.getElementById("btnStep")).disabled == false) {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
                 _SingleStep = false;
-                _CPU.isExecuting = true;
+                if (_ShouldRun) {
+                    _CPU.isExecuting = true;
+                }
             }
             else {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = false;
@@ -153,22 +159,24 @@ module TSOS {
 
         //on click of the step button one cycle
         public static hostBtnStep_click(btn): void {
-            if (_CPUScheduler.cyclesToDo > 0) {
-                _CPU.cycle();
-                _CPU.thePCB.cyclesToComplete++;
-                for (var i = 0; i < _CPUScheduler.processes.length; i++) {
-                    if(_CPUScheduler.processes[i] != _CPU.thePCB) {
-                        _CPUScheduler.processes[i].waitTime++;
+            if (_ShouldRun) {
+                if (_CPUScheduler.cyclesToDo > 0) {
+                    _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if(_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
                     }
                 }
-            }
-            else if (_CPUScheduler.processes.length > 0){
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
-                _CPU.cycle();
-                _CPU.thePCB.cyclesToComplete++;
-                for (var i = 0; i < _CPUScheduler.processes.length; i++) {
-                    if(_CPUScheduler.processes[i] != _CPU.thePCB) {
-                        _CPUScheduler.processes[i].waitTime++;
+                else if (_CPUScheduler.processes.length > 0){
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
+                    _CPU.cycle();
+                    _CPU.thePCB.cyclesToComplete++;
+                    for (var i = 0; i < _CPUScheduler.processes.length; i++) {
+                        if(_CPUScheduler.processes[i] != _CPU.thePCB) {
+                            _CPUScheduler.processes[i].waitTime++;
+                        }
                     }
                 }
             }

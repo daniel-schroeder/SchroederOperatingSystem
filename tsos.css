@@ -30,18 +30,27 @@ h3 {
   font-style: normal;
 }
 
+#schedule {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
 #display {
   background-color:#DFDBC3;
   border: 2px solid red;
   cursor: default;
+  width: 500px;
+  height: 600px;
 }
 
 .normal_button {
   width: 100px;
+  border-radius: 7px;
 }
 
 .small_button {
   width: 50px;
+  border-radius: 7px;
 }
 
 .footerText {
@@ -51,10 +60,9 @@ h3 {
   text-align: center;
 }
 
-table, tr, .tdMem {
+table, tr, td, th {
     border: 1px solid black;
     border-collapse:collapse;
-    background-color: white;
 }
 
 .tdMem {
@@ -66,7 +74,169 @@ table, tr, .tdMem {
     text-align: left;
 }
 
-.tdPCB, .thPCB {
-    width: 12.5%;
+.tdMasterQ, .thMasterQ {
+    width: 11%;
     text-align: left;
+}
+
+.thMasterQ {
+    height: 22px;
+}
+
+.thMasterQState {
+    width: 23%;
+    text-align: left;
+}
+
+#tempMQ {
+    text-align: center;
+}
+
+#memoryTable {
+    width:450px;
+    max-height:165px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+}
+
+#tableMem {
+    width:450px;
+    border: 1px solid black;
+    border-collapse:collapse;
+    background-color: white;
+}
+
+#divMemory {
+    width:450px;
+}
+
+#divMasterQ {
+    width: 450px;
+}
+
+#divCPUStatus {
+    overflow:hidden;
+    max-height:140px;
+    width:450px;
+}
+
+#tableCPU {
+     border: 1px solid black;
+     border-collapse:collapse;
+     width:450px;
+     background-color: white;
+}
+
+#masterQTable {
+    overflow-x:hidden;
+    overflow-y:scroll;
+    max-height:114px;
+    height:114px;
+}
+
+#tableMasterQ {
+     border: 1px solid black;
+     border-collapse:collapse;
+     width:450px;
+     background-color: white;
+     height:114px;
+}
+
+#divLog, #divUserProgramInput, #taHostLog, #taProgramInput {
+     width:350px;
+}
+
+#taProgramInput {
+    margin-top: 12px;
+    height: 144px
+}
+
+#divStatusArea {
+     margin:auto;
+     width:250px;
+     text-align:center;
+     padding-top:10px;
+}
+
+.footerText {
+     clear:both;
+}
+
+.divMain {
+     width:100%;
+}
+
+.divButtonBar {
+     margin:4px;
+     max-width:550px;
+}
+
+#container {
+     display:flex;
+     justify-content:space-between;
+}
+
+#divConsole {
+     margin:4px;
+     width:500px;
+     height:500px;"
+}
+
+#divCPUStatus {
+    max-width:500px;
+}
+
+#divMemory, #divMasterQ, #divDisk {
+     margin-top:10px;
+}
+
+#status {
+    padding-top:10px;
+}
+
+#thMasterQPID {
+    width: 30px;
+}
+
+#diskTable {
+    overflow:scroll;
+    max-height:175px;
+    max-width: 450px;
+}
+
+#tableDisk {
+     width:450px;
+     background-color: white;
+}
+
+#tableDisk, .trDisk, .tdDisk {
+    border: none;
+}
+
+#tableDisk .trDisk {
+    height: 25px;
+}
+
+.tdDisk {
+    padding-right: 6px;
+}
+
+.tdDisk:nth-child(2) {
+    color: tomato;
+}
+
+.tdDisk:nth-child(3) {
+    color: slategray;
+}
+
+.tdDisk:nth-child(4) {
+    color: cornflowerblue;
+}
+
+.trDisk:hover {
+    background-color: gainsboro;
+}
+
+.tdMem:hover {
+    background-color: gainsboro;
 }

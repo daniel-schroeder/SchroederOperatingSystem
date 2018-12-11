@@ -21,7 +21,7 @@ var TSOS;
             this.partitionThreeFree = true;
         }
         //load the program into memory
-        memoryManager.prototype.loadProgram = function () {
+        memoryManager.prototype.loadProgram = function (userInput) {
             var partitionBase;
             if (this.partitionOneFree) {
                 partitionBase = 0;
@@ -44,8 +44,6 @@ var TSOS;
                 this.partitionThreeFree = false;
                 this.latestPartition = 2;
             }
-            //splits the userInput on " "
-            var userInput = document.getElementById("taProgramInput").value.split(" ");
             //sets each loacation in memory to the user input starting at 0000
             for (var i = 0; i < userInput.length; i++) {
                 this.memory[partitionBase] = userInput[i];
@@ -64,7 +62,6 @@ var TSOS;
             this.partitionOneFree = true;
             this.partitionTwoFree = true;
             this.partitionThreeFree = true;
-            _ResidentQ.length = 0;
             _Memory.mem = this.memory;
         };
         memoryManager.prototype.clearMemPartition = function (part) {

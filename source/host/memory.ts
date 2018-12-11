@@ -10,7 +10,7 @@
 
 module TSOS {
     export class Memory {
-        constructor(public mem: String[]) {
+        constructor(public mem = new Array()) {
         }
 
         //initialize memory to "00"

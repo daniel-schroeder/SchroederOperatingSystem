@@ -130,8 +130,13 @@ module TSOS {
                     _CPUScheduler.processes.splice(_CPUScheduler.counter,1);
                     if (_CPUScheduler.processes.length == 0) {
                         this.isExecuting = false;
+                        _ShouldRun = false;
+                        for (var i = 0; i < _TerminatedQ.length; i++) {
+                            _krnFSDriver.deleteFile("~" + _TerminatedQ[i].pid.toString());
+                        }
                     }
                     _CPUScheduler.counter--;
+                    _CPUScheduler.nextToSwap = _CPUScheduler.processes[_CPUScheduler.counter];
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWITCH_IRQ));
                     break;
                 case "Break":
@@ -139,7 +144,28 @@ module TSOS {
                 case "Waiting":
                     break;
                 case "Out of Bounds Error":
-                    this.isExecuting = false;
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i,1);
+                            //remove the process from the the disk
+                            _krnFSDriver.deleteFile("~" + test.pid.toString());
+
+                        }
+                    }
+                    _CPUScheduler.cyclesToDo = 0;
+                    _CPUScheduler.processes.splice(_CPUScheduler.counter,1);
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                        _ShouldRun = false;
+                    }
+                    _CPUScheduler.counter--;
+                    _CPUScheduler.nextToSwap = _CPUScheduler.processes[_CPUScheduler.counter];
                     _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an out of bounds error");
@@ -147,7 +173,27 @@ module TSOS {
                     _OsShell.putPrompt();
                     break;
                 case "Invalid Op Code Error":
-                    this.isExecuting = false;
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i,1);
+                            //remove the process from the the disk
+                            _krnFSDriver.deleteFile("~" + test.pid.toString());
+                        }
+                    }
+                    _CPUScheduler.cyclesToDo = 0;
+                    _CPUScheduler.processes.splice(_CPUScheduler.counter,1);
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                        _ShouldRun = false;
+                    }
+                    _CPUScheduler.counter--;
+                    _CPUScheduler.nextToSwap = _CPUScheduler.processes[_CPUScheduler.counter];
                     _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an invalid op code error");
@@ -345,9 +391,13 @@ module TSOS {
                 }
             }
 
+            //remove the process from the the disk
+            _krnFSDriver.deleteFile("~" + pcb.pid.toString());
+
             //stop execution if its the only process Running
             if (_CPUScheduler.processes.length < 1) {
                 this.isExecuting = false;
+                _ShouldRun = false;
             }
             else {
                 _CPUScheduler.counter--;

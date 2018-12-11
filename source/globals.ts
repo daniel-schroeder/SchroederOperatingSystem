@@ -22,13 +22,17 @@ const KEYBOARD_IRQ: number = 1;
 const SWITCH_IRQ: number = 2;
 const TERMINATE_IRQ: number = 3;
 
+const ROUND_ROBIN: number = 0;
+const PRIORITY: number = 1;
+const FCFS: number = 2;
 
+const DEFAULT_QUANTUM: number = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
-
+var _Disk: TSOS.Disk;
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
@@ -60,6 +64,7 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnFSDriver: any = null;
 
 var _hardwareClockID: number = null;
 
@@ -80,6 +85,7 @@ var _ReadyQ;
 var _TerminatedQ;
 
 var _SingleStep = false;
+var _ShouldExecute = false;
 
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();

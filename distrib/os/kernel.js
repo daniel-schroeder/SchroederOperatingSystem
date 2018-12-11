@@ -38,8 +38,13 @@ var TSOS;
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
-            _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
+            _krnKeyboardDriver.krnKbdDriverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // Load the File System Device Driver
+            this.krnTrace("Loading the file system device driver.");
+            _krnFSDriver = new TSOS.FSDeviceDriver(); // Construct it.
+            _krnFSDriver.krnFSDriverEntry(); // Call the driverEntry() initialization routine.
+            this.krnTrace(_krnFSDriver.status);
             //
             // ... more?
             //
@@ -206,6 +211,9 @@ var TSOS;
         };
         Kernel.prototype.addRowToMasterQTable = function () {
             var table = document.getElementById("tableMasterQ");
+            if (document.getElementById("tempMQ")) {
+                table.deleteRow(1);
+            }
             var row = table.insertRow(1);
             var cell1 = row.insertCell();
             var cell2 = row.insertCell();
@@ -233,6 +241,24 @@ var TSOS;
             document.getElementById("cpuY").innerHTML = "--";
             document.getElementById("cpuZ").innerHTML = "--";
             document.getElementById("cpuIr").innerHTML = "--";
+        };
+        //update the disk display on index.html
+        Kernel.prototype.updateDiskDisplay = function (row, data) {
+            var table = document.getElementById("tableDisk");
+            for (var i = 0; i < table.rows.length; i++) {
+                if (table.rows[i].cells[0].innerHTML == row) {
+                    if (data == "") {
+                        table.rows[i].cells[1].innerHTML = "0";
+                        table.rows[i].cells[2].innerHTML = "0:0:0";
+                        table.rows[i].cells[3].innerHTML = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+                    }
+                    else {
+                        table.rows[i].cells[1].innerHTML = data.substring(1, 2);
+                        table.rows[i].cells[2].innerHTML = data.substring(3, 4) + ":" + data.substring(5, 6) + ":" + data.substring(7, 8);
+                        table.rows[i].cells[3].innerHTML = data.slice(8);
+                    }
+                }
+            }
         };
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
