@@ -108,7 +108,7 @@ module TSOS {
 
         //finds the next open spot in the directory. returns the tsb if it finds on or -1 if it doesnt
         public findSpotInDirectory(filename): any {
-            var tsb = this.findInDirectory(filename);
+            var tsb = this.findInDirectory([filename[0]]);
             //if -1 is returned find a new space for the file to go
             if (tsb == -1) {
                 //cycle through all tsb in track 0
@@ -135,7 +135,7 @@ module TSOS {
         //creates a file by putting a pointer in the directory and initializing a block with
         //an in use byte
         public createFile(filename): number {
-            var tsbForDirectory = this.findSpotInDirectory(filename[0]);
+            var tsbForDirectory = this.findSpotInDirectory(filename);
             //if file is already there
             if (tsbForDirectory == -1) {
                 return 1;
