@@ -232,18 +232,20 @@ var TSOS;
         FSDeviceDriver.prototype.clearFile = function (filename, tsb) {
             if (tsb === void 0) { tsb = null; }
             if (tsb != null) {
-                var data = sessionStorage.getItem(tsb);
+                var data = sessionStorage.getItem(tsb[0] + ":" + tsb[1] + ":" + tsb[2]);
                 if (data == null) {
                     return;
                 }
                 else {
                     var nextData;
                     do {
+                        if (nextData != undefined) {
+                            data = nextData;
+                        }
                         nextData = sessionStorage.getItem(data[3] + ":" + data[5] + ":" + data[7]);
-                        _Disk.writeToDisk(data[3] + ":" + data[5] + ":" + data[7], "");
-                        data = nextData;
+                        _Disk.writeToDisk([data[3], data[5], data[7]], "");
                     } while ((data[3] != nextData[3]) || (data[5] != nextData[5]) || (data[7] != nextData[7]));
-                    _Disk.writeToDisk(data[3] + ":" + data[5] + ":" + data[7], "");
+                    _Disk.writeToDisk([data[3], data[5], data[7]], "");
                 }
             }
             else {
@@ -321,6 +323,7 @@ var TSOS;
                         if (fileExists) {
                             tsb = [data.substring(3, 4), data.substring(5, 6), data.substring(7, 8)];
                             this.clearFile(filename, tsb);
+                            _Disk.writeToDisk(tsb, "01");
                             var trimmedText = text.substring(1, text.length - 1);
                             var counter = 0;
                             if (trimmedText.length > _Disk.blockSize - 4) {
@@ -357,6 +360,7 @@ var TSOS;
                                 }
                                 _Disk.writeToDisk(tsb, temp);
                             }
+                            return;
                         }
                     }
                 }
@@ -392,6 +396,8 @@ var TSOS;
                         if (fileExists) {
                             tsb = [data.substring(3, 4), data.substring(5, 6), data.substring(7, 8)];
                             this.clearFile(filename, tsb);
+                            console.log(filename);
+                            _Disk.writeToDisk(tsb, "01");
                             var counter = 0;
                             text = text.toString().toLowerCase().split(",");
                             if (text.length > _Disk.blockSize - 4) {
@@ -428,6 +434,7 @@ var TSOS;
                                 }
                                 _Disk.writeToDisk(tsb, temp);
                             }
+                            return;
                         }
                     }
                 }
@@ -480,15 +487,35 @@ var TSOS;
                     _MemoryManager.partitionThreeFree = true;
                     break;
             }
-            pcb.location = 4;
             pcb.needToSwap = true;
-            this.createFile(["~" + pcb.pid]);
-            pcb.tsb = this.findInDirectory(["~" + pcb.pid.toString()]);
-            var stuffToRollOut = "";
-            for (var i = pcb.base; i < pcb.limit; i++) {
-                stuffToRollOut += _Memory.mem[i] + ",";
+            if (this.findInDirectory(["~" + pcb.pid.toString()]) == -1) {
+                this.createFile(["~" + pcb.pid]);
+                pcb.tsb = this.findInDirectory(["~" + pcb.pid.toString()]);
             }
+            else {
+                pcb.tsb = this.findInDirectory(["~" + pcb.pid.toString()]);
+            }
+            var stuffToRollOut = new Array();
+            for (var i = pcb.base; i < _MemoryManager.getLimit(pcb.location); i++) {
+                stuffToRollOut.push(_Memory.mem[i]);
+            }
+            for (var j = stuffToRollOut.length - 1; j > 0; j--) {
+                if ((stuffToRollOut[j] == "00" && stuffToRollOut[j - 1] == "00")
+                    || (stuffToRollOut[j] == "00" && stuffToRollOut[j - 1] == "")
+                    || (stuffToRollOut[j] == "" && stuffToRollOut[j - 1] == "00")) {
+                    stuffToRollOut.splice(j, 1);
+                }
+                else {
+                    break;
+                }
+            }
+            var temp = "";
+            for (var k = 0; k < stuffToRollOut.length; k++) {
+                temp += stuffToRollOut[k] + ",";
+            }
+            this.clearFile("~" + pcb.pid.toString(), pcb.tsb);
             this.writeUserInputToDisk("~" + pcb.pid.toString(), stuffToRollOut);
+            pcb.location = 4;
         };
         return FSDeviceDriver;
     }(TSOS.DeviceDriver));

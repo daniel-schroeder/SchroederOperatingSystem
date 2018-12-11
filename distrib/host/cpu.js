@@ -135,7 +135,21 @@ var TSOS;
                 case "Waiting":
                     break;
                 case "Out of Bounds Error":
-                    this.isExecuting = false;
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                        _ShouldRun = false;
+                    }
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i, 1);
+                        }
+                    }
                     _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an out of bounds error");
@@ -143,7 +157,21 @@ var TSOS;
                     _OsShell.putPrompt();
                     break;
                 case "Invalid Op Code Error":
-                    this.isExecuting = false;
+                    if (_CPUScheduler.processes.length == 0) {
+                        this.isExecuting = false;
+                        _ShouldRun = false;
+                    }
+                    var test;
+                    for (var i = _ReadyQ.length - 1; i >= 0; i--) {
+                        test = _ReadyQ[i];
+                        //test to see if the pid matches the given pid
+                        if (test.pid == this.thePCB.pid) {
+                            //move the process from ready queue to terminator queue
+                            _TerminatedQ.push(test);
+                            //remove the process from the resident queue
+                            _ReadyQ.splice(i, 1);
+                        }
+                    }
                     _MemoryManager.clearMemPartition(this.thePCB.partition);
                     _StdOut.advanceLine();
                     _StdOut.putText("Process " + this.thePCB.pid + " was removed from memory due to an invalid op code error");
