@@ -60,6 +60,7 @@ var TSOS;
                 }
             }
             _CPU.thePCB = this.processes[this.counter];
+            //an initial check to see if the first process to run needs swapping
             if (_CPU.thePCB.needToSwap) {
                 _krnFSDriver.rollOut(this.nextToSwap);
                 _krnFSDriver.rollIn(_CPU.thePCB);
@@ -113,6 +114,10 @@ var TSOS;
             if (_ReadyQ.length == 0) {
                 _ShouldRun = false;
             }
+            //clears the file system of any file that has been run
+            for (var i = 0; i < _TerminatedQ.length; i++) {
+                _krnFSDriver.deleteFile("~" + _TerminatedQ[i].pid.toString());
+            }
         };
         CPUScheduler.prototype.killAll = function () {
             var test;
@@ -121,10 +126,8 @@ var TSOS;
                 this.kill(test.pid);
             }
             _ShouldRun = false;
-            for (var i = 0; i < _TerminatedQ.length; i++) {
-                _krnFSDriver.deleteFile("~" + _TerminatedQ[i].pid.toString());
-            }
         };
+        //sets the scheduling algorithm
         CPUScheduler.prototype.setSchedule = function (sched) {
             switch (sched) {
                 case "rr":
@@ -133,14 +136,17 @@ var TSOS;
                     break;
                 case "priority":
                     this.schedule = PRIORITY;
+                    //arbitrary number. really big
                     this.quantum = 99999999999999;
                     break;
                 case "fcfs":
                     this.schedule = FCFS;
+                    //arbitrary number. really big
                     this.quantum = 99999999999999;
                     break;
             }
         };
+        //returns the current scheduling algorithm
         CPUScheduler.prototype.getSchedule = function () {
             switch (this.schedule) {
                 case ROUND_ROBIN:
@@ -158,6 +164,7 @@ var TSOS;
     }());
     TSOS.CPUScheduler = CPUScheduler;
 })(TSOS || (TSOS = {}));
+//test input. formatted nicely here for ease of copy and paste
 //A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00
 //A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 06 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 62 00 62 64 6F 6E 65 00
 //A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 09 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 63 00 63 64 6F 6E 65 00

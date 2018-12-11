@@ -32,6 +32,7 @@ var TSOS;
                 _Kernel.updateDiskDisplay((tsb[0] + ":" + tsb[1] + ":" + tsb[2]), editedData);
             }
         };
+        //set all values to 00 in file system
         Disk.prototype.formatDisk = function () {
             var tsb;
             for (var track = 0; track < this.numTracks; track++) {
@@ -43,26 +44,34 @@ var TSOS;
                 }
             }
         };
+        //used to get the tsb from the directory in many functions
         Disk.prototype.readFromDisk = function (tsb) {
             var data = sessionStorage.getItem(tsb[0] + ":" + tsb[1] + ":" + tsb[2]);
             return data;
         };
+        //returns a human readable version of whats on the disk
         Disk.prototype.readStringFromDisk = function (tsb) {
             var data = sessionStorage.getItem(tsb[0] + ":" + tsb[1] + ":" + tsb[2]);
+            //a check to see if data is in directory, or if the file only uses on block
             if (((data[3] == tsb[0]) && (data[5] == tsb[1]) && (data[7] == tsb[2]))
                 || tsb[0] == 0) {
+                //temp string
                 var stringData = "";
+                //loop through block until 00 or the end of the blocks
+                //start at 8 because thats where data starts
                 for (var i = 8; i < data.length; i += 2) {
                     if ((data[i] + data[i + 1]) == "00") {
                         i = data.length;
                         break;
                     }
                     else {
+                        //convert from hex to char code to character and add it to temp string
                         stringData += String.fromCharCode(parseInt((data[i] + data[i + 1]), 16));
                     }
                 }
             }
             else {
+                //same as above but for multiple block long files
                 var nextData;
                 var stringData = "";
                 do {
@@ -90,6 +99,7 @@ var TSOS;
             }
             return stringData;
         };
+        //same as readStringFromDisk only it does not convert from hex
         Disk.prototype.readOpCodesFromDisk = function (tsb) {
             var data = sessionStorage.getItem(tsb[0] + ":" + tsb[1] + ":" + tsb[2]);
             if (((data[3] == tsb[0]) && (data[1] == tsb[5]) && (data[7] == tsb[2]))

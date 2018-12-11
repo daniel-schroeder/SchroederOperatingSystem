@@ -767,7 +767,11 @@ module TSOS {
         //Read and display contents of file <filename>
         public shellRead(args) {
             if (args.length > 0) {
-                _StdOut.putText(_krnFSDriver.readFromDisk(args[0]));
+                if (_krnFSDriver.readFromDisk(args[0]) == -1) {
+                    _StdOut.putText("file: \"" + args[0] + "\" not found.");
+                } else {
+                    _StdOut.putText(_krnFSDriver.readFromDisk(args[0]));
+                }
             } else {
                 _StdOut.putText("Usage: read <filename>  Please supply a filename.");
             }
@@ -779,7 +783,13 @@ module TSOS {
                 if (args.length >= 2) {
                     if (args[1].substring(0,1) == '"' && args[args.length-1].charAt(args[args.length-1].length-1) == '"') {
                         var text = args.slice(1).join(" ");
-                        _krnFSDriver.writeToDisk(args[0], text);
+                        if (_krnFSDriver.writeToDisk(args[0], text) == -1) {
+                            _StdOut.putText("file: \"" + args[0] + "\" not found.");
+                        } else {
+                            _krnFSDriver.writeToDisk(args[0], text);
+                            _StdOut.putText("File: \"" + args[0] + "\" successfully written to!");
+
+                        }
                     } else {
                         _StdOut.putText("Please enclose what you're writing to the file in double quotes (\").");
                     }
@@ -794,7 +804,13 @@ module TSOS {
         //Deletes file <filename>
         public shellDelete(args) {
             if (args.length > 0) {
-                _krnFSDriver.deleteFile(args[0]);
+                if (_krnFSDriver.deleteFile(args[0]) == -2) {
+                    _StdOut.putText("file: \"" + args[0] + "\" not deleted. Error while clearing file.");
+                } else if (_krnFSDriver.deleteFile(args[0]) == -1) {
+                    _StdOut.putText("file: \"" + args[0] + "\" not found.");
+                } else {
+                    _StdOut.putText("file: \"" + args[0] + "\" deleted");
+                }
             } else {
                 _StdOut.putText("Usage: delete <filename>  Please supply a filename.");
             }
